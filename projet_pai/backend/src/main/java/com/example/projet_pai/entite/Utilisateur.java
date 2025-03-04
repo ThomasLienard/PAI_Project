@@ -1,17 +1,19 @@
-package com.example.projet_pai.models;
+package com.example.projet_pai.entite;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 import java.util.Set;
-@Data
-@Document(collection = "users")
+
+@Entity
 public class Utilisateur {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID) // Utilisation d'un UUID pour l'ID
     private String id;
+
     private String username;
     private String email;
     private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER) // Pour stocker les rôles sous forme de Set<String>
     private Set<String> roles;
 
     public Utilisateur() {}
@@ -52,5 +54,13 @@ public class Utilisateur {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.projet_pai.service.Impl;
 
 import com.example.projet_pai.dto.RegisterRequest;
-import com.example.projet_pai.models.Utilisateur;
+import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,12 +77,19 @@ class UserServiceImplTest {
 
     @Test
     void registerUser_ShouldSaveUserInDatabase_WhenDataIsValid() {
+        Utilisateur expectedUser = new Utilisateur();
+        expectedUser.setEmail(request.getEmail());
+        expectedUser.setPassword("hashed_password");
+        expectedUser.setUsername(request.getUsername());
+
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(request.getPassword())).thenReturn("hashed_password");
+
         userService.registerUser(request);
-        Optional<Utilisateur> savedUser = userRepository.findByEmail(request.getEmail());
-        assertTrue(savedUser.isPresent());
-        assertEquals(request.getUsername(), savedUser.get().getUsername());
+        
+        verify(userRepository).save(argThat(user -> user.getEmail().equals(request.getEmail()) &&
+                user.getUsername().equals(request.getUsername()) &&
+                user.getPassword().equals("hashed_password")));
     }
 
 }

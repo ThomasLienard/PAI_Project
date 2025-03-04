@@ -1,11 +1,13 @@
 package com.example.projet_pai.repository;
 
-import com.example.projet_pai.models.Utilisateur;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.example.projet_pai.entite.Utilisateur;
+
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends MongoRepository<Utilisateur, String> {
+public interface UserRepository extends JpaRepository<Utilisateur, String> {
     Optional<Utilisateur> findByEmail(String email);
 }

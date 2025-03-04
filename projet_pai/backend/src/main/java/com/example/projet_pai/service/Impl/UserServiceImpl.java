@@ -1,8 +1,8 @@
 package com.example.projet_pai.service.Impl;
 
-import com.example.projet_pai.models.Utilisateur;
 import com.example.projet_pai.repository.UserRepository;
 import com.example.projet_pai.dto.RegisterRequest;
+import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.service.UserServiceInt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

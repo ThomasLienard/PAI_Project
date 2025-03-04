@@ -3,12 +3,11 @@ package com.example.projet_pai.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
     
     @Bean
@@ -16,11 +15,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    public void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .requestMatchers("/**").permitAll()
-            .and()
-            .csrf().disable();
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll() // Autorise toutes les requêtes
+            )
+            .csrf(csrf -> csrf.disable()) // Désactive CSRF
+            .headers(headers -> headers
+                .frameOptions().disable() // Nécessaire pour H2 Console
+            )
+            .httpBasic().disable() // Désactive l'authentification basique
+            .formLogin().disable(); // Désactive la page de login
+
+        return http.build();
     }
 }

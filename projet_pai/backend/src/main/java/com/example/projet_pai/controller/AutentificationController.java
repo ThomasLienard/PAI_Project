@@ -1,8 +1,9 @@
 package com.example.projet_pai.controller;
 
-import com.example.projet_pai.models.Utilisateur;
 import com.example.projet_pai.service.Impl.UserServiceImpl;
 import com.example.projet_pai.dto.RegisterRequest;
+import com.example.projet_pai.entite.Utilisateur;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
