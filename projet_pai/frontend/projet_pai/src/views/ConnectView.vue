@@ -1,0 +1,14 @@
+<template>
+    <div class="connect">
+        <form action="">
+            <input type="text" placeholder="Nom d'utilisateur">
+            <input type="password" placeholder="Mot de passe">
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</template>
+
+
+<style>
+
+</style>
