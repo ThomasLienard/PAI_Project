@@ -1,6 +1,7 @@
 package com.example.projet_pai.controller;
 
 import com.example.projet_pai.service.Impl.UserServiceImpl;
+import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
 
@@ -28,4 +29,18 @@ public class AutentificationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
+        try{
+            Boolean isAuthenticated = userService.loginUser(loginRequest);
+            if (isAuthenticated) {
+                return ResponseEntity.ok("Connexion réussie !");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de la connexion !");
+            }
+        } catch(RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+}
 }
