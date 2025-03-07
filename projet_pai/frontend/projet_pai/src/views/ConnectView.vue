@@ -1,5 +1,5 @@
 <template>
-    <div class="connect">
+    <div class="login">
         <form action="">
             <input type="text" placeholder="Nom d'utilisateur">
             <input type="password" placeholder="Mot de passe">
