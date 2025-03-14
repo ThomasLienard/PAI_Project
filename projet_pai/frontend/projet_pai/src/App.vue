@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+
+const route = useRoute()
+const router = useRouter()
+
+// Vérifie si la route actuelle est une route d'administration ou liée au chef
+const isHiddenRoute = ref(route.path.startsWith('/admin') || route.path.startsWith('/chef'))
+
+watch(
+  () => route.path,
+  (newPath) => {
+    isHiddenRoute.value = newPath.startsWith('/admin') || newPath.startsWith('/chef')
+  }
+)
 </script>
 
 <template>
-  <header>
+  <header v-if="!isHiddenRoute">
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>

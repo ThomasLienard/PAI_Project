@@ -1,0 +1,76 @@
+/* Styles globaux pour l'interface du cuisinier */
+.chef-interface {
+    padding: 1rem;
+  }
+  
+  /* Styles pour la liste des commandes */
+  .order-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .order-list li {
+    margin: 0.5rem 0;
+  }
+  
+  .order-list button {
+    margin-left: 1rem;
+    padding: 0.3rem 0.6rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .order-list button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Styles pour la gestion des recettes */
+  .recipe-manager ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .recipe-manager li {
+    margin: 0.5rem 0;
+  }
+  
+  .recipe-manager button {
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .recipe-manager button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styles pour la gestion des stocks */
+  .stock-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .stock-list li {
+    margin: 0.5rem 0;
+  }
+  
+  .stock-list button {
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .stock-list button:hover {
+    background-color: #e68900;
+  }
