@@ -1,9 +1,8 @@
 package com.example.projet_pai.controller;
 
-import com.example.projet_pai.service.Impl.UserServiceImpl;
+import com.example.projet_pai.service.UserServiceItf;
 import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
-import com.example.projet_pai.entite.Utilisateur;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AutentificationController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserServiceItf userService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {

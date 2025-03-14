@@ -4,21 +4,22 @@ import com.example.projet_pai.repository.UserRepository;
 import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
-import com.example.projet_pai.service.UserServiceInt;
+import com.example.projet_pai.service.UserServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserServiceInt {
+public class UserServiceImpl implements UserServiceItf {
 
     @Autowired
     private UserRepository userRepository;
     
     @Autowired
-    private PasswordEncoder passwordEncoder;;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(RegisterRequest registerRequest) {
@@ -53,6 +54,26 @@ public class UserServiceImpl implements UserServiceInt {
         }
 
         return true;
+    }
+
+    public List<Utilisateur> getAllUsers() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAllUsers'");
+    }
+
+    public Utilisateur createUser(Utilisateur user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+    }
+
+    public Utilisateur updateUser(String id, Utilisateur user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+    }
+
+    public void deleteUser(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
     }
 }
 

@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import UserManagement from '../views/UserManagement.vue'
+import MenuManagement from '../views/MenuManagement.vue'
+import OrderManagement from '../views/OrderManagement.vue'
+import StatisticsManagement from '../views/StatisticsManagement.vue'
+import AdminView from '../views/AdminView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +38,29 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/RegisterView.vue'),
+    },
+
+    { path: '/admin', 
+      name: 'admin', 
+      component: AdminView },
+
+    { path: '/admin/user', 
+      name: 'admin-user', 
+      component: UserManagement },
+    {
+      path: '/admin/menus',
+      name: 'admin-menus',
+      component: MenuManagement,
+    },
+    {
+      path: '/admin/orders',
+      name: 'admin-orders',
+      component: OrderManagement,
+    },
+    {
+      path: '/admin/statistics',
+      name: 'admin-statistics',
+      component: StatisticsManagement,
     },
   ],
 })
