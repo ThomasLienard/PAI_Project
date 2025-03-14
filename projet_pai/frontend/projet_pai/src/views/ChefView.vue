@@ -22,15 +22,18 @@
   </template>
   
   <script setup lang="ts">
-  import { useRouter } from 'vue-router'
-  
-  // Utilisation du routeur pour naviguer vers les pages dédiées
-  const router = useRouter()
-  
-  function navigateTo(path: string) {
-    router.push(path)
-  }
-  </script>
+import { useRouter } from 'vue-router'
+
+// Importer les styles globaux
+import '@/assets/styles/ChefStyles.css'
+
+// Utilisation du routeur pour naviguer vers les pages dédiées
+const router = useRouter()
+
+function navigateTo(path: string) {
+  router.push(path)
+}
+</script>
   
   <style scoped>
   .chef-interface {
