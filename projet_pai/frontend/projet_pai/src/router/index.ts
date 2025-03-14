@@ -38,8 +38,19 @@ const router = createRouter({
       path: '/chef',
       name: 'chef',
       component: () => import('../views/ChefView.vue'),
+    },
+    {
+      path: '/chef/orders',
+      name: 'ChefOrders',
+      component: () => import('@/components/chef/OrderList.vue'),
+    },
+    {
+      path: '/chef/recipes',
+      name: 'ChefRecipes',
+      component: () => import('@/components/chef/RecipeManager.vue'),
     }
-  ],
+  ]
+    ,
 })
 
 export default router
