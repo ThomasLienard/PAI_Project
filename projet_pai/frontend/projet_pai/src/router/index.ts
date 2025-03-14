@@ -34,6 +34,69 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/RegisterView.vue'),
     },
+
+    {
+      path: '/user',
+      name: 'user',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/UserView.vue'),
+    },
+
+    {
+      path: '/user/reservation',
+      name: 'reservation',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ReservationView.vue'),
+    },
+    {
+      path: '/user/reservation/choix',
+      name: 'reservationChoix',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ReservationChoiceView.vue'),
+    },
+
+    {
+      path: '/user/feedback',
+      name: 'feedback',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/FeedbackView.vue'),
+    },
+
+    {
+      path: '/user/modifier',
+      name: 'modifier',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ModifierView.vue'),
+    },
+
+    {
+      path: '/user/commandes',
+      name: 'commandes',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/CommandeView.vue'),
+    },
+
+    {
+      path: '/user/commander',
+      name: 'commander',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/CommanderView.vue'),
+    },
+
   ],
 })
 
