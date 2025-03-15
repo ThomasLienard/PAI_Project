@@ -1,9 +1,12 @@
 package com.example.projet_pai.dto;
 
+
 public class RegisterRequest {
 
-    private String username;
     private String email;
+
+    private String username;
+
     private String password;
 
     public RegisterRequest(String username, String email, String password) {

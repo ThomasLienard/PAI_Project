@@ -6,6 +6,8 @@ import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.service.UserServiceItf;
 import com.example.projet_pai.util.JwtUtil;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
