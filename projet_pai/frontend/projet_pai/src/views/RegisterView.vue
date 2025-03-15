@@ -14,9 +14,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const newUser = ref({ email: '', username: '', password: '', confirmPassword: '' })
 const errorMessage = ref('')
+const router = useRouter()
 
 const registerUser = async () => {
   if (newUser.value.password !== newUser.value.confirmPassword) {
@@ -32,6 +34,7 @@ const registerUser = async () => {
     })
     newUser.value = { email: '', username: '', password: '', confirmPassword: '' }
     errorMessage.value = ''
+    router.push('/login') // Redirige vers la page de connexion en cas de réussite
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
       errorMessage.value = error.response.data.message
