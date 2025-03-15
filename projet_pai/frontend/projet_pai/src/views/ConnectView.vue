@@ -9,40 +9,39 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { login } from '../services/authService';
 
-const email = ref('')
-const password = ref('')
-const errorMessage = ref('')
-const router = useRouter()
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const router = useRouter();
 
 const loginUser = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', {
-      email: email.value,
-      password: password.value
-    })
-    const role = response.data.role
+    const response = await login(email.value, password.value);
+    const { role, token } = response;
+    console.log('Token:', token); // Afficher le token dans la console
+
     if (role === 'ADMIN') {
-      router.push('/admin')
+      router.push('/admin');
     } else if (role === 'CUISINIER') {
-      router.push('/cuisinier')
+      router.push('/cuisinier');
     } else if (role === 'SERVEUR') {
-      router.push('/serveur')
+      router.push('/serveur');
     } else {
-      router.push('/user')
+      router.push('/user');
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message
+      errorMessage.value = error.response.data.message;
     } else {
-      errorMessage.value = 'Erreur lors de la connexion'
+      errorMessage.value = 'Erreur lors de la connexion';
     }
   }
-}
+};
 </script>
 
 <style scoped>

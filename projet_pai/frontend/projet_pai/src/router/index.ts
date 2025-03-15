@@ -1,68 +1,45 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import UserManagement from '../views/UserManagement.vue'
-import MenuManagement from '../views/MenuManagement.vue'
-import OrderManagement from '../views/OrderManagement.vue'
-import StatisticsManagement from '../views/StatisticsManagement.vue'
-import AdminView from '../views/AdminView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/HomeView.vue';
+import AdminView from '../views/AdminView.vue';
+import ConnectView from '../views/ConnectView.vue';
+import RegisterView from '../views/RegisterView.vue';
+import UserManagement from '../views/UserManagement.vue';
+import MenuManagement from '../views/MenuManagement.vue';
+import OrderManagement from '../views/OrderManagement.vue';
+import StatisticsManagement from '../views/StatisticsManagement.vue';
+
+const routes = [
+  { path: '/', name: 'home', component: Home },
+  { path: '/login', name: 'login', component: ConnectView },
+  { path: '/register', name: 'register', component: RegisterView },
+  { path: '/admin', name: 'admin', component: AdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/admin/user', name: 'admin-user', component: UserManagement, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/admin/menus',name: 'admin-menus',component: MenuManagement,meta: { requiresAuth: true, role: 'ADMIN' } },
+  {path: '/admin/orders',name: 'admin-orders',component: OrderManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
+  {path: '/admin/statistics',name: 'admin-statistics',component: StatisticsManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
+  history: createWebHistory(''),
+  routes,
+});
 
-    {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ConnectView.vue'),
-    },
-    {
-      path: '/register',
-      name: 'register',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/RegisterView.vue'),
-    },
+router.beforeEach((to, from, next) => {
+  const token = sessionStorage.getItem('jwtToken');
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+      next({ name: 'login' });
+    } else {
+      const userRole = JSON.parse(atob(token.split('.')[1])).role;
+      if (to.meta.role && to.meta.role !== userRole) {
+        next({ name: 'login' });
+      } else {
+        next();
+      }
+    }
+  } else {
+    next();
+  }
+});
 
-    { path: '/admin', 
-      name: 'admin', 
-      component: AdminView },
-
-    { path: '/admin/user', 
-      name: 'admin-user', 
-      component: UserManagement },
-    {
-      path: '/admin/menus',
-      name: 'admin-menus',
-      component: MenuManagement,
-    },
-    {
-      path: '/admin/orders',
-      name: 'admin-orders',
-      component: OrderManagement,
-    },
-    {
-      path: '/admin/statistics',
-      name: 'admin-statistics',
-      component: StatisticsManagement,
-    },
-  ],
-})
-
-export default router
+export default router;

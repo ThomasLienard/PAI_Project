@@ -29,22 +29,22 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import apiClient from '../services/apiClient' // Utilisez apiClient au lieu de axios
 
 const users = ref([])
 const newUser = ref({ username: '', email: '', password: '', role: '' })
 const activities = ref([])
 
 const fetchUsers = async () => {
-  const response = await axios.get('/api/users')
+  const response = await apiClient.get('/users')
   users.value = response.data
 }
 
 const createUser = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/api/admin/create-user', newUser.value)
+    const response = await apiClient.post('/admin/create-user', newUser.value)
     console.log('Utilisateur créé avec succès:', response.data)
     newUser.value = { username: '', email: '', password: '', role: '' }
     fetchUsers()
@@ -59,13 +59,13 @@ const editUser = (user) => {
 }
 
 const deleteUser = async (id) => {
-  await axios.delete(`/api/users/${id}`)
+  await apiClient.delete(`/users/${id}`)
   fetchUsers()
   fetchActivities()
 }
 
 const fetchActivities = async () => {
-  const response = await axios.get('/api/activities')
+  const response = await apiClient.get('/activities')
   activities.value = response.data
 }
 

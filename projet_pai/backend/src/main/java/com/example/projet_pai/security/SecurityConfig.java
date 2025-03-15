@@ -45,6 +45,8 @@ public class SecurityConfig {
             .anyRequest().authenticated()
             .and()
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors()
+            .and()
             .headers(headers -> headers.frameOptions().sameOrigin()); // Nécessaire pour H2 Console
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
