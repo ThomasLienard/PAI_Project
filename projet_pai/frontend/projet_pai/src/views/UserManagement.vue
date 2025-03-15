@@ -6,10 +6,8 @@
       <input v-model="newUser.email" placeholder="Email" required />
       <input v-model="newUser.password" type="password" placeholder="Mot de passe" required />
       <select v-model="newUser.role" required>
-        <option value="Admin">Admin</option>
-        <option value="Serveur">Serveur</option>
-        <option value="Cuisinier">Cuisinier</option>
-        <option value="Caissier">Caissier</option>
+        <option value="SERVEUR">Serveur</option>
+        <option value="CUISINIER">Cuisinier</option>
       </select>
       <button type="submit">Créer un utilisateur</button>
     </form>
@@ -36,7 +34,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 const users = ref([])
-const newUser = ref({ username: '', email: '', password: '', role: 'Serveur' })
+const newUser = ref({ username: '', email: '', password: '', role: '' })
 const activities = ref([])
 
 const fetchUsers = async () => {
@@ -45,10 +43,15 @@ const fetchUsers = async () => {
 }
 
 const createUser = async () => {
-  const response = await axios.post('/api/users', newUser.value)
-  users.value.push(response.data)
-  newUser.value = { username: '', email: '', password: '', role: 'Serveur' }
-  fetchActivities()
+  try {
+    const response = await axios.post('http://localhost:8080/api/admin/create-user', newUser.value)
+    console.log('Utilisateur créé avec succès:', response.data)
+    newUser.value = { username: '', email: '', password: '', role: '' }
+    fetchUsers()
+    fetchActivities()
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'utilisateur:', error.response.data)
+  }
 }
 
 const editUser = (user) => {
