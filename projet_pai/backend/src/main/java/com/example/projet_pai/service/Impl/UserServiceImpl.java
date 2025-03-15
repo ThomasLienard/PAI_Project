@@ -1,17 +1,16 @@
 package com.example.projet_pai.service.Impl;
 
-import com.example.projet_pai.repository.UserRepository;
-import com.example.projet_pai.repository.RoleRepository;
 import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
+import com.example.projet_pai.repository.UserRepository;
+import com.example.projet_pai.repository.RoleRepository;
 import com.example.projet_pai.entite.Role;
 import com.example.projet_pai.service.UserServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +21,7 @@ public class UserServiceImpl implements UserServiceItf {
 
     @Autowired
     private RoleRepository roleRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -49,7 +48,7 @@ public class UserServiceImpl implements UserServiceItf {
     }
 
     @Override
-    public Boolean loginUser(LoginRequest loginRequest) {
+    public Utilisateur loginUser(LoginRequest loginRequest) {
         if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
             throw new RuntimeException("Données manquantes");
         }
@@ -64,27 +63,7 @@ public class UserServiceImpl implements UserServiceItf {
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
-        return true;
-    }
-
-    public List<Utilisateur> getAllUsers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllUsers'");
-    }
-
-    public Utilisateur createUser(Utilisateur user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
-    }
-
-    public Utilisateur updateUser(String id, Utilisateur user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
-    }
-
-    public void deleteUser(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        return user;
     }
 }
 

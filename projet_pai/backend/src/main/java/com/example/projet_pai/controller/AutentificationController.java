@@ -2,7 +2,9 @@ package com.example.projet_pai.controller;
 
 import com.example.projet_pai.service.UserServiceItf;
 import com.example.projet_pai.dto.LoginRequest;
+import com.example.projet_pai.dto.LoginResponse;
 import com.example.projet_pai.dto.RegisterRequest;
+import com.example.projet_pai.entite.Utilisateur;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +32,17 @@ public class AutentificationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
-        try{
-            Boolean isAuthenticated = userService.loginUser(loginRequest);
-            if (isAuthenticated) {
-                return ResponseEntity.ok("Connexion réussie !");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+        try {
+            Utilisateur user = userService.loginUser(loginRequest);
+            if (user != null) {
+                String role = user.getRole().getName();
+                return ResponseEntity.ok(new LoginResponse(user.getUsername(), role));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de la connexion !");
             }
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-}
+    }
 }
