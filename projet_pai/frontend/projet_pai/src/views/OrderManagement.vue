@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <h1>Gestion des commandes</h1>
     <div>
       <h2>Commandes</h2>
@@ -36,9 +37,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import { ref } from 'vue'
 import axios from 'axios'
+import NavBar from '../components/NavBar.vue';
 
 const orders = ref([])
 const dishes = ref([])

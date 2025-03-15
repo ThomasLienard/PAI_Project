@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <h1>Interface d'administration</h1>
     <div class="admin-buttons">
       <router-link to="/admin/user">
@@ -18,8 +19,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// Vous pouvez ajouter des scripts ici si nécessaire
+<script setup>
+import NavBar from '../components/NavBar.vue';
 </script>
 
 <style scoped>

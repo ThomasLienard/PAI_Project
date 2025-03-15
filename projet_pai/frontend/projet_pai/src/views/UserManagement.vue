@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <h1>Gestion des utilisateurs</h1>
     <form @submit.prevent="createUser">
       <input v-model="newUser.username" placeholder="Nom d'utilisateur" required />
@@ -32,7 +33,7 @@
 <script setup>
 import { ref } from 'vue'
 import apiClient from '../services/apiClient' // Utilisez apiClient au lieu de axios
-
+import NavBar from '../components/NavBar.vue';
 const users = ref([])
 const newUser = ref({ username: '', email: '', password: '', role: '' })
 const activities = ref([])

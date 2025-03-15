@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <h1>Gestion des menus</h1>
     <form @submit.prevent="saveDish">
       <input v-model="currentDish.name" placeholder="Nom du plat" required />
@@ -24,9 +25,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
 import { ref } from 'vue'
 import axios from 'axios'
+import NavBar from '../components/NavBar.vue';
 
 const dishes = ref([])
 const currentDish = ref({ id: null, name: '', price: 0, allergens: '', category: 'entrée', stock: 0 })

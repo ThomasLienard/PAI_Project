@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <h1>Gestion des statistiques</h1>
     <div v-if="performances.length">
       <h2>Performances en temps réel</h2>
@@ -28,9 +29,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import NavBar from '../components/NavBar.vue';
 
 const performances = ref([])
 const trends = ref([])
