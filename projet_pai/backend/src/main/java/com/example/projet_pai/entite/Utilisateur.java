@@ -1,27 +1,28 @@
 package com.example.projet_pai.entite;
 
 import jakarta.persistence.*;
-import java.util.Set;
 
 @Entity
 public class Utilisateur {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // Utilisation d'un UUID pour l'ID
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String username;
     private String email;
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER) // Pour stocker les rôles sous forme de Set<String>
-    private Set<String> roles;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     public Utilisateur() {}
 
-    public Utilisateur(String username, String email, String password) {
+    public Utilisateur(String username, String email, String password, Role role) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public String getId() {
@@ -56,11 +57,11 @@ public class Utilisateur {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
