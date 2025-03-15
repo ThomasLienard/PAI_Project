@@ -4,14 +4,14 @@
 <template>
   <main>
     <div>
-      <form action="">
+      <form action="/user/reservation">
         <button type="submit">
           Réserver une table
         </button>
       </form>
     </div>
     <div>
-      <form action="">
+      <form action="/user/reservations">
         <button type="submit">
           Voir mes réservations
         </button>
@@ -19,7 +19,7 @@
     </div>
 
     <div>
-      <form action="">
+      <form action="/user/commander">
         <button type="submit">
           Commander 
         </button>
@@ -27,7 +27,7 @@
     </div>
 
     <div>
-      <form action="">
+      <form action="/user/commandes">
         <button type="submit">
           Voir mes commandes 
         </button>
@@ -35,7 +35,7 @@
     </div>
     
     <div>
-      <form action="">
+      <form action="/user/modifier">
         <button type="submit">
           Afficher son profil 
         </button>
@@ -43,7 +43,7 @@
     </div>
     
     <div>
-      <form action="">
+      <form action="/user/feedback">
         <button type="submit">
           Laisser un avis
         </button>

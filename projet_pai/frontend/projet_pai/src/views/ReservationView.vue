@@ -3,7 +3,7 @@
 
 <template>
   <main>
-    <form action="">
+    <form action="/user/reservation/choix">
         <input type="date" name="" id="">
         <input type="time" name="" id="">
         <input type="number" placeholder="Nombre de personnes" id="">

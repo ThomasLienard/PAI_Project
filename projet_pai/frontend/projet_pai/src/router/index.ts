@@ -76,7 +76,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ModifierView.vue'),
+      component: () => import('../views/ModifyView.vue'),
     },
 
     {
@@ -95,6 +95,15 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/CommanderView.vue'),
+    },
+
+    {
+      path: '/user/reservations',
+      name: 'mesReservations',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ReservationsView.vue'),
     },
 
   ],
