@@ -1,112 +1,63 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/HomeView.vue';
+import AdminView from '../views/AdminView.vue';
+import ConnectView from '../views/ConnectView.vue';
+import RegisterView from '../views/RegisterView.vue';
+import UserManagement from '../views/UserManagement.vue';
+import MenuManagement from '../views/MenuManagement.vue';
+import OrderManagement from '../views/OrderManagement.vue';
+import StatisticsManagement from '../views/StatisticsManagement.vue';
+import UserView from '../views/UserView.vue';
+import ReservationView from '../views/ReservationView.vue';
+import ReservationChoiceView from '../views/ReservationChoiceView.vue';
+import FeedbackView from '../views/FeedbackView.vue';
+import ModifyView from '../views/ModifyView.vue';
+import CommandeView from '../views/CommandeView.vue';
+import CommanderView from '../views/CommanderView.vue';
+import ReservationsView from '../views/ReservationsView.vue';
+
+const routes = [
+  { path: '/', name: 'home', component: Home },
+  { path: '/login', name: 'login', component: ConnectView },
+  { path: '/register', name: 'register', component: RegisterView },
+  { path: '/admin', name: 'admin', component: AdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/admin/user', name: 'admin-user', component: UserManagement, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/admin/menus',name: 'admin-menus',component: MenuManagement,meta: { requiresAuth: true, role: 'ADMIN' } },
+  {path: '/admin/orders',name: 'admin-orders',component: OrderManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
+  {path: '/admin/statistics',name: 'admin-statistics',component: StatisticsManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
+  {path: '/user',name: 'user',component: UserView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/reservation',name: 'reservation',component: ReservationView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/reservation/choix',name: 'reservationChoix',component: ReservationChoiceView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/feedback',name: 'feedback',component: FeedbackView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/modifier',name: 'modifier',component: ModifyView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/commandes',name: 'commandes',component: CommandeView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/commander',name: 'commander',component: CommanderView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/reservations',name: 'mesReservations',component: ReservationsView, meta: { requiresAuth: true, role: 'CLIENT' }},
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
+  history: createWebHistory(''),
+  routes,
+});
 
-    {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ConnectView.vue'),
-    },
-    {
-      path: '/register',
-      name: 'register',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/RegisterView.vue'),
-    },
 
-    {
-      path: '/user',
-      name: 'user',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/UserView.vue'),
-    },
+router.beforeEach((to, from, next) => {
+  const token = sessionStorage.getItem('jwtToken');
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+      next({ name: 'login' });
+    } else {
+      const userRole = JSON.parse(atob(token.split('.')[1])).role;
+      if (to.meta.role && to.meta.role !== userRole) {
+        next({ name: 'login' });
+      } else {
+        next();
+      }
+    }
+  } else {
+    next();
+  }
+});
 
-    {
-      path: '/user/reservation',
-      name: 'reservation',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ReservationView.vue'),
-    },
-    {
-      path: '/user/reservation/choix',
-      name: 'reservationChoix',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ReservationChoiceView.vue'),
-    },
 
-    {
-      path: '/user/feedback',
-      name: 'feedback',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/FeedbackView.vue'),
-    },
-
-    {
-      path: '/user/modifier',
-      name: 'modifier',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ModifyView.vue'),
-    },
-
-    {
-      path: '/user/commandes',
-      name: 'commandes',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/CommandeView.vue'),
-    },
-
-    {
-      path: '/user/commander',
-      name: 'commander',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/CommanderView.vue'),
-    },
-
-    {
-      path: '/user/reservations',
-      name: 'mesReservations',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ReservationsView.vue'),
-    },
-
-  ],
-})
-
-export default router
+export default router;

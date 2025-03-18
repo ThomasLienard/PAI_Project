@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+
+const route = useRoute()
+const router = useRouter()
+
+const isAdminRoute = ref(route.path.startsWith('/admin'))
+
+watch(
+  () => route.path,
+  (newPath) => {
+    isAdminRoute.value = newPath.startsWith('/admin')
+  }
+)
 </script>
 
 <template>
   <header>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Se connecter</RouterLink>
-        <RouterLink to="/register">Creer son compte</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/">Home</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/about">About</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/login">Se connecter</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/register">Creer son compte</RouterLink>
       </nav>
     </div>
   </header>

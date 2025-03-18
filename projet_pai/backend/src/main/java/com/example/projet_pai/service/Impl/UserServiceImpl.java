@@ -1,10 +1,12 @@
 package com.example.projet_pai.service.Impl;
 
-import com.example.projet_pai.repository.UserRepository;
 import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
-import com.example.projet_pai.service.UserServiceInt;
+import com.example.projet_pai.repository.UserRepository;
+import com.example.projet_pai.repository.RoleRepository;
+import com.example.projet_pai.entite.Role;
+import com.example.projet_pai.service.UserServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,13 +14,16 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserServiceInt {
+public class UserServiceImpl implements UserServiceItf {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
-    private PasswordEncoder passwordEncoder;;
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(RegisterRequest registerRequest) {
@@ -28,16 +33,22 @@ public class UserServiceImpl implements UserServiceInt {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email déjà utilisé !");
         }
+
+        // Récupérer le rôle "CLIENT" depuis la base de données
+        Role clientRole = roleRepository.findByName("CLIENT")
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
         Utilisateur user = new Utilisateur(
             registerRequest.getUsername(),
             registerRequest.getEmail(),
-            passwordEncoder.encode(registerRequest.getPassword())
+            passwordEncoder.encode(registerRequest.getPassword()),
+            clientRole // Attribuer le rôle "CLIENT" par défaut
         );
         userRepository.save(user);
     }
 
     @Override
-    public Boolean loginUser(LoginRequest loginRequest) {
+    public Utilisateur loginUser(LoginRequest loginRequest) {
         if (loginRequest.getEmail() == null || loginRequest.getPassword() == null) {
             throw new RuntimeException("Données manquantes");
         }
@@ -52,7 +63,7 @@ public class UserServiceImpl implements UserServiceInt {
             throw new RuntimeException("Email ou mot de passe incorrect");
         }
 
-        return true;
+        return user;
     }
 }
 
