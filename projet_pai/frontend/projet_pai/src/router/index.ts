@@ -39,7 +39,7 @@ const routes = [
   {path: '/user/reservations',name: 'mesReservations',component: ReservationsView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
-  {path: '/chef/recipes',name: 'chef',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
+  {path: '/chef/recipes',name: 'chefRecipe',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
 ];
 
 const router = createRouter({
