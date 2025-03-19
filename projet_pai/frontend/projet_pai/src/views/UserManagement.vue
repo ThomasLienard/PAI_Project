@@ -4,7 +4,7 @@
     <h1>Gestion des utilisateurs</h1>
     <form @submit.prevent="createUser">
       <input v-model="newUser.username" placeholder="Nom d'utilisateur" required />
-      <input v-model="newUser.email" placeholder="Email" required />
+      <input v-model="newUser.email" type="email" placeholder="Email" required />
       <input v-model="newUser.password" type="password" placeholder="Mot de passe" required />
       <select v-model="newUser.role" required>
         <option value="SERVEUR">Serveur</option>
