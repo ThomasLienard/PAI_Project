@@ -5,13 +5,14 @@ import { ref, watch } from 'vue'
 const route = useRoute()
 const router = useRouter()
 
-// Vérifie si la route actuelle est une route d'administration ou liée au chef
-const isHiddenRoute = ref(route.path.startsWith('/admin') || route.path.startsWith('/chef'))
+
+const isAdminRoute = ref(route.path.startsWith('/admin'))
+
 
 watch(
   () => route.path,
   (newPath) => {
-    isHiddenRoute.value = newPath.startsWith('/admin') || newPath.startsWith('/chef')
+    isAdminRoute.value = newPath.startsWith('/admin')
   }
 )
 </script>
@@ -20,10 +21,10 @@ watch(
   <header v-if="!isHiddenRoute">
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Se connecter</RouterLink>
-        <RouterLink to="/register">Creer son compte</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/">Home</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/about">About</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/login">Se connecter</RouterLink>
+        <RouterLink v-if="!isAdminRoute" to="/register">Creer son compte</RouterLink>
       </nav>
     </div>
   </header>

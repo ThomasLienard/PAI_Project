@@ -1,24 +1,29 @@
 package com.example.projet_pai.controller;
 
-import com.example.projet_pai.service.Impl.UserServiceImpl;
 import com.example.projet_pai.dto.LoginRequest;
+import com.example.projet_pai.dto.LoginResponse;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
+import com.example.projet_pai.service.UserServiceItf;
+import com.example.projet_pai.util.JwtUtil;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@PreAuthorize("hasRole('ADMIN')")
 public class AutentificationController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserServiceItf userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
@@ -31,16 +36,18 @@ public class AutentificationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
-        try{
-            Boolean isAuthenticated = userService.loginUser(loginRequest);
-            if (isAuthenticated) {
-                return ResponseEntity.ok("Connexion réussie !");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            Utilisateur user = userService.loginUser(loginRequest);
+            if (user != null) {
+                String token = jwtUtil.generateToken(user.getEmail(), user.getRole().getName());
+                String role = user.getRole().getName();
+                return ResponseEntity.ok(new LoginResponse(user.getUsername(), role, token));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de la connexion !");
             }
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-}
+    }
 }

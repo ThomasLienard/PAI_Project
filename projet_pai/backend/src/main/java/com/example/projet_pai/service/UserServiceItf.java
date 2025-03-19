@@ -1,14 +1,13 @@
 package com.example.projet_pai.service;
 
+import java.util.List;
+
 import com.example.projet_pai.dto.LoginRequest;
 import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Utilisateur;
 
-import java.util.List;
 
-
-public interface UserServiceInt {
+public interface UserServiceItf {
     void registerUser(RegisterRequest registerRequest);
-
-    Boolean loginUser(LoginRequest loginrequest);   
+    Utilisateur loginUser(LoginRequest loginrequest);
 }
