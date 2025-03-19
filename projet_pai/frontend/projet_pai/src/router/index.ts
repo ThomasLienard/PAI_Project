@@ -15,6 +15,10 @@ import ModifyView from '../views/ModifyView.vue';
 import CommandeView from '../views/CommandeView.vue';
 import CommanderView from '../views/CommanderView.vue';
 import ReservationsView from '../views/ReservationsView.vue';
+import ChefView from '../views/ChefView.vue';
+import OrderList from '../components/chef/OrderList.vue';
+import RecipeManager from '../components/chef/RecipeManager.vue';
+
 
 const routes = [
   { path: '/', name: 'home', component: Home },
@@ -33,6 +37,9 @@ const routes = [
   {path: '/user/commandes',name: 'commandes',component: CommandeView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/commander',name: 'commander',component: CommanderView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/reservations',name: 'mesReservations',component: ReservationsView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
+  {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
+  {path: '/chef/recipes',name: 'chef',component: ChefRecipes, meta: { requiresAuth: true, role: 'CUISINIER' }},
 ];
 
 const router = createRouter({
@@ -58,6 +65,5 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-
 
 export default router;

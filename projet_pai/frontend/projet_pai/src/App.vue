@@ -5,7 +5,9 @@ import { ref, watch } from 'vue'
 const route = useRoute()
 const router = useRouter()
 
+
 const isAdminRoute = ref(route.path.startsWith('/admin'))
+
 
 watch(
   () => route.path,
@@ -16,7 +18,7 @@ watch(
 </script>
 
 <template>
-  <header>
+  <header v-if="!isHiddenRoute">
     <div class="wrapper">
       <nav>
         <RouterLink v-if="!isAdminRoute" to="/">Home</RouterLink>
