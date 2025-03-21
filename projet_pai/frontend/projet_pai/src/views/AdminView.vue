@@ -1,21 +1,21 @@
 <template>
   <div>
     <NavBar />
-    <h1>Interface d'administration</h1>
-    <div class="admin-buttons">
-      <router-link to="/admin/user">
-        <button>Gestion des utilisateurs</button>
-      </router-link>
-      <router-link to="/admin/menus">
-        <button>Gestion des menus</button>
-      </router-link>
-      <router-link to="/admin/orders">
-        <button>Gestion des commandes</button>
-      </router-link>
-      <router-link to="/admin/statistics">
-        <button>Gestion des statistiques</button>
-      </router-link>
-    </div>
+      <h1>Interface d'administration</h1>
+      <div class="admin-buttons">
+        <router-link to="/admin/user">
+          <button>Gestion des utilisateurs</button>
+        </router-link>
+        <router-link to="/admin/menus">
+          <button>Gestion des menus</button>
+        </router-link>
+        <router-link to="/admin/orders">
+          <button>Gestion des commandes</button>
+        </router-link>
+        <router-link to="/admin/statistics">
+          <button>Gestion des statistiques</button>
+        </router-link>
+      </div>
   </div>
 </template>
 

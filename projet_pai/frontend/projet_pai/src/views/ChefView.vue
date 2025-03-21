@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <NavBar />
     <div class="chef-interface">
       <h1>Interface Cuisinier</h1>
       <div class="blocks-container">
@@ -19,10 +21,13 @@
         </div>
       </div>
     </div>
+  </div>
   </template>
   
   <script setup lang="ts">
 import { useRouter } from 'vue-router'
+
+import NavBar from '../components/NavBar.vue';
 
 // Importer les styles globaux
 import '@/assets/styles/ChefStyles.css'

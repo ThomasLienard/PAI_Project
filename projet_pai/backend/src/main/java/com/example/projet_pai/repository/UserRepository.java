@@ -8,6 +8,6 @@ import com.example.projet_pai.entite.Utilisateur;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<Utilisateur, String> {
+public interface UserRepository extends JpaRepository<Utilisateur, Long> {
     Optional<Utilisateur> findByEmail(String email);
 }
