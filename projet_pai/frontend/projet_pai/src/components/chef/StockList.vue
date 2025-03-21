@@ -6,13 +6,17 @@
 // - Synchroniser les données avec le backend pour maintenir les stocks à jour.
 
 <template>
-    <div>
-      <h3>Liste des stocks</h3>
-      <p>Ce composant affichera les stocks d'ingrédients.</p>
-    </div>
+  <div>
+    <NavBar />
+      <div>
+        <h3>Liste des stocks</h3>
+        <p>Ce composant affichera les stocks d'ingrédients.</p>
+      </div>
+  </div>
   </template>
   
   <script setup>
+    import NavBar from '../../components/NavBar.vue';
   </script>
   
   <style scoped>

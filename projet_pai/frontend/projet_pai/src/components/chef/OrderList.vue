@@ -5,19 +5,24 @@
 // - Permettre au cuisinier de marquer une commande comme terminée.
 
 <template>
-    <div class="order-list">
-      <h3>Liste des commandes</h3>
-      <ul>
-        <li v-for="order in orders" :key="order.id">
-          {{ order.name }} - Statut : {{ order.status }}
-          <button @click="markAsCompleted(order.id)">Marquer comme terminé</button>
-        </li>
-      </ul>
-    </div>
+  <div>
+    <NavBar />
+      <div class="order-list">
+        <h3>Liste des commandes</h3>
+        <ul>
+          <li v-for="order in orders" :key="order.id">
+            {{ order.name }} - Statut : {{ order.status }}
+            <button @click="markAsCompleted(order.id)">Marquer comme terminé</button>
+          </li>
+        </ul>
+      </div>
+  </div>
   </template>
   
   <script setup lang="ts">
   import { ref } from 'vue'
+
+  import NavBar from '../../components/NavBar.vue';
   
   // Importer les styles globaux
   import '@/assets/styles/ChefStyles.css'

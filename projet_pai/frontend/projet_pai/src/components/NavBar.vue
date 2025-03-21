@@ -22,7 +22,7 @@ const goHome = () => {
     if (userRole === 'ADMIN') {
       router.push('/admin');
     } else if (userRole === 'CUISINIER') {
-      router.push('/cuisinier');
+      router.push('/chef');
     } else if (userRole === 'SERVEUR') {
       router.push('/serveur');
     } else {

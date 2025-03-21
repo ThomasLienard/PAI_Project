@@ -1,19 +1,24 @@
 <template>
-    <div class="recipe-manager">
-      <h3>Gestion des recettes</h3>
-      <ul>
-        <li v-for="recipe in recipes" :key="recipe.id">
-          {{ recipe.name }}
-          <button @click="editRecipe(recipe.id)">Modifier</button>
-          <button @click="deleteRecipe(recipe.id)">Supprimer</button>
-        </li>
-      </ul>
-      <button @click="addRecipe">Ajouter une recette</button>
-    </div>
+  <div>
+    <NavBar />
+      <div class="recipe-manager">
+        <h3>Gestion des recettes</h3>
+        <ul>
+          <li v-for="recipe in recipes" :key="recipe.id">
+            {{ recipe.name }}
+            <button @click="editRecipe(recipe.id)">Modifier</button>
+            <button @click="deleteRecipe(recipe.id)">Supprimer</button>
+          </li>
+        </ul>
+        <button @click="addRecipe">Ajouter une recette</button>
+      </div>
+  </div>
   </template>
   
   <script setup lang="ts">
   import { ref } from 'vue'
+
+  import NavBar from '../../components/NavBar.vue';
   
   // Importer les styles globaux
   import '@/assets/styles/ChefStyles.css'
