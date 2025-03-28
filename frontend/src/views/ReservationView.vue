@@ -48,9 +48,9 @@ const createReservation = async () => {
     <NavBar />
     <main>
       <form @submit.prevent="createReservation">
-          <input type="date" v-model="newReservation.date">
-          <input type="time" v-model="newReservation.time">
-          <input type="number" placeholder="Nombre de personnes" v-model="newReservation.nbPersonnes">
+          <input type="date" v-model="newReservation.date_reservation">
+          <input type="time" v-model="newReservation.creneau_horaire">
+          <input type="number" placeholder="Nombre de personnes" v-model="newReservation.nbPersonne">
           <button type="submit">Vérifier la réservation</button>
       </form>
       
