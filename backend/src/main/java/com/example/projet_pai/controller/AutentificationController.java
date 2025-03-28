@@ -30,7 +30,8 @@ public class AutentificationController {
         try {
             userService.registerUser(registerRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body("Utilisateur enregistré avec succès !");
-        } catch (RuntimeException e) {
+        } 
+        catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
