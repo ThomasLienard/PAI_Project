@@ -5,6 +5,8 @@ import com.example.projet_pai.dto.TagDTO;
 import com.example.projet_pai.entite.Dish;
 import com.example.projet_pai.entite.Tag;
 import com.example.projet_pai.repository.DishRepository;
+import com.example.projet_pai.service.MenuServiceItf;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class MenuService {
+public class MenuServiceImpl implements MenuServiceItf  {
 
     @Autowired
     private DishRepository dishRepository;
 
+    @Override
     public Map<String, List<DishDTO>> getMenuGroupedByCategory() {
         List<Dish> dishes = dishRepository.findAll();
 

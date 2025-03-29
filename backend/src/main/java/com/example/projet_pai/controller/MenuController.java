@@ -1,7 +1,7 @@
 package com.example.projet_pai.controller;
 
 import com.example.projet_pai.dto.DishDTO;
-import com.example.projet_pai.service.Impl.MenuService;
+import com.example.projet_pai.service.Impl.MenuServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class MenuController {
 
     @Autowired
-    private MenuService menuService;
+    private MenuServiceImpl menuService;
 
     @GetMapping("/grouped")
     public Map<String, List<DishDTO>> getMenuGroupedByCategory() {
