@@ -46,9 +46,20 @@ public class DataInitializer implements CommandLineRunner {
             Utilisateur admin = new Utilisateur();
             admin.setUsername("admin");
             admin.setEmail("admin@example.com");
-            admin.setPassword(passwordEncoder.encode("adminpassword"));
+            admin.setPassword(passwordEncoder.encode("Adminpassword1"));
             admin.setRole(adminRole);
             userRepository.save(admin);
+        }
+
+        // Créer un utilisateur client par défaut s'il n'existe pas
+        if (!userRepository.findByEmail("client@example.com").isPresent()) {
+            Role clientRole = roleRepository.findByName("CLIENT").orElseThrow(() -> new RuntimeException("Role not found"));
+            Utilisateur client = new Utilisateur();
+            client.setUsername("client");
+            client.setEmail("client@example.com");
+            client.setPassword(passwordEncoder.encode("Clientpassword1"));
+            client.setRole(clientRole);
+            userRepository.save(client);
         }
 
         // Créer des catégories
@@ -63,7 +74,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // Créer des plats
         createDishIfNotFound("Salade César", "Une salade classique avec du poulet, des croûtons et une sauce César.",
-                12.5, "https://example.com/images/salade-cesar.jpg", entrees, Set.of(vegetarien));
+                12.5, "http://localhost:8080/images/salade-cesar.png", entrees, Set.of(vegetarien));
         createDishIfNotFound("Steak Frites", "Un steak juteux accompagné de frites croustillantes.",
                 18.0, "https://example.com/images/steak-frites.jpg", plats, Set.of(sansGluten));
         createDishIfNotFound("Tarte aux pommes", "Une tarte maison avec des pommes fraîches.",
