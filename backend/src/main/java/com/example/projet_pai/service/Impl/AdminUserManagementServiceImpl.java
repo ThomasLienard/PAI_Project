@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Pattern;
+
 @Service
 public class AdminUserManagementServiceImpl implements AdminUserManagementServiceItf {
 
@@ -23,6 +25,12 @@ public class AdminUserManagementServiceImpl implements AdminUserManagementServic
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // Ajout de la méthode utilitaire pour valider les mots de passe
+    private boolean isPasswordValid(String password) {
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
+        return Pattern.matches(passwordPattern, password);
+    }
+
     @Override
     public void createUserWithRole(AdminRegisterRequest adminRegisterRequest) {
         if (adminRegisterRequest.getUsername() == null || adminRegisterRequest.getEmail() == null || adminRegisterRequest.getPassword() == null || adminRegisterRequest.getRole() == null) {
@@ -30,6 +38,11 @@ public class AdminUserManagementServiceImpl implements AdminUserManagementServic
         }
         if (userRepository.findByEmail(adminRegisterRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email déjà utilisé !");
+        }
+
+        // Vérification de la validité du mot de passe
+        if (!isPasswordValid(adminRegisterRequest.getPassword())) {
+            throw new RuntimeException("Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre.");
         }
 
         // Récupérer le rôle depuis la base de données
