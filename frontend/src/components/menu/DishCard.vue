@@ -4,6 +4,12 @@
     <h3>{{ dish.name }}</h3>
     <p>{{ dish.description }}</p>
     <p class="price">{{ dish.price.toFixed(2) }} €</p>
+    <!-- Affichage des tags -->
+    <div class="tags" v-if="dish.tags && dish.tags.length > 0">
+      <span v-for="tag in dish.tags" :key="tag.id" class="tag">
+        {{ tag.name }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -32,5 +38,19 @@ defineProps({
 .price {
   font-weight: bold;
   color: #333;
+}
+
+.tags {
+  margin-top: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
 }
 </style>
