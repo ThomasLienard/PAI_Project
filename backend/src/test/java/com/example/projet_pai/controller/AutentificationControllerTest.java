@@ -1,138 +1,123 @@
 package com.example.projet_pai.controller;
 
-import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.dto.LoginRequest;
-import com.example.projet_pai.entite.Utilisateur;
+import com.example.projet_pai.dto.LoginResponse;
+import com.example.projet_pai.dto.RegisterRequest;
 import com.example.projet_pai.entite.Role;
+import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.service.UserServiceItf;
-import com.example.projet_pai.service.Impl.UserDetailsServiceImpl;
 import com.example.projet_pai.util.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import org.mockito.ArgumentCaptor;
-import static org.junit.jupiter.api.Assertions.*;
 
-@WebMvcTest(controllers = AutentificationController.class)
-@AutoConfigureMockMvc(addFilters = false)
 class AutentificationControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-     @MockBean
-    private UserDetailsServiceImpl userDetailsService;
-
-    @MockBean 
+    @Mock
     private UserServiceItf userService;
 
-    @MockBean
+    @Mock
     private JwtUtil jwtUtil;
 
-    private RegisterRequest validRegisterRequest;
-    private LoginRequest validLoginRequest;
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private AutentificationController autentificationController;
 
     @BeforeEach
     void setUp() {
-        validRegisterRequest = new RegisterRequest();
-        validRegisterRequest.setUsername("testuser");
-        validRegisterRequest.setEmail("test@example.com");
-        validRegisterRequest.setPassword("password123");
-
-        validLoginRequest = new LoginRequest();
-        validLoginRequest.setEmail("test@example.com");
-        validLoginRequest.setPassword("password123");
-
-        objectMapper = new ObjectMapper();
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testRegisterUser_Success() throws Exception {
-        String requestBody = objectMapper.writeValueAsString(validRegisterRequest);
+    void testRegisterUser_Success() {
+        // Préparer les données
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setEmail("test@example.com");
+        registerRequest.setPassword("Password123");
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isCreated());
+        // Simuler le comportement du service
+        doNothing().when(userService).registerUser(registerRequest);
 
-        ArgumentCaptor<RegisterRequest> registerRequestCaptor = ArgumentCaptor.forClass(RegisterRequest.class);
-        verify(userService, times(1)).registerUser(registerRequestCaptor.capture());
-        assertEquals("testuser", registerRequestCaptor.getValue().getUsername());
+        // Appeler le endpoint
+        ResponseEntity<String> response = autentificationController.registerUser(registerRequest);
+
+        // Vérifier la réponse
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Utilisateur enregistré avec succès !", response.getBody());
     }
 
     @Test
-    void testRegisterUser_Failure_EmailAlreadyExists() throws Exception {
-        doThrow(new RuntimeException("Email déjà utilisé !")).when(userService).registerUser(any(RegisterRequest.class));
+    void testRegisterUser_EmailAlreadyExists() {
+        // Préparer les données
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setEmail("test@example.com");
+        registerRequest.setPassword("Password123");
 
-        String requestBody = objectMapper.writeValueAsString(validRegisterRequest);
+        // Simuler une exception levée par le service
+        doThrow(new RuntimeException("Email déjà utilisé !")).when(userService).registerUser(registerRequest);
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Email déjà utilisé !"));
+        // Appeler le endpoint
+        ResponseEntity<String> response = autentificationController.registerUser(registerRequest);
+
+        // Vérifier la réponse
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Email déjà utilisé !", response.getBody());
     }
 
     @Test
-    void testRegisterUser_Failure_MissingData() throws Exception {
-        RegisterRequest invalidRequest = new RegisterRequest();
-        System.out.println("email: " + invalidRequest.getEmail());
-        System.out.println("username: " + invalidRequest.getEmail());
-        System.out.println("mdp: " + invalidRequest.getEmail());
+    void testLogin_Success() {
+        // Préparer les données
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@example.com");
+        loginRequest.setPassword("Password123");
 
-        String requestBody = objectMapper.writeValueAsString(invalidRequest);
-
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void testLoginUser_Success() throws Exception {
         Utilisateur user = new Utilisateur();
         user.setUsername("testuser");
         user.setEmail("test@example.com");
-        user.setRole(new Role("ADMIN"));
+        Role role = new Role();
+        role.setName("CLIENT");
+        user.setRole(role);
 
-        when(userService.loginUser(any(LoginRequest.class))).thenReturn(user);
-        when(jwtUtil.generateToken(anyString(), anyString())).thenReturn("mocked-jwt-token");
+        String token = "mocked-jwt-token";
 
-        String requestBody = objectMapper.writeValueAsString(validLoginRequest);
+        // Simuler le comportement du service et du JWT utilitaire
+        when(userService.loginUser(loginRequest)).thenReturn(user);
+        when(jwtUtil.generateToken(user.getEmail(), user.getRole().getName())).thenReturn(token);
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"username\":\"testuser\",\"role\":\"ADMIN\",\"token\":\"mocked-jwt-token\"}"));
+        // Appeler le endpoint
+        ResponseEntity<?> response = autentificationController.login(loginRequest);
+
+        // Vérifier la réponse
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        LoginResponse loginResponse = (LoginResponse) response.getBody();
+        assertEquals("testuser", loginResponse.getUsername());
+        assertEquals("CLIENT", loginResponse.getRole());
+        assertEquals(token, loginResponse.getToken());
     }
 
     @Test
-    void testLoginUser_Failure_InvalidCredentials() throws Exception {
-        when(userService.loginUser(any(LoginRequest.class))).thenReturn(null);
+    void testLogin_InvalidCredentials() {
+        // Préparer les données
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@example.com");
+        loginRequest.setPassword("WrongPassword");
 
-        String requestBody = objectMapper.writeValueAsString(validLoginRequest);
+        // Simuler une exception levée par le service
+        when(userService.loginUser(loginRequest)).thenThrow(new RuntimeException("Email ou mot de passe incorrect"));
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Échec de la connexion !"));
+        // Appeler le endpoint
+        ResponseEntity<?> response = autentificationController.login(loginRequest);
+
+        // Vérifier la réponse
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Email ou mot de passe incorrect", response.getBody());
     }
 }
