@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar />
     <MenuHeader />
     <div v-if="Object.keys(menu).length > 0">
       <CategoryList
@@ -18,6 +19,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getMenuGroupedByCategory } from '../services/apiClient';
+import NavBar from '../components/NavBar.vue';
 import MenuHeader from '../components/menu/MenuHeader.vue'
 import CategoryList from '../components/menu/CategoryList.vue'
 
