@@ -52,6 +52,13 @@ import NavBar from '../components/NavBar.vue';
             </button>
           </form>
         </div> 
+        <div>
+        <form action="/user/menu">
+          <button type="submit">
+            Voir le menu
+          </button>
+        </form>
+      </div>
       </main>
   </div>
 </template>

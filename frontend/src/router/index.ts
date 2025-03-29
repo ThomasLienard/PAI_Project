@@ -18,6 +18,7 @@ import ReservationsView from '../views/ReservationsView.vue';
 import ChefView from '../views/ChefView.vue';
 import OrderList from '../components/chef/OrderList.vue';
 import RecipeManager from '../components/chef/RecipeManager.vue';
+import MenuView from '../views/MenuView.vue';  
 
 
 const routes = [
@@ -37,6 +38,7 @@ const routes = [
   {path: '/user/commandes',name: 'commandes',component: CommandeView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/commander',name: 'commander',component: CommanderView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/reservations',name: 'mesReservations',component: ReservationsView, meta: { requiresAuth: true, role: 'CLIENT' }},
+  {path: '/user/menu',name: 'Menu',component: MenuView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/recipes',name: 'chefRecipe',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
