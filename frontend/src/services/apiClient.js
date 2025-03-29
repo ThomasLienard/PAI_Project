@@ -55,7 +55,7 @@ export const logout = async () => {
 
 export const getMenuGroupedByCategory = async () => {
   try {
-    const response = await apiClient.get('/menu/grouped');
+    const response = await apiClient.get('user/menu/grouped');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du menu groupé :', error);

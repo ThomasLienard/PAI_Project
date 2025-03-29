@@ -1,40 +1,17 @@
-package com.example.projet_pai.entite;
+package com.example.projet_pai.dto;
 
-import jakarta.persistence.*;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-public class Dish {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DishDTO {
     private Long id;
-
     private String name;
-
-    @Column(length = 1000)
     private String description;
-
     private double price;
-
     private String imageUrl;
+    private String categoryName; // Nom de la catégorie
+    private Set<TagDTO> tags; // Liste des tags sous forme de DTO
 
-    @ManyToMany
-    @JoinTable(
-        name = "dish_tags",
-        joinColumns = @JoinColumn(name = "dish_id"),
-        inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    @JsonIgnore
-    private Set<Tag> tags;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    
+    // Getters et setters
     public Long getId() {
         return id;
     }
@@ -75,19 +52,19 @@ public class Dish {
         this.imageUrl = imageUrl;
     }
 
-    public Set<Tag> getTags() {
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Set<TagDTO> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(Set<TagDTO> tags) {
         this.tags = tags;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 }
