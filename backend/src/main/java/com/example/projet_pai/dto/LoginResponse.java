@@ -4,11 +4,14 @@ public class LoginResponse {
     private String username;
     private String role;
     private String token;
+    private Long UserId;
 
-    public LoginResponse(String username, String role, String token) {
+
+    public LoginResponse(String username, String role, String token, Long UserId) {
         this.username = username;
         this.role = role;
         this.token = token;
+        this.UserId = UserId;
     }
 
     // Getters and setters
@@ -34,5 +37,13 @@ public class LoginResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Long getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(Long userId) {
+        UserId = userId;
     }
 }

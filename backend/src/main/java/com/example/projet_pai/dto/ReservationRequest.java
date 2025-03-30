@@ -1,33 +1,35 @@
 package com.example.projet_pai.dto;
 
 public class ReservationRequest {
-    private String date_reservation;
-    private String creneau_horaire;
+    private String dateReservation;
+    private String creneauHoraire;
     private int nbPersonne;
+    private String client;
 
     public ReservationRequest() {
     }
 
-    public ReservationRequest(String date_reservation, String creneau_horaire, int nbPersonne) {
-        this.date_reservation = date_reservation;
-        this.creneau_horaire = creneau_horaire;
+    public ReservationRequest(String dateReservation, String creneauHoraire, int nbPersonne, String client) {
+        this.dateReservation = dateReservation;
+        this.creneauHoraire = creneauHoraire;
         this.nbPersonne = nbPersonne;
+        this.client = client;
     }
 
-    public String getDate_reservation() {
-        return date_reservation;
+    public String getdateReservation() {
+        return dateReservation;
     }
 
-    public void setDate_reservation(String date_reservation) {
-        this.date_reservation = date_reservation;
+    public void setdateReservation(String dateReservation) {
+        this.dateReservation = dateReservation;
     }
 
-    public String getCreneau_horaire() {
-        return creneau_horaire;
+    public String getcreneauHoraire() {
+        return creneauHoraire;
     }
 
-    public void setCreneau_horaire(String creneau_horaire) {
-        this.creneau_horaire = creneau_horaire;
+    public void setcreneauHoraire(String creneauHoraire) {
+        this.creneauHoraire = creneauHoraire;
     }
 
     public int getNbPersonne() {
@@ -36,6 +38,14 @@ public class ReservationRequest {
 
     public void setNbPersonne(int nbPersonne) {
         this.nbPersonne = nbPersonne;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
     }
 
     

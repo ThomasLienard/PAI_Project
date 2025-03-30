@@ -6,9 +6,10 @@ import { useRouter } from 'vue-router';
 import apiClient from '../services/apiClient'
 
 const newReservation = ref({
-  date_reservation: '',
-  creneau_horaire: '',
-  nbPersonne: 0
+  dateReservation: '',
+  creneauHoraire: '',
+  nbPersonne: 0,
+  client: sessionStorage.getItem('user')
 })
 const router = useRouter()
 const errorMessage = ref('')
@@ -16,19 +17,22 @@ const errorMessage = ref('')
 
 const createReservation = async () => {
   try {
+    /*
+    console.log( sessionStorage.getItem('user'));
     console.log({
-      date_reservation: newReservation.value.date_reservation,
-      creneau_horaire: newReservation.value.creneau_horaire,
-      nbPersonne: newReservation.value.nbPersonne
+      dateReservation: newReservation.value.dateReservation,
+      creneauHoraire: newReservation.value.creneauHoraire,
+      nbPersonne: newReservation.value.nbPersonne,
+      client: newReservation.value.client
     });
+    */
     const response = await apiClient.post("user/reservation/create", newReservation.value);
-    console.log("requête effectuée", response.data);
     newReservation.value = {
-      date_reservation: '',
-      creneau_horaire: '',
-      nbPersonne: 0
+      dateReservation: '',
+      creneauHoraire: '',
+      nbPersonne: 0,
+      client: ""
     };
-    console.log("paramètres réinitialisés");
     router.push('/user/reservations')
   } 
   catch (error) {
@@ -49,8 +53,8 @@ const createReservation = async () => {
     <main>
       <div>
         <form @submit.prevent="createReservation">
-          <input type="date" v-model="newReservation.date_reservation" required>
-          <input type="time" v-model="newReservation.creneau_horaire" required>
+          <input type="date" v-model="newReservation.dateReservation" required>
+          <input type="time" v-model="newReservation.creneauHoraire" required>
           <input type="number" placeholder="Nombre de personnes" v-model="newReservation.nbPersonne" required>
           <button type="submit">Vérifier la réservation</button>
         </form>

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Reservation {
@@ -12,44 +13,48 @@ public class Reservation {
     @Column(name = "id_reservation")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_reservation;
+    private int idReservation;
 
-    @Column
-    private String date_reservation;
+    @Column(name = "date_reservation")
+    private String dateReservation;
 
-    @Column
-    private String creneau_horaire;
+    @Column(name = "creneau_horaire")
+    private String creneauHoraire;
 
     @Column(name = "nb_personne")
     private int nbPersonne;
 
+    @ManyToOne
+    private Utilisateur client;
+
     public Reservation() {
     }
 
-    public Reservation(String date_reservation, String creneau_horaire, int nbPersonne) {
-        this.date_reservation = date_reservation;
-        this.creneau_horaire = creneau_horaire;
+    public Reservation(String dateReservation, String creneauHoraire, int nbPersonne, Utilisateur client) {
+        this.dateReservation = dateReservation;
+        this.creneauHoraire = creneauHoraire;
         this.nbPersonne = nbPersonne;
+        this.client = client;
     }
 
-    public int getId_reservation() {
-        return id_reservation;
+    public int getIdReservation() {
+        return idReservation;
     }
 
-    public String getDate_reservation() {
-        return date_reservation;
+    public String getDateReservation() {
+        return dateReservation;
     }
 
-    public void setDate_reservation(String date_reservation) {
-        this.date_reservation = date_reservation;
+    public void setDateReservation(String dateReservation) {
+        this.dateReservation = dateReservation;
     }
 
-    public String getCreneau_horaire() {
-        return creneau_horaire;
+    public String getCreneauHoraire() {
+        return creneauHoraire;
     }
 
-    public void setCreneau_horaire(String creneau_horaire) {
-        this.creneau_horaire = creneau_horaire;
+    public void setCreneauHoraire(String creneauHoraire) {
+        this.creneauHoraire = creneauHoraire;
     }
 
     public int getNbPersonne() {
@@ -60,7 +65,11 @@ public class Reservation {
         this.nbPersonne = nbPersonne;
     }
 
-    
+    public Utilisateur getClient() {
+        return client;
+    }
 
-    
+    public void setClient(Utilisateur client) {
+        this.client = client;
+    }
 }
