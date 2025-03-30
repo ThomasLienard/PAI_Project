@@ -10,12 +10,18 @@ const newReservation = ref({
   creneauHoraire: '',
   nbPersonne: 0,
   client: sessionStorage.getItem('user')
-})
-const router = useRouter()
-const errorMessage = ref('')
+});
+const router = useRouter();
+const errorMessage = ref('');
+
+const nbCreneauxDisponibles = ref(10); // valeur définit clairement mais dépendra du nombre de tables et réservation pour le créneau choisi
 
 
 const createReservation = async () => {
+  if (nbCreneauxDisponibles.value <= 0) {
+    errorMessage.value = "Aucun créneau n'est disponible pour le moment.";
+    return;
+  }
   try {
     /*
     console.log( sessionStorage.getItem('user'));
@@ -33,6 +39,7 @@ const createReservation = async () => {
       nbPersonne: 0,
       client: ""
     };
+    nbCreneauxDisponibles.value = nbCreneauxDisponibles.value - 1;
     router.push('/user/reservations')
   } 
   catch (error) {
@@ -52,20 +59,34 @@ const createReservation = async () => {
     <NavBar />
     <main>
       <div>
-        <form @submit.prevent="createReservation">
-          <input type="date" v-model="newReservation.dateReservation" required>
-            <div>
-            <label>
-              <input type="radio" value="midi" v-model="newReservation.creneauHoraire" required>
-              Midi
-            </label>
-            <label>
-              <input type="radio" value="soir" v-model="newReservation.creneauHoraire" required>
-              Soir
-            </label>
+        <form @submit.prevent="createReservation" class="reservation-form">
+          <div class="form-group">
+            <label for="dateReservation">Date de réservation</label>
+            <input type="date" id="dateReservation" v-model="newReservation.dateReservation" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Créneau horaire</label>
+            <div class="radio-group">
+              <label>
+          <input type="radio" value="midi" v-model="newReservation.creneauHoraire" required>
+          Midi
+              </label>
+              <label>
+          <input type="radio" value="soir" v-model="newReservation.creneauHoraire" required>
+          Soir
+              </label>
             </div>
-          <input type="number" placeholder="Nombre de personnes" v-model="newReservation.nbPersonne" required>
-          <button type="submit">Vérifier la réservation</button>
+          </div>
+          
+          <div class="form-group">
+            <label for="nbPersonne">Nombre de personnes</label>
+            <input type="number" id="nbPersonne" placeholder="Nombre de personnes" v-model="newReservation.nbPersonne" required>
+          </div>
+          
+          <div class="form-group">
+            <button type="submit" class="submit-button">Vérifier la réservation</button>
+          </div>
         </form>
         
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
