@@ -122,6 +122,8 @@ public class DataInitializer implements CommandLineRunner {
             table.setNumero(numero);
             table.setCapacite(capacite);
             tableRepository.save(table);
+        }
+    }
 
 
     private Category createCategoryIfNotFound(String categoryName) {

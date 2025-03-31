@@ -33,7 +33,6 @@ const routes = [
   {path: '/user/modifier',name: 'modifier',component: ModifyView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/commandes',name: 'commandes',component: CommandeView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/commander',name: 'commander',component: CommanderView, meta: { requiresAuth: true, role: 'CLIENT' }},
-  {path: '/user/reservations',name: 'mesReservations',component: ReservationsView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/menu',name: 'Menu',component: MenuView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
