@@ -1,98 +1,201 @@
-<script setup lang="ts">
-import NavBar from '../components/NavBar.vue';
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
-import apiClient from '../services/apiClient'
-
-const newReservation = ref({
-  dateReservation: '',
-  creneauHoraire: '',
-  nbPersonne: 0,
-  client: sessionStorage.getItem('user')
-});
-const router = useRouter();
-const errorMessage = ref('');
-
-const nbCreneauxDisponibles = ref(10); // valeur définit clairement mais dépendra du nombre de tables et réservation pour le créneau choisi
-
-
-const createReservation = async () => {
-  if (nbCreneauxDisponibles.value <= 0) {
-    errorMessage.value = "Aucun créneau n'est disponible pour le moment.";
-    return;
-  }
-  try {
-    /*
-    console.log( sessionStorage.getItem('user'));
-    console.log({
-      dateReservation: newReservation.value.dateReservation,
-      creneauHoraire: newReservation.value.creneauHoraire,
-      nbPersonne: newReservation.value.nbPersonne,
-      client: newReservation.value.client
-    });
-    */
-    const response = await apiClient.post("user/reservation/create", newReservation.value);
-    newReservation.value = {
-      dateReservation: '',
-      creneauHoraire: '',
-      nbPersonne: 0,
-      client: ""
-    };
-    nbCreneauxDisponibles.value = nbCreneauxDisponibles.value - 1;
-    router.push('/user/reservations')
-  } 
-  catch (error) {
-    console.log(error);
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message;
-    } 
-    else {
-      errorMessage.value ='Erreur lors de la création de la réservation';
-    }
-  }
-};
-</script>
-
 <template>
   <div>
     <NavBar />
-    <main>
-      <div>
-        <form @submit.prevent="createReservation" class="reservation-form">
-          <div class="form-group">
-            <label for="dateReservation">Date de réservation</label>
-            <input type="date" id="dateReservation" v-model="newReservation.dateReservation" required>
-          </div>
-          
-          <div class="form-group">
-            <label>Créneau horaire</label>
-            <div class="radio-group">
-              <label>
-          <input type="radio" value="midi" v-model="newReservation.creneauHoraire" required>
-          Midi
-              </label>
-              <label>
-          <input type="radio" value="soir" v-model="newReservation.creneauHoraire" required>
-          Soir
-              </label>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="nbPersonne">Nombre de personnes</label>
-            <input type="number" id="nbPersonne" placeholder="Nombre de personnes" v-model="newReservation.nbPersonne" required>
-          </div>
-          
-          <div class="form-group">
-            <button type="submit" class="submit-button">Vérifier la réservation</button>
-          </div>
-        </form>
-        
-        <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-
-      </div>
+    <main class="disponibilite-container">
+      <h1>Réservation de table</h1>
       
+      <!-- Afficher un message d'erreur global si nécessaire -->
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      
+      <!-- Formulaire de recherche -->
+      <SearchTableForm @search="searchTables" />
+      
+      <!-- Liste des tables disponibles -->
+      <AvailableTablesList 
+        :tables="availableTables"
+        :loading="loading"
+        :hasSearched="hasSearched"
+        @reserve="reserveTable"
+      />
+      
+      <!-- Liste des réservations existantes -->
+      <ReservationsList 
+        :reservations="userReservations"
+        :loading="loadingReservations"
+        @cancel="cancelReservation"
+      />
+      
+      <!-- Modal de confirmation -->
+      <ConfirmationModal
+        :show="showConfirmation"
+        :reservation="searchCriteria"
+        :table="selectedTable"
+        @confirm="confirmReservation"
+        @cancel="cancelConfirmation"
+      />
     </main>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import NavBar from '../components/NavBar.vue';
+import SearchTableForm from '../components/reservation/SearchTableForm.vue';
+import AvailableTablesList from '../components/reservation/AvailableTablesList.vue';
+import ReservationsList from '../components/reservation/ReservationsList.vue';
+import ConfirmationModal from '../components/reservation/ConfirmationModal.vue';
+import apiClient from '../services/apiClient';
+
+const router = useRouter();
+const loading = ref(false);
+const loadingReservations = ref(false);
+const hasSearched = ref(false);
+const errorMessage = ref('');
+const availableTables = ref([]);
+const userReservations = ref([]);
+const showConfirmation = ref(false);
+const selectedTable = ref(null);
+const searchCriteria = ref({
+  date: '',
+  creneau: 'midi',
+  nbPersonnes: 1
+});
+
+// Recherche des tables disponibles
+const searchTables = async (criteria) => {
+  searchCriteria.value = criteria;
+  
+  loading.value = true;
+  hasSearched.value = true;
+  errorMessage.value = '';
+  
+  try {
+    const response = await apiClient.get('/tables/disponibles', {
+      params: {
+        date: criteria.date,
+        creneau: criteria.creneau,
+        nbPersonnes: criteria.nbPersonnes
+      }
+    });
+    
+    availableTables.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors de la recherche des tables:', error);
+    errorMessage.value = error.response?.data || 'Erreur lors de la recherche des tables disponibles';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Récupération des réservations de l'utilisateur
+const fetchUserReservations = async () => {
+  loadingReservations.value = true;
+  
+  try {
+    const clientId = sessionStorage.getItem('user');
+    const response = await apiClient.get("user/reservation/getAll", {
+      params: { clientId } 
+    });
+    userReservations.value = response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations:', error);
+    errorMessage.value = error.response?.data || 'Erreur lors de la récupération des réservations';
+  } finally {
+    loadingReservations.value = false;
+  }
+};
+
+// Afficher la modale de confirmation
+const reserveTable = (table) => {
+  selectedTable.value = table;
+  showConfirmation.value = true;
+};
+
+// Confirmer la réservation
+const confirmReservation = async () => {
+  loading.value = true;
+  errorMessage.value = '';
+  
+  try {
+    await apiClient.post('/user/reservation/create', {
+      dateReservation: searchCriteria.value.date,
+      creneauHoraire: searchCriteria.value.creneau,
+      nbPersonne: searchCriteria.value.nbPersonnes,
+      client: sessionStorage.getItem('user'),
+      tableId: selectedTable.value.id
+    });
+    
+    // Fermer la modale
+    showConfirmation.value = false;
+    
+    // Rafraîchir les tables disponibles et les réservations
+    await searchTables(searchCriteria.value);
+    await fetchUserReservations();
+    
+  } catch (error) {
+    console.error('Erreur lors de la réservation:', error);
+    errorMessage.value = error.response?.data || 'La réservation a échoué';
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Annuler la confirmation
+const cancelConfirmation = () => {
+  showConfirmation.value = false;
+  selectedTable.value = null;
+};
+
+// Annuler une réservation
+const cancelReservation = async (reservationId) => {
+  if (!confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+    return;
+  }
+  
+  loadingReservations.value = true;
+  errorMessage.value = '';
+  
+  try {
+    await apiClient.delete(`/user/reservation/delete/${reservationId}`);
+    
+    // Rafraîchir les tables disponibles et les réservations
+    await searchTables(searchCriteria.value);
+    await fetchUserReservations();
+    
+  } catch (error) {
+    console.error('Erreur lors de l\'annulation de la réservation:', error);
+    errorMessage.value = error.response?.data || 'L\'annulation de la réservation a échoué';
+  } finally {
+    loadingReservations.value = false;
+  }
+};
+
+onMounted(async () => {
+  // Charger les réservations de l'utilisateur
+  fetchUserReservations();
+});
+</script>
+
+<style scoped>
+.disponibilite-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+</style>
