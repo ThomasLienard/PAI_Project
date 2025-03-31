@@ -14,7 +14,7 @@ public class Reservation {
     @Column(name = "id_reservation")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idReservation;
+    private Long id; // Changer de int à Long pour être cohérent avec les autres entités
 
     @Column(name = "date_reservation")
     private String dateReservation;
@@ -42,8 +42,12 @@ public class Reservation {
         this.client = client;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public int getIdReservation() {
-        return idReservation;
+        return id.intValue(); // Pour la compatibilité avec le code existant
     }
 
     public String getDateReservation() {

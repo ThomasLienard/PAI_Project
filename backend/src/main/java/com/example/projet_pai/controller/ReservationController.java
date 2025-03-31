@@ -1,5 +1,6 @@
 package com.example.projet_pai.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.projet_pai.dto.ReservationRequest;
+import com.example.projet_pai.dto.ReservationResponseDTO;
 import com.example.projet_pai.entite.Reservation;
 import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.service.ReservationItf;
@@ -39,12 +41,31 @@ public class ReservationController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Reservation>> getReservations(@RequestParam String clientId) {
+    public ResponseEntity<List<ReservationResponseDTO>> getReservations(@RequestParam String clientId) {
         try {
+            System.out.println("Récupération des réservations pour l'utilisateur: " + clientId);
+            
             List<Reservation> reservations = service.getReservationsByClient(clientId);
-            System.out.println("les réservations: "+reservations);
-            return ResponseEntity.ok(reservations);
+            
+            // Convertir les entités en DTOs
+            List<ReservationResponseDTO> dtos = new ArrayList<>();
+            for (Reservation reservation : reservations) {
+                dtos.add(ReservationResponseDTO.fromEntity(reservation));
+            }
+            
+            System.out.println("Nombre de réservations trouvées: " + dtos.size());
+            
+            // Afficher les détails pour le débogage
+            for (ReservationResponseDTO dto : dtos) {
+                System.out.println("Réservation ID: " + dto.getId() + 
+                                  ", Date: " + dto.getDateReservation() +
+                                  ", Table: " + (dto.getTable() != null ? dto.getTable().getNumero() : "N/A"));
+            }
+            
+            return ResponseEntity.ok(dtos);
         } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération des réservations: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

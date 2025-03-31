@@ -1,5 +1,6 @@
 package com.example.projet_pai.entite;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Table {
     private int capacite;
     
     @OneToMany(mappedBy = "table")
+    @JsonIgnore // Ajouter cette annotation pour éviter la récursion infinie
     private List<Reservation> reservations = new ArrayList<>();
     
     public Table() {
