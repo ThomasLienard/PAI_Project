@@ -39,7 +39,7 @@ const registerUser = async () => {
     if (error.response && error.response.data && error.response.data.message) {
       errorMessage.value = error.response.data.message
     } else {
-      errorMessage.value = 'Email déjà utilisé'
+      errorMessage.value = error.response.data
     }
   }
 }
