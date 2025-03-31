@@ -30,7 +30,7 @@ const loginUser = async () => {
     } else if (role === 'CUISINIER') {
       router.push('/chef');
     } else if (role === 'SERVEUR') {
-      router.push('/serveur');
+      router.push('/server');
     } else {
       router.push('/user');
     }

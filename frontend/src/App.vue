@@ -7,7 +7,7 @@ const route = useRoute()
 // Définir les routes spécifiques pour chaque rôle
 const isAdminRoute = ref(route.path.startsWith('/admin'))
 const isChiefRoute = ref(route.path.startsWith('/chef'))
-const isServeurRoute = ref(route.path.startsWith('/serveur'))
+const isServeurRoute = ref(route.path.startsWith('/server'))
 const isUserRoute = ref(route.path.startsWith('/user'))
 
 // Variable réactive pour déterminer si le header doit être caché
@@ -19,7 +19,7 @@ watch(
   (newPath) => {
     isAdminRoute.value = newPath.startsWith('/admin')
     isChiefRoute.value = newPath.startsWith('/chef')
-    isServeurRoute.value = newPath.startsWith('/serveur')
+    isServeurRoute.value = newPath.startsWith('/server')
     isUserRoute.value = newPath.startsWith('/user')
 
     // Mettre à jour `isHiddenRoute` en fonction du rôle
