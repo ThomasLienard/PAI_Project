@@ -1,5 +1,9 @@
 package com.example.projet_pai.entite;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +25,10 @@ public class Utilisateur {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @OneToMany(mappedBy = "client")
+    @JsonIgnore
+    private List<Reservation> lesReservations;
 
     public Utilisateur() {}
 
@@ -69,5 +77,20 @@ public class Utilisateur {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void addReservation(Reservation reservation){
+        this.lesReservations.add(reservation);
+    }
+
+    public void removeReservation(Reservation reservation){
+        if(!lesReservations.contains(reservation)){
+            throw new NullPointerException("La réservation n'existe pas");
+        }
+        lesReservations.remove(reservation);
+    }
+
+    public List<Reservation> getLesReservations() {
+        return lesReservations;
     }
 }

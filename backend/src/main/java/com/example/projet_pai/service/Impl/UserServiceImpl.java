@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserServiceItf {
@@ -25,6 +26,12 @@ public class UserServiceImpl implements UserServiceItf {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    
+    private boolean isPasswordValid(String password) {
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
+        return Pattern.matches(passwordPattern, password);
+    }
+
     @Override
     public void registerUser(RegisterRequest registerRequest) {
         if (registerRequest.getUsername() == null || registerRequest.getEmail() == null || registerRequest.getPassword() == null) {
@@ -32,6 +39,11 @@ public class UserServiceImpl implements UserServiceItf {
         }
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email déjà utilisé !");
+        }
+
+        // Vérification de la validité du mot de passe
+        if (!isPasswordValid(registerRequest.getPassword())) {
+            throw new RuntimeException("Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre.");
         }
 
         // Récupérer le rôle "CLIENT" depuis la base de données

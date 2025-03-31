@@ -5,6 +5,7 @@ export const login = async (email, password) => {
     const response = await apiClient.post('/auth/login', { email, password });
     const token = response.data.token;
     sessionStorage.setItem('jwtToken', token);
+    sessionStorage.setItem('user', response.data.userId);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la connexion :', error);

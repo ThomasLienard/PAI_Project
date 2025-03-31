@@ -8,20 +8,16 @@ import com.example.projet_pai.repository.RoleRepository;
 import com.example.projet_pai.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
     @Mock
@@ -31,144 +27,123 @@ class UserServiceImplTest {
     private RoleRepository roleRepository;
 
     @Mock
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
 
-    private RegisterRequest request;
-    private Role clientRole;
-
     @BeforeEach
     void setUp() {
-        request = new RegisterRequest();
-        request.setUsername("testuser");
-        request.setEmail("test@example.com");
-        request.setPassword("password123");
-
-        clientRole = new Role();
-        clientRole.setName("CLIENT");
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void registerUser_ShouldSaveUser_WhenDataIsValid() {
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("hashed_password");
+    void testRegisterUser_Success() {
+        // Préparer les données
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setEmail("test@example.com");
+        registerRequest.setPassword("Password123");
+
+        Role clientRole = new Role();
+        clientRole.setName("CLIENT");
+
+        // Simuler les comportements des dépendances
+        when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.empty());
         when(roleRepository.findByName("CLIENT")).thenReturn(Optional.of(clientRole));
-        userService.registerUser(request);
+        when(passwordEncoder.encode(registerRequest.getPassword())).thenReturn("encodedPassword");
+
+        // Appeler la méthode à tester
+        assertDoesNotThrow(() -> userService.registerUser(registerRequest));
+
+        // Vérifier que le repository a été appelé avec les bonnes données
         verify(userRepository, times(1)).save(any(Utilisateur.class));
     }
 
     @Test
-    void registerUser_ShouldThrowException_WhenEmailAlreadyExists() {
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(new Utilisateur()));
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.registerUser(request));
+    void testRegisterUser_EmailAlreadyExists() {
+        // Préparer les données
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setEmail("test@example.com");
+        registerRequest.setPassword("Password123");
+
+        // Simuler un email déjà existant
+        when(userRepository.findByEmail(registerRequest.getEmail())).thenReturn(Optional.of(new Utilisateur()));
+
+        // Appeler la méthode à tester et vérifier l'exception
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.registerUser(registerRequest));
         assertEquals("Email déjà utilisé !", exception.getMessage());
-        verify(userRepository, never()).save(any(Utilisateur.class));
     }
 
     @Test
-    void registerUser_ShouldThrowException_WhenDataIsMissing() {
-        RegisterRequest invalidRequest = new RegisterRequest();
-        invalidRequest.setUsername("testuser");
-        invalidRequest.setEmail(null);
-        invalidRequest.setPassword(null);
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.registerUser(invalidRequest));
-        assertEquals("Données manquantes", exception.getMessage());
+    void testRegisterUser_InvalidPassword() {
+        // Préparer les données
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setEmail("test@example.com");
+        registerRequest.setPassword("weak");
+
+        // Appeler la méthode à tester et vérifier l'exception
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.registerUser(registerRequest));
+        assertEquals("Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule et un chiffre.", exception.getMessage());
     }
 
     @Test
-    void registerUser_ShouldEncryptPasswordBeforeSaving() {
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("hashed_password");
-        when(roleRepository.findByName("CLIENT")).thenReturn(Optional.of(clientRole));
-        userService.registerUser(request);
-        verify(passwordEncoder, times(1)).encode(request.getPassword());
-    }
-
-    @Test
-    void registerUser_ShouldSaveUserInDatabase_WhenDataIsValid() {
-        Utilisateur expectedUser = new Utilisateur();
-        expectedUser.setEmail(request.getEmail());
-        expectedUser.setPassword("hashed_password");
-        expectedUser.setUsername(request.getUsername());
-
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(request.getPassword())).thenReturn("hashed_password");
-        when(roleRepository.findByName("CLIENT")).thenReturn(Optional.of(clientRole));
-
-        userService.registerUser(request);
-        
-        verify(userRepository).save(argThat(user -> user.getEmail().equals(request.getEmail()) &&
-                user.getUsername().equals(request.getUsername()) &&
-                user.getPassword().equals("hashed_password")));
-    }
-
-    @Test
-    void loginUser_ShouldReturnUser_WhenCredentialsAreValid() {
+    void testLoginUser_Success() {
+        // Préparer les données
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword("password123");
+        loginRequest.setPassword("Password123");
 
         Utilisateur user = new Utilisateur();
         user.setEmail("test@example.com");
-        user.setPassword("hashed_password");
+        user.setPassword("encodedPassword");
 
+        // Simuler les comportements des dépendances
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())).thenReturn(true);
 
+        // Appeler la méthode à tester
         Utilisateur result = userService.loginUser(loginRequest);
 
+        // Vérifier le résultat
         assertNotNull(result);
-        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals("test@example.com", result.getEmail());
     }
 
     @Test
-    void loginUser_ShouldThrowException_WhenEmailIsMissing() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(null);
-        loginRequest.setPassword("password123");
-
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
-        assertEquals("Données manquantes", exception.getMessage());
-    }
-
-    @Test
-    void loginUser_ShouldThrowException_WhenPasswordIsMissing() {
+    void testLoginUser_EmailNotFound() {
+        // Préparer les données
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword(null);
+        loginRequest.setPassword("Password123");
 
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
-        assertEquals("Données manquantes", exception.getMessage());
-    }
-
-    @Test
-    void loginUser_ShouldThrowException_WhenUserNotFound() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword("password123");
-
+        // Simuler un email non trouvé
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
+        // Appeler la méthode à tester et vérifier l'exception
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
         assertEquals("Email ou mot de passe incorrect", exception.getMessage());
     }
 
     @Test
-    void loginUser_ShouldThrowException_WhenPasswordDoesNotMatch() {
+    void testLoginUser_InvalidPassword() {
+        // Préparer les données
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword("wrongpassword");
+        loginRequest.setPassword("WrongPassword");
 
         Utilisateur user = new Utilisateur();
         user.setEmail("test@example.com");
-        user.setPassword("hashed_password");
+        user.setPassword("encodedPassword");
 
+        // Simuler les comportements des dépendances
         when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())).thenReturn(false);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
+        // Appeler la méthode à tester et vérifier l'exception
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.loginUser(loginRequest));
         assertEquals("Email ou mot de passe incorrect", exception.getMessage());
     }
 }

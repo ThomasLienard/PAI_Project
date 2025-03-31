@@ -38,10 +38,11 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+            .requestMatchers("/api/auth/**", "/h2-console/**","/images/**").permitAll()
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .requestMatchers("/api/serveur/**").hasRole("SERVEUR")
             .requestMatchers("/api/cuisinier/**").hasRole("CUISINIER")
+            .requestMatchers("/api/user/**").hasRole("CLIENT")
             .anyRequest().authenticated()
             .and()
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
