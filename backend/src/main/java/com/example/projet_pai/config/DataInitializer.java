@@ -1,5 +1,7 @@
 package com.example.projet_pai.config;
 
+
+
 import com.example.projet_pai.entite.*;
 import com.example.projet_pai.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private TableRepository tableRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,6 +55,27 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(adminRole);
             userRepository.save(admin);
         }
+        
+        // Initialiser des tables de restaurant
+        // Tables pour 2 personnes
+        createTableIfNotExist(1, 2);
+        createTableIfNotExist(2, 2);
+        createTableIfNotExist(3, 2);
+        
+        // Tables pour 4 personnes
+        createTableIfNotExist(4, 4);
+        createTableIfNotExist(5, 4);
+        createTableIfNotExist(6, 4);
+        createTableIfNotExist(7, 4);
+        
+        // Tables pour 6 personnes
+        createTableIfNotExist(8, 6);
+        createTableIfNotExist(9, 6);
+        
+        // Tables pour groupes
+        createTableIfNotExist(10, 8);
+        createTableIfNotExist(11, 10);
+        createTableIfNotExist(12, 12);
 
         // Créer un utilisateur client par défaut s'il n'existe pas
         if (!userRepository.findByEmail("client@example.com").isPresent()) {
@@ -88,6 +114,15 @@ public class DataInitializer implements CommandLineRunner {
             roleRepository.save(newRole);
         }
     }
+    
+    private void createTableIfNotExist(int numero, int capacite) {
+        // Vérifier si une table avec ce numéro existe déjà
+        if (tableRepository.findAll().stream().noneMatch(t -> t.getNumero() == numero)) {
+            Table table = new Table();
+            table.setNumero(numero);
+            table.setCapacite(capacite);
+            tableRepository.save(table);
+
 
     private Category createCategoryIfNotFound(String categoryName) {
         return categoryRepository.findByName(categoryName)

@@ -30,7 +30,8 @@ public class AutentificationController {
         try {
             userService.registerUser(registerRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body("Utilisateur enregistré avec succès !");
-        } catch (RuntimeException e) {
+        } 
+        catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -42,7 +43,7 @@ public class AutentificationController {
             if (user != null) {
                 String token = jwtUtil.generateToken(user.getEmail(), user.getRole().getName());
                 String role = user.getRole().getName();
-                return ResponseEntity.ok(new LoginResponse(user.getUsername(), role, token));
+                return ResponseEntity.ok(new LoginResponse(user.getUsername(), role, token, user.getId()));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de la connexion !");
             }
