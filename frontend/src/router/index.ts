@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/HomeView.vue';
-import AdminView from '../views/AdminView.vue';
+import AdminView from '../views/admin/AdminView.vue';
 import ConnectView from '../views/ConnectView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import UserManagement from '../views/UserManagement.vue';
-import MenuManagement from '../views/MenuManagement.vue';
-import OrderManagement from '../views/OrderManagement.vue';
-import StatisticsManagement from '../views/StatisticsManagement.vue';
+import UserManagement from '../views/admin/UserManagement.vue';
+import MenuManagement from '../views/admin/MenuManagement.vue';
+import OrderManagement from '../views/admin/OrderManagement.vue';
+import StatisticsManagement from '../views/admin/StatisticsManagement.vue';
 import UserView from '../views/UserView.vue';
 import ReservationView from '../views/ReservationView.vue';
 import ReservationChoiceView from '../views/ReservationChoiceView.vue';
@@ -18,6 +18,12 @@ import ReservationsView from '../views/ReservationsView.vue';
 import ChefView from '../views/ChefView.vue';
 import OrderList from '../components/chef/OrderList.vue';
 import RecipeManager from '../components/chef/RecipeManager.vue';
+import ServerView from '../views/server/ServerView.vue';
+import CurrentOrders from '../components/server/CurrentOrders.vue';
+import Reservations from '../components/server/Reservations.vue';
+import ServerOrdersView from '../views/server/ServerOrdersView.vue';
+import ServerReservationsView from '../views/server/ServerReservationsView.vue';
+import ServerNewOrderView from '../views/server/ServerNewOrderView.vue';
 
 
 const routes = [
@@ -40,6 +46,10 @@ const routes = [
   {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/recipes',name: 'chefRecipe',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
+  {path: '/server', name: 'server',component: ServerView, meta: { requiresAuth: true, role: 'SERVEUR' }},
+  {path: '/server/orders', name: 'server-orders', component: CurrentOrders, meta: { requiresAuth: true, role: 'SERVEUR' } },
+  {path: '/server/reservations', name: 'server-reservations', component: Reservations,meta: { requiresAuth: true, role: 'SERVEUR' }},
+  {path: '/server/new-order', name: 'server-new-order',component: ServerNewOrderView, meta: { requiresAuth: true, role: 'SERVEUR' }}
 ];
 
 const router = createRouter({

@@ -32,8 +32,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import apiClient from '../services/apiClient' // Utilisez apiClient au lieu de axios
-import NavBar from '../components/NavBar.vue';
+import apiClient from '../../services/apiClient' // Utilisez apiClient au lieu de axios
+import NavBar from '../../components/NavBar.vue';
 const users = ref([])
 const newUser = ref({ username: '', email: '', password: '', role: '' })
 const activities = ref([])
