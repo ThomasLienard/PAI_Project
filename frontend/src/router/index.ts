@@ -18,6 +18,8 @@ import ReservationsView from '../views/ReservationsView.vue';
 import ChefView from '../views/ChefView.vue';
 import OrderList from '../components/chef/OrderList.vue';
 import RecipeManager from '../components/chef/RecipeManager.vue';
+import TableDisponibiliteView from '../views/TableDisponibiliteView.vue'
+
 
 
 const routes = [
@@ -40,6 +42,7 @@ const routes = [
   {path: '/chef/',name: 'chef',component: ChefView, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/recipes',name: 'chefRecipe',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
+  {path: '/user/tables-disponibles',name: 'tablesDisponibles',component: TableDisponibiliteView ,meta: { requiresAuth: true, role: 'CLIENT' }},
 ];
 
 const router = createRouter({

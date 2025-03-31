@@ -1,8 +1,10 @@
 package com.example.projet_pai.config;
 
 import com.example.projet_pai.entite.Role;
+import com.example.projet_pai.entite.Table;
 import com.example.projet_pai.entite.Utilisateur;
 import com.example.projet_pai.repository.RoleRepository;
+import com.example.projet_pai.repository.TableRepository;
 import com.example.projet_pai.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +21,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private TableRepository tableRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,6 +46,27 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(adminRole);
             userRepository.save(admin);
         }
+        
+        // Initialiser des tables de restaurant
+        // Tables pour 2 personnes
+        createTableIfNotExist(1, 2);
+        createTableIfNotExist(2, 2);
+        createTableIfNotExist(3, 2);
+        
+        // Tables pour 4 personnes
+        createTableIfNotExist(4, 4);
+        createTableIfNotExist(5, 4);
+        createTableIfNotExist(6, 4);
+        createTableIfNotExist(7, 4);
+        
+        // Tables pour 6 personnes
+        createTableIfNotExist(8, 6);
+        createTableIfNotExist(9, 6);
+        
+        // Tables pour groupes
+        createTableIfNotExist(10, 8);
+        createTableIfNotExist(11, 10);
+        createTableIfNotExist(12, 12);
     }
 
     private void createRoleIfNotFound(String roleName) {
@@ -48,6 +74,16 @@ public class DataInitializer implements CommandLineRunner {
         if (!role.isPresent()) {
             Role newRole = new Role(roleName);
             roleRepository.save(newRole);
+        }
+    }
+    
+    private void createTableIfNotExist(int numero, int capacite) {
+        // Vérifier si une table avec ce numéro existe déjà
+        if (tableRepository.findAll().stream().noneMatch(t -> t.getNumero() == numero)) {
+            Table table = new Table();
+            table.setNumero(numero);
+            table.setCapacite(capacite);
+            tableRepository.save(table);
         }
     }
 }

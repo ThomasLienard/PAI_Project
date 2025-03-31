@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Reservation {
@@ -26,6 +27,10 @@ public class Reservation {
 
     @ManyToOne
     private Utilisateur client;
+
+    @ManyToOne
+    @JoinColumn(name = "table_id")
+    private Table table;
 
     public Reservation() {
     }
@@ -71,5 +76,13 @@ public class Reservation {
 
     public void setClient(Utilisateur client) {
         this.client = client;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
     }
 }

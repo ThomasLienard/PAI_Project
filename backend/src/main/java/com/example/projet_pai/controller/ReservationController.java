@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +29,6 @@ public class ReservationController {
     @PostMapping("/create")
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest reservation) {
         try {
-            System.out.println("Réservation reçue : "+ reservation);
-            System.out.println("Création de la réservation pour l'utilisateur : "+ reservation.getClient());
             service.saveReservation(reservation);
             return ResponseEntity.status(HttpStatus.CREATED).body("Réservation créée avec succès !");
         } 
@@ -49,5 +49,17 @@ public class ReservationController {
         }
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteReservation(@PathVariable Long id) {
+        try {
+            System.out.println("Suppression de la réservation avec l'ID: " + id);
+            service.deleteReservation(id);
+            return ResponseEntity.ok("Réservation annulée avec succès");
+        } catch (Exception e) {
+            System.out.println("Erreur lors de l'annulation de la réservation: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erreur lors de l'annulation de la réservation: " + e.getMessage());
+        }
+    }
     
 }

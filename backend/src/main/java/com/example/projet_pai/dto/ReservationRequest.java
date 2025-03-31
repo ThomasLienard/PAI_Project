@@ -5,6 +5,7 @@ public class ReservationRequest {
     private String creneauHoraire;
     private int nbPersonne;
     private String client;
+    private Long tableId;
 
     public ReservationRequest() {
     }
@@ -48,5 +49,11 @@ public class ReservationRequest {
         this.client = client;
     }
 
-    
+    public Long getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
+    }
 }
