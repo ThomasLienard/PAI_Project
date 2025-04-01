@@ -115,7 +115,7 @@ const fetchUsers = async () => {
 
 const createUser = async () => {
   try {
-    const response = await apiClient.post('/admin/users', newUser.value)
+    const response = await apiClient.post('/admin/create-user', newUser.value)
     console.log('Utilisateur créé avec succès:', response.data)
     newUser.value = { username: '', email: '', password: '', role: '' }
     await fetchUsers()
