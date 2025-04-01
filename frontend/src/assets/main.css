@@ -1,12 +1,10 @@
 @import './base.css';
-@import './styles/global.css';
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
-  min-height: 100vh;
 }
 
 a,
@@ -33,12 +31,5 @@ a,
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .container {
-    padding: var(--spacing-medium);
   }
 }

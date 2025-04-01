@@ -32,7 +32,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import NavBar from '../../components/NavBar.vue';
+import NavBar from '../components/NavBar.vue';
 
 const performances = ref([])
 const trends = ref([])
