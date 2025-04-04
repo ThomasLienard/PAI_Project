@@ -102,9 +102,9 @@ public class DataInitializer implements CommandLineRunner {
         createDishIfNotFound("Salade César", "Une salade classique avec du poulet, des croûtons et une sauce César.",
                 12.5, "http://localhost:8080/images/salade-cesar.png", entrees, Set.of(vegetarien));
         createDishIfNotFound("Steak Frites", "Un steak juteux accompagné de frites croustillantes.",
-                18.0, "https://example.com/images/steak-frites.jpg", plats, Set.of(sansGluten));
+                18.0, "http://localhost:8080/images/steak-frites.png", plats, Set.of(sansGluten));
         createDishIfNotFound("Tarte aux pommes", "Une tarte maison avec des pommes fraîches.",
-                6.0, "https://example.com/images/tarte-aux-pommes.jpg", desserts, Set.of(vegan, sansGluten));
+                6.0, "http://localhost:8080/images/tarte-aux-pommes.png", desserts, Set.of(vegan, sansGluten));
     }
 
     private void createRoleIfNotFound(String roleName) {

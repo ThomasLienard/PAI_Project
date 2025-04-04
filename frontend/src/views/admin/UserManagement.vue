@@ -97,7 +97,7 @@ const newUser = ref({ username: '', email: '', password: '', role: '' })
 const activities = ref([])
 const errorMessage = ref('')
 
-const fetchUsers = async () => {
+/*const fetchUsers = async () => {
   try {
     const response = await apiClient.get('/users')
     users.value = response.data
@@ -111,15 +111,15 @@ const fetchUsers = async () => {
       }
     }
   }
-}
+}*/
 
 const createUser = async () => {
   try {
     const response = await apiClient.post('/admin/create-user', newUser.value)
     console.log('Utilisateur créé avec succès:', response.data)
     newUser.value = { username: '', email: '', password: '', role: '' }
-    await fetchUsers()
-    await fetchActivities()
+    //await fetchUsers()
+    //await fetchActivities()
     errorMessage.value = ''
   } catch (error) {
     console.error('Erreur lors de la création:', error)
@@ -131,7 +131,7 @@ const editUser = (user) => {
   newUser.value = { ...user }
 }
 
-const deleteUser = async (id) => {
+/*const deleteUser = async (id) => {
   try {
     await apiClient.delete(`/admin/users/${id}`)
     await fetchUsers()
@@ -141,9 +141,9 @@ const deleteUser = async (id) => {
     console.error('Erreur lors de la suppression:', error)
     errorMessage.value = error.response?.data?.message || 'Erreur lors de la suppression'
   }
-}
+}*/
 
-const fetchActivities = async () => {
+/*const fetchActivities = async () => {
   try {
     const response = await apiClient.get('/activities')
     activities.value = response.data
@@ -153,10 +153,10 @@ const fetchActivities = async () => {
       errorMessage.value = "Vous n'avez pas les droits nécessaires"
     }
   }
-}
+}*/
 
 // Initial data fetch with error handling
-const initializeData = async () => {
+/*const initializeData = async () => {
   try {
     await Promise.all([fetchUsers(), fetchActivities()])
   } catch (error) {
@@ -164,7 +164,7 @@ const initializeData = async () => {
   }
 }
 
-initializeData()
+initializeData()*/
 </script>
 
 <style scoped>
