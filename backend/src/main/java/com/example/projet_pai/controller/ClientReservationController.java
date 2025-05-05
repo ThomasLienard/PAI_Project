@@ -23,7 +23,7 @@ import com.example.projet_pai.service.ReservationItf;
 
 @RestController
 @RequestMapping("/api/user/reservation")
-public class ReservationController {
+public class ClientReservationController {
 
     @Autowired
     private ReservationItf service;
