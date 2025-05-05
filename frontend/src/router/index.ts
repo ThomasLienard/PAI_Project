@@ -7,6 +7,7 @@ import UserManagement from '../views/admin/UserManagement.vue';
 import MenuManagement from '../views/admin/MenuManagement.vue';
 import OrderManagement from '../views/admin/OrderManagement.vue';
 import StatisticsManagement from '../views/admin/StatisticsManagement.vue';
+import SuppliersManagement from '@/views/admin/SuppliersManageement.vue';
 import UserView from '../views/UserView.vue';
 import FeedbackView from '../views/FeedbackView.vue';
 import ModifyView from '../views/ModifyView.vue';
@@ -34,6 +35,7 @@ const routes = [
   { path: '/admin/menus',name: 'admin-menus',component: MenuManagement,meta: { requiresAuth: true, role: 'ADMIN' } },
   {path: '/admin/orders',name: 'admin-orders',component: OrderManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
   {path: '/admin/statistics',name: 'admin-statistics',component: StatisticsManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
+  {path: '/admin/suppliers',name: 'admin-suppliers',component: SuppliersManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
   {path: '/user',name: 'user',component: UserView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/feedback',name: 'feedback',component: FeedbackView, meta: { requiresAuth: true, role: 'CLIENT' }},
   {path: '/user/modifier',name: 'modifier',component: ModifyView, meta: { requiresAuth: true, role: 'CLIENT' }},
