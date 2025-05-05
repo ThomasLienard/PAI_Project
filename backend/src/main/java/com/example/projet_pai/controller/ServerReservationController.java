@@ -33,7 +33,19 @@ public class ServerReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    // D'autres endpoints de réservation ici...
-    // Comme créer, modifier ou annuler des réservations
+
+    @GetMapping("/tables/count")
+@PreAuthorize("hasRole('SERVEUR')")
+public ResponseEntity<Integer> getTotalTables() {
+    try {
+        // Récupérer le nombre total de tables via le service
+        int totalTables = reservationService.getTotalTables();
+        return ResponseEntity.ok(totalTables);
+    } catch (Exception e) {
+        System.err.println("Erreur lors de la récupération du nombre de tables: " + e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+}
+
 }

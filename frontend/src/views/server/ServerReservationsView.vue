@@ -11,7 +11,15 @@
       <div class="stats-container">
         <div class="stat-card" :class="{ 'high-occupancy': occupancyRate > 80, 'medium-occupancy': occupancyRate > 50 && occupancyRate <= 80 }">
           <div class="stat-value">{{ occupancyRate }}%</div>
-          <div class="stat-label">Taux d'occupation</div>
+          <div class="stat-label">Taux d'occupation global</div>
+        </div>
+        <div class="stat-card" :class="{ 'high-occupancy': lunchOccupancyRate > 80, 'medium-occupancy': lunchOccupancyRate > 50 && lunchOccupancyRate <= 80 }">
+          <div class="stat-value">{{ lunchOccupancyRate }}%</div>
+          <div class="stat-label">Occupation midi</div>
+        </div>
+        <div class="stat-card" :class="{ 'high-occupancy': dinnerOccupancyRate > 80, 'medium-occupancy': dinnerOccupancyRate > 50 && dinnerOccupancyRate <= 80 }">
+          <div class="stat-value">{{ dinnerOccupancyRate }}%</div>
+          <div class="stat-label">Occupation soir</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ reservations.length }}</div>
@@ -122,7 +130,7 @@ const errorMessage = ref('');
 const searchQuery = ref('');
 const timeSlotFilter = ref('');
 const groupSizeFilter = ref('');
-const totalTables = 20; // À ajuster selon le nombre réel de tables
+const totalTables = ref(24); // À ajuster selon le nombre réel de tables
 
 // Calcul des réservations filtrées
 const filteredReservations = computed(() => {
@@ -165,10 +173,38 @@ const dinnerReservations = computed(() => {
 });
 
 // Calcul des statistiques
+// Puis mettre à jour le calcul du taux d'occupation:
 const occupancyRate = computed(() => {
-  if (!reservations.value.length) return 0;
-  const uniqueTables = new Set(reservations.value.map(r => r.table?.id).filter(Boolean));
-  return Math.round((uniqueTables.size / totalTables) * 100);
+  // Si aucun créneau n'a de réservations, retourner 0
+  if (!lunchReservations.value.length && !dinnerReservations.value.length) return 0;
+  
+  // Calculer la moyenne des deux taux d'occupation
+  return Math.round((lunchOccupancyRate.value + dinnerOccupancyRate.value) / 2);
+  
+  // Compter les tables uniques réservées
+  const uniqueTables = new Set(reservations.value
+    .map(r => r.table?.id)
+    .filter(Boolean)); // Filtrer les tables null ou undefined
+    
+  // Calculer et arrondir le pourcentage
+  return Math.round((uniqueTables.size / totalTables.value) * 100);
+});
+
+// Vous pourriez également ajouter des statistiques par créneau:
+const lunchOccupancyRate = computed(() => {
+  if (!lunchReservations.value.length || !totalTables.value) return 0;
+  const uniqueLunchTables = new Set(lunchReservations.value
+    .map(r => r.table?.id)
+    .filter(Boolean));
+  return Math.round((uniqueLunchTables.size / totalTables.value) * 100);
+});
+
+const dinnerOccupancyRate = computed(() => {
+  if (!dinnerReservations.value.length || !totalTables.value) return 0;
+  const uniqueDinnerTables = new Set(dinnerReservations.value
+    .map(r => r.table?.id)
+    .filter(Boolean));
+  return Math.round((uniqueDinnerTables.size / totalTables.value) * 100);
 });
 
 const totalGuests = computed(() => {
@@ -194,6 +230,17 @@ const fetchReservations = async () => {
   }
 };
 
+const fetchTotalTables = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/tables/count');
+    totalTables.value = response.data || 24; 
+    console.log("Nombre total de tables:", totalTables.value);
+  } catch (error) {
+    console.error('Erreur lors de la récupération du nombre de tables:', error);
+    totalTables.value = 24;
+  }
+};
+
 // Formatage de la date
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -207,6 +254,7 @@ const formatDate = (dateString) => {
 // Au chargement du composant
 onMounted(() => {
   fetchReservations();
+  fetchTotalTables();
 });
 </script>
 

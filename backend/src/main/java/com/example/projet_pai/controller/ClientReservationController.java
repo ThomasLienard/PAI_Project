@@ -42,9 +42,7 @@ public class ClientReservationController {
 
     @GetMapping("/getAll")
     public ResponseEntity<List<ReservationResponseDTO>> getReservations(@RequestParam String clientId) {
-        try {
-            System.out.println("Récupération des réservations pour l'utilisateur: " + clientId);
-            
+        try {            
             List<Reservation> reservations = service.getReservationsByClient(clientId);
             
             // Convertir les entités en DTOs
@@ -52,16 +50,7 @@ public class ClientReservationController {
             for (Reservation reservation : reservations) {
                 dtos.add(ReservationResponseDTO.fromEntity(reservation));
             }
-            
-            System.out.println("Nombre de réservations trouvées: " + dtos.size());
-            
-            // Afficher les détails pour le débogage
-            for (ReservationResponseDTO dto : dtos) {
-                System.out.println("Réservation ID: " + dto.getId() + 
-                                  ", Date: " + dto.getDateReservation() +
-                                  ", Table: " + (dto.getTable() != null ? dto.getTable().getNumero() : "N/A"));
-            }
-            
+                                 
             return ResponseEntity.ok(dtos);
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération des réservations: " + e.getMessage());
@@ -73,7 +62,6 @@ public class ClientReservationController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteReservation(@PathVariable Long id) {
         try {
-            System.out.println("Suppression de la réservation avec l'ID: " + id);
             service.deleteReservation(id);
             return ResponseEntity.ok("Réservation annulée avec succès");
         } catch (Exception e) {

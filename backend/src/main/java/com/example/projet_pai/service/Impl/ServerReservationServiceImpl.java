@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.projet_pai.dto.ServerReservationDTO;
 import com.example.projet_pai.entite.Reservation;
 import com.example.projet_pai.repository.ReservationRepository;
+import com.example.projet_pai.repository.TableRepository;
 import com.example.projet_pai.service.ServerReservationServiceItf;
 
 @Service
@@ -18,6 +19,8 @@ public class ServerReservationServiceImpl implements ServerReservationServiceItf
 
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private TableRepository tableRepository;
     
     @Override
     public List<ServerReservationDTO> getTodayReservations() {
@@ -32,4 +35,8 @@ public class ServerReservationServiceImpl implements ServerReservationServiceItf
                 .map(ServerReservationDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+    @Override
+    public int getTotalTables() {
+    return (int) tableRepository.count();
+}
 }

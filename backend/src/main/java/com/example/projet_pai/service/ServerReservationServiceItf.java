@@ -10,4 +10,9 @@ public interface ServerReservationServiceItf {
      * @return La liste des réservations du jour
      */
     List<ServerReservationDTO> getTodayReservations();
+    /**
+    * Récupère le nombre total de tables dans le restaurant
+     * @return Le nombre de tables
+     */
+    int getTotalTables();
 }
