@@ -14,7 +14,7 @@ import com.example.projet_pai.dto.ServerReservationDTO;
 import com.example.projet_pai.service.ServerReservationServiceItf;
 
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/api/server/reservations")
 public class ServerReservationController {
 
     @Autowired

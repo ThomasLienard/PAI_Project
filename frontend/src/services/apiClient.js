@@ -63,4 +63,14 @@ export const getMenuGroupedByCategory = async () => {
   }
 };
 
+export const getServerTodayReservations = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/today');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations du jour :', error);
+    throw error;
+  }
+};
+
 export default apiClient;
