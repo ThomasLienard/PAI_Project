@@ -23,8 +23,57 @@ public class SupplierOrder {
     private List<SupplierOrderLine> lines;
 
     // Getters et setters
+    
 
     public enum OrderStatus {
         EN_ATTENTE, CONFIRMEE, LIVREE, PARTIELLEMENT_LIVREE, PROBLEME
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public List<SupplierOrderLine> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<SupplierOrderLine> lines) {
+        this.lines = lines;
     }
 }
