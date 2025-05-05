@@ -63,4 +63,25 @@ export const getMenuGroupedByCategory = async () => {
   }
 };
 
+export const getServerTodayReservations = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/today');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations du jour :', error);
+    throw error;
+  }
+};
+
+export const getTotalTables = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/tables/count');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération du nombre de tables:', error);
+    // Valeur par défaut en cas d'erreur
+    return 24;
+  }
+};
+
 export default apiClient;
