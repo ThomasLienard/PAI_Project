@@ -18,7 +18,6 @@ import RecipeManager from '../components/chef/RecipeManager.vue';
 import ServerView from '../views/server/ServerView.vue';
 import CurrentOrders from '../components/server/CurrentOrders.vue';
 import Reservations from '../components/server/Reservations.vue';
-import ServerOrdersView from '../views/server/ServerOrdersView.vue';
 import ServerReservationsView from '../views/server/ServerReservationsView.vue';
 import ServerNewOrderView from '../views/server/ServerNewOrderView.vue';
 import ReservationView from '../views/ReservationView.vue'
