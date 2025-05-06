@@ -7,7 +7,7 @@ import UserManagement from '../views/admin/UserManagement.vue';
 import MenuManagement from '../views/admin/MenuManagement.vue';
 import OrderManagement from '../views/admin/OrderManagement.vue';
 import StatisticsManagement from '../views/admin/StatisticsManagement.vue';
-import SuppliersManagement from '@/views/admin/SuppliersManageement.vue';
+import SuppliersManagement from '../views/admin/SuppliersManagement.vue';
 import UserView from '../views/UserView.vue';
 import FeedbackView from '../views/FeedbackView.vue';
 import ModifyView from '../views/ModifyView.vue';

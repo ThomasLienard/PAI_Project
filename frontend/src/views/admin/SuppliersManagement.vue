@@ -15,18 +15,20 @@
           <select v-model="filterCriteria">
             <option value="name">Nom</option>
             <option value="location">Localisation</option>
-            <option value="productType">Type de produits</option>
-          </select>
-          <select v-model="sortCriteria">
-            <option value="reliability">Fiabilité</option>
-            <option value="deliveryTime">Délai de livraison</option>
-            <option value="terms">Conditions commerciales</option>
           </select>
         </div>
       </div>
 
+      <!-- Message d'erreur -->
+      <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
+
+      <!-- Bouton pour afficher le formulaire -->
+      <button class="btn-primary" @click="openForm" v-if="!showForm">
+        Ajouter un fournisseur
+      </button>
+
       <!-- Formulaire d'ajout/modification -->
-      <form @submit.prevent="saveSupplier" class="supplier-form">
+      <form v-if="showForm" @submit.prevent="saveSupplier" class="supplier-form">
         <div class="form-grid">
           <div class="form-group">
             <label>Nom du fournisseur*</label>
@@ -39,13 +41,13 @@
           </div>
 
           <div class="form-group">
-            <label>Délai de paiement (jours)</label>
-            <input v-model="currentSupplier.paymentTerms" type="number" />
+            <label>Localisation</label>
+            <input v-model="currentSupplier.location" />
           </div>
 
           <div class="form-group">
-            <label>Minimum de commande (€)</label>
-            <input v-model="currentSupplier.minimumOrder" type="number" />
+            <label>Délai de paiement (jours)</label>
+            <input v-model="currentSupplier.paymentTerms" type="number" />
           </div>
 
           <div class="form-group">
@@ -56,6 +58,9 @@
 
         <button type="submit" class="btn-primary">
           {{ isEditing ? 'Modifier' : 'Ajouter' }} le fournisseur
+        </button>
+        <button type="button" class="btn-secondary" @click="closeForm">
+          Annuler
         </button>
       </form>
 
@@ -70,24 +75,27 @@
             <div class="card-header">
               <h3>{{ supplier.name }}</h3>
               <div class="rating">
-                <span>Note: {{ supplier.rating }}/5</span>
+                <span>Note: {{ supplier.rating ? supplier.rating.toFixed(1) : 0 }}/5</span>
                 <star-rating v-model="supplier.rating" :read-only="true"></star-rating>
               </div>
             </div>
 
             <div class="card-body">
               <p><strong>Email:</strong> {{ supplier.email }}</p>
+              <p><strong>Localisation:</strong> {{ supplier.location }}</p>
               <p><strong>Délai de paiement:</strong> {{ supplier.paymentTerms }} jours</p>
-              <p><strong>Commande minimum:</strong> {{ supplier.minimumOrder }}€</p>
+              <p><strong>Frais de livraison:</strong> {{ supplier.deliveryFee }}€</p>
             </div>
 
             <div class="card-footer">
               <button @click="editSupplier(supplier)" class="btn-secondary">
                 Modifier
               </button>
-              <button @click="toggleSupplierStatus(supplier)" 
-                      :class="supplier.active ? 'btn-warning' : 'btn-success'">
-                {{ supplier.active ? 'Désactiver' : 'Activer' }}
+              <button v-if="supplier.active" @click="deactivateSupplier(supplier)" class="btn-warning">
+                Désactiver
+              </button>
+              <button v-else @click="activateSupplier(supplier)" class="btn-success">
+                Activer
               </button>
               <button @click="viewProducts(supplier)" class="btn-info">
                 Catalogue
@@ -134,17 +142,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import NavBar from '../../components/NavBar.vue'
 import StarRating from '../../components/StarRating.vue'
+import apiClient from '@/services/apiClient'
 
 // État
 const suppliers = ref([])
 const currentSupplier = ref({
   name: '',
   email: '',
+  location: '',
   paymentTerms: 30,
-  minimumOrder: 0,
   deliveryFee: 0,
   active: true,
   rating: 0
@@ -152,11 +161,12 @@ const currentSupplier = ref({
 
 const searchQuery = ref('')
 const filterCriteria = ref('name')
-const sortCriteria = ref('reliability')
 const isEditing = ref(false)
+const showForm = ref(false)
 const showCatalogModal = ref(false)
 const showOrdersModal = ref(false)
 const selectedSupplier = ref(null)
+const errorMsg = ref('')
 
 // Computed
 const filteredSuppliers = computed(() => {
@@ -168,43 +178,72 @@ const filteredSuppliers = computed(() => {
       const searchLower = searchQuery.value.toLowerCase()
       switch (filterCriteria.value) {
         case 'name':
-          return supplier.name.toLowerCase().includes(searchLower)
+          return supplier.name && supplier.name.toLowerCase().includes(searchLower)
         case 'location':
-          return supplier.location.toLowerCase().includes(searchLower)
-        case 'productType':
-          return supplier.productTypes.some(type => 
-            type.toLowerCase().includes(searchLower)
-          )
+          return supplier.location && supplier.location.toLowerCase().includes(searchLower)
       }
     })
   }
 
-  // Tri
-  filtered.sort((a, b) => {
-    switch (sortCriteria.value) {
-      case 'reliability':
-        return b.rating - a.rating
-      case 'deliveryTime':
-        return a.averageDeliveryTime - b.averageDeliveryTime
-      case 'terms':
-        return b.paymentTerms - a.paymentTerms
-    }
-  })
+  // Tri par note décroissante (fiabilité)
+  filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0))
 
   return filtered
 })
 
-// Méthodes
+// Méthodes API
+const fetchSuppliers = async () => {
+  try {
+    const res = await apiClient.get('/suppliers/all')
+    suppliers.value = res.data
+  } catch (error) {
+    console.error('Erreur lors du chargement des fournisseurs:', error)
+  }
+}
+
+const createSupplier = async (supplier) => {
+  await apiClient.post('/suppliers', supplier)
+}
+
+const updateSupplier = async (supplier) => {
+  await apiClient.put(`/suppliers/${supplier.id}`, supplier)
+}
+
+const deactivateSupplier = async (supplier) => {
+  await apiClient.patch(`/suppliers/${supplier.id}/deactivate`)
+  await fetchSuppliers()
+}
+
+const activateSupplier = async (supplier) => {
+  // Réactivation = update avec active: true
+  await updateSupplier({ ...supplier, active: true })
+  await fetchSuppliers()
+}
+
+// Méthodes UI
+const openForm = () => {
+  resetForm()
+  showForm.value = true
+}
+
+const closeForm = () => {
+  resetForm()
+  showForm.value = false
+}
+
 const saveSupplier = async () => {
   try {
+    errorMsg.value = ''
     if (isEditing.value) {
       await updateSupplier(currentSupplier.value)
     } else {
       await createSupplier(currentSupplier.value)
     }
     resetForm()
+    showForm.value = false
     await fetchSuppliers()
   } catch (error) {
+    errorMsg.value = 'Erreur lors de la sauvegarde : ' + (error.response?.status === 403 ? 'Accès interdit. Êtes-vous connecté en tant qu\'admin ?' : error.message)
     console.error('Erreur lors de la sauvegarde:', error)
   }
 }
@@ -212,18 +251,7 @@ const saveSupplier = async () => {
 const editSupplier = (supplier) => {
   currentSupplier.value = { ...supplier }
   isEditing.value = true
-}
-
-const toggleSupplierStatus = async (supplier) => {
-  try {
-    await updateSupplier({
-      ...supplier,
-      active: !supplier.active
-    })
-    await fetchSuppliers()
-  } catch (error) {
-    console.error('Erreur lors du changement de statut:', error)
-  }
+  showForm.value = true
 }
 
 const viewProducts = (supplier) => {
@@ -240,8 +268,8 @@ const resetForm = () => {
   currentSupplier.value = {
     name: '',
     email: '',
+    location: '',
     paymentTerms: 30,
-    minimumOrder: 0,
     deliveryFee: 0,
     active: true,
     rating: 0
@@ -348,6 +376,11 @@ onMounted(async () => {
 .btn-info {
   background-color: var(--info-color);
   color: white;
+}
+
+.error-msg {
+  color: red;
+  margin-bottom: 1em;
 }
 
 /* Responsive */
