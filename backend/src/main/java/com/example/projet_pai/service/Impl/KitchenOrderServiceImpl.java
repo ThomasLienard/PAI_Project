@@ -1,0 +1,57 @@
+package com.example.projet_pai.service.Impl;
+
+import com.example.projet_pai.dto.OrderDTO;
+import com.example.projet_pai.entite.Order;
+import com.example.projet_pai.entite.OrderItem;
+import com.example.projet_pai.repository.OrderRepository;
+import com.example.projet_pai.repository.OrderItemRepository;
+import com.example.projet_pai.service.KitchenOrderServiceItf;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
+
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Override
+    public List<OrderDTO> getOrdersToPrepare() {
+        // On suppose que le repository a une méthode pour trouver les commandes à préparer
+        List<Order> orders = orderRepository.findOrdersToPrepare();
+        return orders.stream().map(OrderDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void markItemInPreparation(Long orderId, Long itemId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
+        order.setStatus("en préparation");
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void markItemReady(Long orderId, Long itemId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
+        order.setStatus("prêt");
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void markOrderCompleted(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
+        order.setStatus("terminée");
+        orderRepository.save(order);
+    }
+}
