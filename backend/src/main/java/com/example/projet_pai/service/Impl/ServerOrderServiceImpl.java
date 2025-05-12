@@ -50,7 +50,7 @@ public class ServerOrderServiceImpl implements ServerOrderServiceItf {
         // Création de la commande
         Order order = new Order(table, orderRequest.getClientName());
         order.setOrderTime(LocalDateTime.now());
-        order.setStatus("en_preparation");
+        order.setStatus("en_attente");
         order.setAdditional(orderRequest.isAdditional());
         
         // Ajout des articles

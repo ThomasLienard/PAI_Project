@@ -242,7 +242,7 @@ export default {
             quantity: item.quantity,
             specialInstructions: item.specialInstructions
           })),
-          isAdditional: isAdditionalOrder.value
+          isAdditional: isAdditionalOrder.value,
         };
         await apiClient.post('/server/orders', orderData);
         showSuccessNotification.value = true;
@@ -302,6 +302,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  margin-top: 48px;
 }
 
 .order-header {
