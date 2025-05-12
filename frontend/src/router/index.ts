@@ -20,6 +20,8 @@ import ServerOrdersListView from '../views/server/ServerOrdersListView.vue';impo
 import ServerNewOrderView from '../views/server/ServerNewOrderView.vue';
 import ReservationView from '../views/ReservationView.vue'
 import MenuView from '../views/MenuView.vue';
+import StockAdminView from '../views/admin/StockAdminView.vue';
+
 
 
 const routes = [
@@ -44,8 +46,8 @@ const routes = [
   {path: '/server/orders', name: 'server-orders', component: ServerOrdersListView, meta: { requiresAuth: true, role: 'SERVEUR' } },
   {path: '/server/reservations', name: 'server-reservations', component: ServerReservationsView ,meta: { requiresAuth: true, role: 'SERVEUR' }},
   {path: '/server/new-order', name: 'server-new-order',component: ServerNewOrderView, meta: { requiresAuth: true, role: 'SERVEUR' }},
-  {path: '/user/reservation',name: 'reservation',component: ReservationView ,meta: { requiresAuth: true, role: 'CLIENT' }}
-
+  {path: '/user/reservation',name: 'reservation',component: ReservationView ,meta: { requiresAuth: true, role: 'CLIENT' }},
+  { path: '/admin/stocks', name: 'admin-stocks', component: StockAdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
 ];
 
 const router = createRouter({
