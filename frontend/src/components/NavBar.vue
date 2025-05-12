@@ -43,13 +43,22 @@ const logoutUser = async () => {
 <style scoped>
 nav {
   background-color: #333;
-  padding: 1rem;
+  padding: 0 1rem;
+  height: 48px;
+  min-height: 0;
+  max-height: 56px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #222;
+  box-sizing: border-box;
 }
 
 ul {
   list-style: none;
   display: flex;
   gap: 1rem;
+  margin: 0;
+  padding: 0;
 }
 
 li {
@@ -61,5 +70,9 @@ button {
   border: none;
   color: white;
   cursor: pointer;
+  font-size: 1rem;
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
 }
 </style>

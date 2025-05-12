@@ -1,6 +1,7 @@
 package com.example.projet_pai.service.Impl;
 
 import com.example.projet_pai.dto.TableDisponibiliteDTO;
+import com.example.projet_pai.dto.TableDTO;
 import com.example.projet_pai.entite.Table;
 import com.example.projet_pai.repository.TableRepository;
 import com.example.projet_pai.service.TableServiceItf;
@@ -26,5 +27,13 @@ public class TableServiceImpl implements TableServiceItf {
                         table.getNumero(),
                         table.getCapacite()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TableDTO> getAllTables() {
+        List<Table> tables = tableRepository.findAll();
+        return tables.stream()
+            .map(t -> new TableDTO(t.getId(), t.getNumero(), t.getCapacite()))
+            .collect(Collectors.toList());
     }
 }
