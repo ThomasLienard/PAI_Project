@@ -29,10 +29,6 @@
             <div class="status-indicator occupied"></div>
             <span>Occupée</span>
           </div>
-          <div class="status-item">
-            <div class="status-indicator reserved"></div>
-            <span>Réservée</span>
-          </div>
         </div>
 
         <div class="tables-grid">
@@ -42,7 +38,6 @@
             class="table-item"
             :class="{ 
               'occupied': table.status === 'OCCUPIED',
-              'reserved': table.status === 'RESERVED',
               'available': table.status === 'AVAILABLE'
             }"
             @click="selectTable(table)"
@@ -90,14 +85,16 @@ export default {
           try {
             const orderResponse = await apiClient.get(`/server/orders/tables/${table.id}`);
             table.orderCount = orderResponse.data.length || 0;
-            if (table.orderCount > 0 && !table.status) {
+            // Seulement OCCUPIED ou AVAILABLE
+            if (table.orderCount > 0) {
               table.status = 'OCCUPIED';
-            } else if (!table.status) {
+            } else {
               table.status = 'AVAILABLE';
             }
           } catch (err) {
             console.error(`Erreur lors de la récupération des commandes pour la table ${table.id}:`, err);
             table.orderCount = 0;
+            table.status = 'AVAILABLE';
           }
         }
         tables.value = response.data;
@@ -239,10 +236,6 @@ export default {
   background-color: #f44336;
 }
 
-.status-indicator.reserved {
-  background-color: #ff9800;
-}
-
 .tables-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -274,11 +267,6 @@ export default {
 .table-item.occupied {
   background-color: #ffebee;
   border: 2px solid #f44336;
-}
-
-.table-item.reserved {
-  background-color: #fff3e0;
-  border: 2px solid #ff9800;
 }
 
 .table-number {

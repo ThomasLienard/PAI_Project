@@ -11,6 +11,13 @@
         class="order-item"
       >
         <div class="order-item-header">
+          <!-- Ajout de la photo du plat -->
+          <img
+            v-if="item.imageUrl"
+            :src="item.imageUrl"
+            alt="photo du plat"
+            style="width: 48px; height: 48px; object-fit: cover; margin-right: 12px; border-radius: 6px;"
+          />
           <span class="order-item-name">{{ item.name }}</span>
           <span class="order-item-price">{{ formatPrice(item.price * item.quantity) }}</span>
         </div>
@@ -19,7 +26,7 @@
           <button 
             class="quantity-btn decrease" 
             @click="decreaseQuantity(item.id)"
-          >
+          >-
             <i class="fas fa-minus"></i>
           </button>
           <span class="quantity-value">{{ item.quantity }}</span>
@@ -27,7 +34,7 @@
             class="quantity-btn increase" 
             @click="increaseQuantity(item.id)"
           >
-            <i class="fas fa-plus"></i>
+          +  
           </button>
         </div>
         

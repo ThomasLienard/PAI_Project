@@ -43,6 +43,12 @@
               @click="addItemToOrder(item)"
               style="cursor: pointer; margin-bottom: 8px; padding: 8px; border: 1px solid #eee; border-radius: 4px;"
             >
+              <img
+                v-if="item.imageUrl"
+                :src="item.imageUrl"
+                alt="photo du plat"
+                style="width: 60px; height: 60px; object-fit: cover; margin-right: 12px; border-radius: 6px;"
+              />
               <span>{{ item.name }}</span>
               <span style="float:right;">{{ item.price }} €</span>
             </div>
