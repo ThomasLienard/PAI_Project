@@ -110,6 +110,13 @@ export const deleteCategory = async (id) => {
   await apiClient.delete(`/admin/stocks/categories/${id}`);
 };
 
+export const updateCategory = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/categories/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
 // Ingrédients
 export const getAllIngredients = async () => {
   const response = await apiClient.get('/admin/stocks/ingredients');
@@ -125,6 +132,13 @@ export const createIngredient = async (formData) => {
 
 export const deleteIngredient = async (id) => {
   await apiClient.delete(`/admin/stocks/ingredients/${id}`);
+};
+
+export const updateIngredient = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/ingredients/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
 };
 
 export default apiClient;

@@ -11,7 +11,8 @@
         <button @click="deleteCategory(cat.id)">🗑️</button>
       </li>
     </ul>
-    <form @submit.prevent="addCategory" enctype="multipart/form-data">
+    <!-- Formulaire d'ajout -->
+    <form v-if="!editingCategory" @submit.prevent="addCategory" enctype="multipart/form-data">
       <div>
         <label>Nom de la catégorie :</label><br>
         <input v-model="newCategory.name" required />
@@ -22,18 +23,32 @@
       </div>
       <button type="submit">Ajouter</button>
     </form>
+    <!-- Formulaire d'édition -->
+    <form v-else @submit.prevent="updateCategory" enctype="multipart/form-data">
+      <div>
+        <label>Nom de la catégorie :</label><br>
+        <input v-model="editingCategory.name" required />
+      </div>
+      <div>
+        <label>Icône :</label><br>
+        <input type="file" @change="onFileChange" accept="image/*" />
+      </div>
+      <button type="submit">Valider</button>
+      <button type="button" @click="cancelEdit">Annuler</button>
+    </form>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getAllCategories, createCategory, deleteCategory as apiDeleteCategory } from '../../services/apiClient'
+import { getAllCategories, createCategory, deleteCategory as apiDeleteCategory, updateCategory as apiUpdateCategory } from '../../services/apiClient'
 
 const emit = defineEmits(['refresh'])
 
 const categories = ref([])
 const newCategory = ref({ name: '' })
 const iconFile = ref(null)
+const editingCategory = ref(null)
 
 const fetchCategories = async () => {
   categories.value = await getAllCategories()
@@ -58,12 +73,31 @@ const addCategory = async () => {
 
 const deleteCategory = async (id) => {
   await apiDeleteCategory(id)
-  await fetchCategories() 
+  await fetchCategories()
   emit('refresh')
 }
 
 const editCategory = (cat) => {
-  alert('Édition non implémentée')
+  editingCategory.value = { ...cat }
+  iconFile.value = null
+}
+
+const updateCategory = async () => {
+  const formData = new FormData()
+  formData.append('name', editingCategory.value.name)
+  if (iconFile.value) {
+    formData.append('icon', iconFile.value)
+  }
+  await apiUpdateCategory(editingCategory.value.id, formData)
+  editingCategory.value = null
+  iconFile.value = null
+  await fetchCategories()
+  emit('refresh')
+}
+
+const cancelEdit = () => {
+  editingCategory.value = null
+  iconFile.value = null
 }
 
 onMounted(fetchCategories)
