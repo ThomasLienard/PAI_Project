@@ -14,12 +14,12 @@ public interface KitchenOrderServiceItf {
     /**
      * Marque un plat comme "en préparation"
      */
-    void markItemInPreparation(Long orderId, Long itemId);
+    void markItemInPreparation(Long orderId);
 
     /**
      * Marque un plat comme "prêt"
      */
-    void markItemReady(Long orderId, Long itemId);
+    void markItemReady(Long orderId);
 
     /**
      * Marque une commande comme "terminée"

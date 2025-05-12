@@ -80,7 +80,7 @@ let lastOrderIds: number[] = []
 
 // Récupérer les commandes depuis le backend
 const fetchOrders = async () => {
-  const res = await apiClient.get('/chef/orders')
+  const res = await apiClient.get('/cuisinier/orders')
   orders.value = res.data.sort((a: { createdAt: string }, b: { createdAt: string }) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 }
 
@@ -106,15 +106,15 @@ const sortedOrders = computed(() => orders.value)
 
 // Actions sur la commande
 const markOrderInPreparation = async (orderId: number) => {
-  await apiClient.put(`/chef/orders/${orderId}/in-preparation`)
+  await apiClient.patch(`/cuisinier/orders/${orderId}/in-preparation`)
   await fetchOrders()
 }
 const markOrderReady = async (orderId: number) => {
-  await apiClient.patch(`/chef/orders/${orderId}/ready`)
+  await apiClient.patch(`/cuisinier/orders/${orderId}/ready`)
   await fetchOrders()
 }
 const markOrderCompleted = async (orderId: number) => {
-  await apiClient.patch(`/chef/orders/${orderId}/complete`)
+  await apiClient.patch(`/cuisinier/orders/${orderId}/complete`)
   await fetchOrders()
 }
 
