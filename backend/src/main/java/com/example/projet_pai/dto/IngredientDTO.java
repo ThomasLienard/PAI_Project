@@ -11,6 +11,9 @@ public class IngredientDTO {
     private Double recommendedOrderQty;
     private Integer shelfLifeDays;
     private Long categoryId;
+
+    private boolean alertSent;
+
     public Long getId() {
         return id;
     }
@@ -70,6 +73,13 @@ public class IngredientDTO {
     }
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public boolean isAlertSent() {
+        return alertSent;
+    }
+    public void setAlertSent(boolean alertSent) {
+        this.alertSent = alertSent;
     }
 
     // Getters & setters

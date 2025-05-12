@@ -17,6 +17,8 @@ public class Ingredient {
     private Double recommendedOrderQty;
     private Integer shelfLifeDays;
 
+    private boolean alertSent = false;
+
     @ManyToOne
     private IngredientCategory category;
 
@@ -98,6 +100,13 @@ public class Ingredient {
 
     public void setCategory(IngredientCategory category) {
         this.category = category;
+    }
+
+    public boolean isAlertSent() {
+        return alertSent;
+    }
+    public void setAlertSent(boolean alertSent) {
+        this.alertSent = alertSent;
     }
 
     // Getters & Setters
