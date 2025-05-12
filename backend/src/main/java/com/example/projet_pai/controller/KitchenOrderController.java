@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chef/orders")
+@RequestMapping("/api/cuisinier/orders")
 public class KitchenOrderController {
 
     @Autowired
@@ -19,14 +19,14 @@ public class KitchenOrderController {
         return kitchenOrderService.getOrdersToPrepare();
     }
 
-    @PutMapping("/{orderId}/items/{itemId}/in-preparation")
-    public void markItemInPreparation(@PathVariable Long orderId, @PathVariable Long itemId) {
-        kitchenOrderService.markItemInPreparation(orderId, itemId);
+    @PatchMapping("/{orderId}/in-preparation")
+    public void markItemInPreparation(@PathVariable Long orderId) {
+        kitchenOrderService.markItemInPreparation(orderId);
     }
 
-    @PatchMapping("/{orderId}/items/{itemId}/ready")
-    public void markItemReady(@PathVariable Long orderId, @PathVariable Long itemId) {
-        kitchenOrderService.markItemReady(orderId, itemId);
+    @PatchMapping("/{orderId}/ready")
+    public void markItemReady(@PathVariable Long orderId) {
+        kitchenOrderService.markItemReady(orderId);
     }
 
     @PatchMapping("/{orderId}/complete")

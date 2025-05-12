@@ -30,7 +30,7 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
 
     @Override
     @Transactional
-    public void markItemInPreparation(Long orderId, Long itemId) {
+    public void markItemInPreparation(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
         order.setStatus("en préparation");
@@ -39,7 +39,7 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
 
     @Override
     @Transactional
-    public void markItemReady(Long orderId, Long itemId) {
+    public void markItemReady(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
         order.setStatus("prêt");
