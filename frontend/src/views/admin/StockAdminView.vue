@@ -19,9 +19,14 @@
             {{ cat.name }}
           </h3>
           <ul>
-            <li v-for="ing in ingredientsByCategory(cat.id)" :key="ing.id">
+            <li
+              v-for="ing in ingredientsByCategory(cat.id)"
+              :key="ing.id"
+              :class="{ 'alert-stock': ing.initialStock <= ing.alertThreshold }"
+            >
               <img v-if="ing.photoUrl" :src="ing.photoUrl" alt="photo" width="24" height="24" style="vertical-align:middle;"/>
               {{ ing.name }} ({{ ing.unit }}) - Stock : {{ ing.initialStock }}
+              <span v-if="ing.initialStock <= ing.alertThreshold" style="color:#e53935; font-weight:bold;">⚠️ Stock bas</span>
             </li>
           </ul>
         </div>
@@ -67,7 +72,6 @@ const toggleIngredient = () => {
   if (showIngredient.value) showCategory.value = false
 }
 
-// Rafraîchit la liste après ajout/suppression/modif
 const handleRefresh = () => {
   fetchCategories();
   fetchIngredients();
@@ -99,5 +103,9 @@ onMounted(() => {
   background: #f8f8f8;
   padding: 1rem;
   border-radius: 8px;
+}
+.alert-stock {
+  background: #ffcccc !important; /* rouge clair */
+  border: 1px solid #e53935;
 }
 </style>
