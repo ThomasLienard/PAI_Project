@@ -55,12 +55,90 @@ export const logout = async () => {
 
 export const getMenuGroupedByCategory = async () => {
   try {
-    const response = await apiClient.get('user/menu/grouped');
+    const response = await apiClient.get('/menu/grouped');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du menu groupé :', error);
     throw error;
   }
+};
+export const getAllTable = async () => {
+  try {
+    const response = await apiClient.get('/tables/all');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération du menu groupé :', error);
+    throw error;
+  }
+};
+
+export const getServerTodayReservations = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/today');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des réservations du jour :', error);
+    throw error;
+  }
+};
+
+export const getTotalTables = async () => {
+  try {
+    const response = await apiClient.get('/server/reservations/tables/count');
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération du nombre de tables:', error);
+    // Valeur par défaut en cas d'erreur
+    return 24;
+  }
+};
+
+// Catégories
+export const getAllCategories = async () => {
+  const response = await apiClient.get('/admin/stocks/categories');
+  return response.data;
+};
+
+export const createCategory = async (formData) => {
+  const response = await apiClient.post('/admin/stocks/categories', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const deleteCategory = async (id) => {
+  await apiClient.delete(`/admin/stocks/categories/${id}`);
+};
+
+export const updateCategory = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/categories/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+// Ingrédients
+export const getAllIngredients = async () => {
+  const response = await apiClient.get('/admin/stocks/ingredients');
+  return response.data;
+};
+
+export const createIngredient = async (formData) => {
+  const response = await apiClient.post('/admin/stocks/ingredients', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const deleteIngredient = async (id) => {
+  await apiClient.delete(`/admin/stocks/ingredients/${id}`);
+};
+
+export const updateIngredient = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/ingredients/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
 };
 
 export default apiClient;

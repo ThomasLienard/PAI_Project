@@ -17,13 +17,12 @@ import ChefView from '../views/ChefView.vue';
 import OrderList from '../components/chef/OrderList.vue';
 import RecipeManager from '../components/chef/RecipeManager.vue';
 import ServerView from '../views/server/ServerView.vue';
-import CurrentOrders from '../components/server/CurrentOrders.vue';
-import Reservations from '../components/server/Reservations.vue';
-import ServerOrdersView from '../views/server/ServerOrdersView.vue';
-import ServerReservationsView from '../views/server/ServerReservationsView.vue';
+import ServerOrdersListView from '../views/server/ServerOrdersListView.vue';import ServerReservationsView from '../views/server/ServerReservationsView.vue';
 import ServerNewOrderView from '../views/server/ServerNewOrderView.vue';
 import ReservationView from '../views/ReservationView.vue'
-import MenuView from '../views/MenuView.vue';  
+import MenuView from '../views/MenuView.vue';
+import StockAdminView from '../views/admin/StockAdminView.vue';
+
 
 
 const routes = [
@@ -46,11 +45,11 @@ const routes = [
   {path: '/chef/orders',name: 'ChefOrders',component: OrderList, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/chef/recipes',name: 'chefRecipe',component: RecipeManager, meta: { requiresAuth: true, role: 'CUISINIER' }},
   {path: '/server', name: 'server',component: ServerView, meta: { requiresAuth: true, role: 'SERVEUR' }},
-  {path: '/server/orders', name: 'server-orders', component: CurrentOrders, meta: { requiresAuth: true, role: 'SERVEUR' } },
-  {path: '/server/reservations', name: 'server-reservations', component: Reservations,meta: { requiresAuth: true, role: 'SERVEUR' }},
+  {path: '/server/orders', name: 'server-orders', component: ServerOrdersListView, meta: { requiresAuth: true, role: 'SERVEUR' } },
+  {path: '/server/reservations', name: 'server-reservations', component: ServerReservationsView ,meta: { requiresAuth: true, role: 'SERVEUR' }},
   {path: '/server/new-order', name: 'server-new-order',component: ServerNewOrderView, meta: { requiresAuth: true, role: 'SERVEUR' }},
-  {path: '/user/reservation',name: 'reservation',component: ReservationView ,meta: { requiresAuth: true, role: 'CLIENT' }}
-
+  {path: '/user/reservation',name: 'reservation',component: ReservationView ,meta: { requiresAuth: true, role: 'CLIENT' }},
+  { path: '/admin/stocks', name: 'admin-stocks', component: StockAdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
 ];
 
 const router = createRouter({

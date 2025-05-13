@@ -1,6 +1,7 @@
 package com.example.projet_pai.controller;
 
 import com.example.projet_pai.dto.TableDisponibiliteDTO;
+import com.example.projet_pai.dto.TableDTO;
 import com.example.projet_pai.service.TableServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +25,11 @@ public class TableController {
         List<TableDisponibiliteDTO> tables = tableService.getTablesDisponibles(date, creneau, nbPersonnes);
         return ResponseEntity.ok(tables);
     }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<TableDTO>> getAllTables() {
+        List<TableDTO> tables = tableService.getAllTables();
+        return ResponseEntity.ok(tables);
+    }
+    
 }
