@@ -14,7 +14,7 @@ import com.example.projet_pai.service.RecipeServiceItf;
 import com.example.projet_pai.service.ServerOrderServiceItf;
 
 @RestController
-@RequestMapping("/api/server/orders")
+@RequestMapping("/api/cuisinier/recipes")
 @PreAuthorize("hasRole('CUISINIER')")
 public class RecipeController {
     
