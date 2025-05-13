@@ -6,7 +6,6 @@
         <th @click="sort('id')">Commande #</th>
         <th @click="sort('status')">Statut</th>
         <th>Plats</th>
-        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -22,15 +21,6 @@
               {{ item.name }} x{{ item.quantity }}
             </li>
           </ul>
-        </td>
-        <td>
-          <button
-            :disabled="order.status !== 'prete'"
-            @click="$emit('serve', order.id)"
-            class="serve-btn"
-          >
-            Marquer comme servie
-          </button>
         </td>
       </tr>
     </tbody>
