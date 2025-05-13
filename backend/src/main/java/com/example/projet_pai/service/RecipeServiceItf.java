@@ -1,7 +1,13 @@
 package com.example.projet_pai.service;
 
+import java.util.List;
+
 import com.example.projet_pai.dto.RecipeDTO;
 
 public interface RecipeServiceItf {
-    public RecipeDTO createRecipe(RecipeDTO recipeDTO);
+    RecipeDTO createRecipe(RecipeDTO recipeDTO);
+    List<RecipeDTO> getAllRecipes();
+    RecipeDTO getRecipeById(Long id);
+    RecipeDTO updateRecipe(Long id, RecipeDTO recipeDTO);
+    boolean deleteRecipe(Long id);
 }

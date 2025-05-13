@@ -1,47 +1,70 @@
 <template>
   <div>
     <NavBar />
-      <div class="recipe-manager">
-        <h3>Gestion des recettes</h3>
-        <ul>
-          <li v-for="recipe in recipes" :key="recipe.id">
-            {{ recipe.name }}
-            <button @click="editRecipe(recipe.id)">Modifier</button>
-            <button @click="deleteRecipe(recipe.id)">Supprimer</button>
-          </li>
-        </ul>
-        <button @click="addRecipe">Ajouter une recette</button>
-      </div>
+    <div class="recipe-manager">
+      <h3>Gestion des recettes</h3>
+      <RecipeList
+        :recipes="recipes"
+        @edit="openEditForm"
+        @delete="deleteRecipe"
+      />
+      <button @click="showCreateForm = true">Ajouter une recette</button>
+      <RecipeForm
+        v-if="showCreateForm || editingRecipe"
+        :ingredients="ingredients"
+        :recipe="editingRecipe"
+        @save="handleSave"
+        @cancel="closeForm"
+      />
+    </div>
   </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref } from 'vue'
+</template>
 
-  import NavBar from '../../components/NavBar.vue';
-  
-  // Importer les styles globaux
-  import '@/assets/styles/ChefStyles.css'
-  
-  // Exemple de données fictives pour les recettes
-  const recipes = ref([
-    { id: 1, name: 'Pizza Margherita' },
-    { id: 2, name: 'Salade César' },
-    { id: 3, name: 'Pâtes Carbonara' },
-  ])
-  
-  // Fonction pour ajouter une recette
-  function addRecipe() {
-    console.log('Ajouter une nouvelle recette')
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import NavBar from '../../components/NavBar.vue'
+import RecipeList from './RecipeList.vue'
+import RecipeForm from './RecipeForm.vue'
+import apiClient from '@/services/apiClient'
+
+const recipes = ref([])
+const ingredients = ref([])
+const showCreateForm = ref(false)
+const editingRecipe = ref(null)
+
+const fetchRecipes = async () => {
+  const res = await apiClient.get('/cuisinier/recipes')
+  recipes.value = res.data
+}
+const fetchIngredients = async () => {
+  const res = await apiClient.get('/cuisinier/ingredients')
+  ingredients.value = res.data
+}
+
+onMounted(() => {
+  fetchRecipes()
+  fetchIngredients()
+})
+
+function openEditForm(recipe) {
+  editingRecipe.value = recipe
+  showCreateForm.value = false
+}
+function closeForm() {
+  editingRecipe.value = null
+  showCreateForm.value = false
+}
+async function handleSave(recipeData) {
+  if (editingRecipe.value) {
+    await apiClient.put(`/cuisinier/recipes/${editingRecipe.value.id}`, recipeData)
+  } else {
+    await apiClient.post('/cuisinier/recipes/create', recipeData)
   }
-  
-  // Fonction pour modifier une recette
-  function editRecipe(recipeId: number) {
-    console.log(`Modifier la recette avec l'ID : ${recipeId}`)
-  }
-  
-  // Fonction pour supprimer une recette
-  function deleteRecipe(recipeId: number) {
-    console.log(`Supprimer la recette avec l'ID : ${recipeId}`)
-  }
-  </script>
+  await fetchRecipes()
+  closeForm()
+}
+async function deleteRecipe(id) {
+  await apiClient.delete(`/cuisinier/recipes/${id}`)
+  await fetchRecipes()
+}
+</script>
