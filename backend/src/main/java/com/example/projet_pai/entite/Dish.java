@@ -34,6 +34,10 @@ public class Dish {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
+
     
     public Long getId() {
         return id;
@@ -89,5 +93,13 @@ public class Dish {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
     }
 }

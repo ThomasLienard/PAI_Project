@@ -29,11 +29,10 @@ public class Recipe {
     public Recipe() {
     }
 
-    public Recipe(String name, String unite, int quantite, List<Ingredient> ingredients) {
+    public Recipe(String name, String unite, int quantite) {
         this.name = name;
         this.unite = unite;
         this.quantite = quantite;
-        this.ingredients = ingredients;
     }
 
     public Long getId() {
@@ -62,14 +61,6 @@ public class Recipe {
 
     public void setQuantite(int quantite) {
         this.quantite = quantite;
-    }
-
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
     }
 
     public List<RecipeIngredient> getRecipeIngredients() {

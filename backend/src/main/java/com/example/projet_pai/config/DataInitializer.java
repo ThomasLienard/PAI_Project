@@ -43,6 +43,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private IngredientRepository ingredientRepository;
 
+    @Autowired
+    private RecipeRepository recipeRepository; // Ajouté pour gérer les recettes
+
     @Override
     public void run(String... args) throws Exception {
         // Créer les rôles s'ils n'existent pas
@@ -120,6 +123,32 @@ public class DataInitializer implements CommandLineRunner {
         createIngredientIfNotFound("Tomate", "Tomate fraîche", "kg", "http://localhost:8080/images/ingredient-photos/tomate.jpg", legumes, 50.0, 10.0, 20.0, 7);
         createIngredientIfNotFound("Carotte", "Carotte bio", "kg", "http://localhost:8080/images/ingredient-photos/carotte.jpg", legumes, 30.0, 5.0, 10.0, 10);
         createIngredientIfNotFound("Poulet", "Blanc de poulet", "kg", "http://localhost:8080/images/ingredient-photos/poulet.jpg", viandes, 20.0, 5.0, 10.0, 5);   
+        
+        // --- Création d'une recette "Recette Salade César" ---
+        if (!recipeRepository.findByName("Recette Salade César").isPresent()) {
+            Recipe recetteCesar = new Recipe("Recette Salade César", "portion", 1);
+
+            // Ajout des ingrédients à la recette
+            Ingredient tomate = ingredientRepository.findByName("Tomate").orElseThrow();
+            Ingredient poulet = ingredientRepository.findByName("Poulet").orElseThrow();
+
+            RecipeIngredient ri1 = new RecipeIngredient();
+            ri1.setRecipe(recetteCesar);
+            ri1.setIngredient(tomate);
+            ri1.setQuantite(2);
+            ri1.setUnite("pièce");
+
+            RecipeIngredient ri2 = new RecipeIngredient();
+            ri2.setRecipe(recetteCesar);
+            ri2.setIngredient(poulet);
+            ri2.setQuantite(0.2);
+            ri2.setUnite("kg");
+
+            recetteCesar.getRecipeIngredients().add(ri1);
+            recetteCesar.getRecipeIngredients().add(ri2);
+
+            recipeRepository.save(recetteCesar);
+        }
     }
 
     private void createRoleIfNotFound(String roleName) {
@@ -139,7 +168,6 @@ public class DataInitializer implements CommandLineRunner {
             tableRepository.save(table);
         }
     }
-
 
     private Category createCategoryIfNotFound(String categoryName) {
         return categoryRepository.findByName(categoryName)
