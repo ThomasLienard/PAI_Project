@@ -56,7 +56,7 @@ function closeForm() {
 }
 async function handleSave(recipeData) {
   if (editingRecipe.value) {
-    await apiClient.put(`/cuisinier/recipes/${editingRecipe.value.id}`, recipeData)
+    await apiClient.patch(`/cuisinier/recipes/modify/${editingRecipe.value.id}`, recipeData)
   } else {
     await apiClient.post('/cuisinier/recipes/create', recipeData)
   }

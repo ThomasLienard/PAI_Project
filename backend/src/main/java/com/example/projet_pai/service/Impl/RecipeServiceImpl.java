@@ -115,7 +115,7 @@ public class RecipeServiceImpl implements RecipeServiceItf {
             recipe.setQuantite(recipeDTO.getQuantite());
             recipe.setUnite(recipeDTO.getUnite());
 
-            // Supprime les anciens RecipeIngredient
+            // Supprime les anciens RecipeIngredient (pour l'orphanRemoval)
             recipe.getRecipeIngredients().clear();
 
             List<RecipeIngredient> recipeIngredients = new ArrayList<>();
@@ -128,7 +128,7 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 ri.setUnite(ridto.getUnite());
                 recipeIngredients.add(ri);
             }
-            recipe.setRecipeIngredients(recipeIngredients);
+            recipe.getRecipeIngredients().addAll(recipeIngredients);
 
             Recipe updated = recipeRepository.save(recipe);
 
