@@ -1,6 +1,7 @@
 package com.example.projet_pai.service;
 
 import com.example.projet_pai.dto.SupplierDTO;
+
 import java.util.List;
 
 public interface SupplierServiceItf {
@@ -10,4 +11,6 @@ public interface SupplierServiceItf {
     SupplierDTO getSupplier(Long id);
     List<SupplierDTO> searchSuppliers(String name, String location, String productCategory);
     List<SupplierDTO> getAllSuppliers();
+    void activateSupplier(Long id);
+    SupplierDTO rateSupplier(Long id, double rate);
 }

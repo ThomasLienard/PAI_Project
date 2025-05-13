@@ -17,7 +17,7 @@ public class Supplier {
     private int paymentTerms; // jours
     private double deliveryFee;
 
-    private double rating; // moyenne des notes
+    private double rating; // 0-5
 
     @OneToMany(mappedBy = "supplier")
     private List<SupplierProduct> products;

@@ -76,7 +76,10 @@
               <h3>{{ supplier.name }}</h3>
               <div class="rating">
                 <span>Note: {{ supplier.rating ? supplier.rating.toFixed(1) : 0 }}/5</span>
-                <star-rating v-model="supplier.rating" :read-only="true"></star-rating>
+                <star-rating
+                  v-model="supplier.rating"
+                  @update:modelValue="rateSupplier(supplier)"
+                ></star-rating>
               </div>
             </div>
 
@@ -194,7 +197,7 @@ const filteredSuppliers = computed(() => {
 // Méthodes API
 const fetchSuppliers = async () => {
   try {
-    const res = await apiClient.get('/suppliers/all')
+    const res = await apiClient.get('/admin/suppliers/all')
     suppliers.value = res.data
   } catch (error) {
     console.error('Erreur lors du chargement des fournisseurs:', error)
@@ -202,22 +205,33 @@ const fetchSuppliers = async () => {
 }
 
 const createSupplier = async (supplier) => {
-  await apiClient.post('/suppliers', supplier)
+  await apiClient.post('/admin/suppliers', supplier)
 }
 
 const updateSupplier = async (supplier) => {
-  await apiClient.put(`/suppliers/${supplier.id}`, supplier)
+  await apiClient.put(`/admin/suppliers/${supplier.id}`, supplier)
 }
 
 const deactivateSupplier = async (supplier) => {
-  await apiClient.patch(`/suppliers/${supplier.id}/deactivate`)
+  await apiClient.patch(`/admin/suppliers/${supplier.id}/deactivate`)
   await fetchSuppliers()
 }
 
 const activateSupplier = async (supplier) => {
-  // Réactivation = update avec active: true
-  await updateSupplier({ ...supplier, active: true })
+  await apiClient.patch(`/admin/suppliers/${supplier.id}/activate`)
   await fetchSuppliers()
+}
+
+const rateSupplier = async (supplier) => {
+  try {
+    await apiClient.patch(`/admin/suppliers/${supplier.id}/rate`,
+      { rating: supplier.rating }
+    )
+    await fetchSuppliers()
+  } catch (error) {
+    errorMsg.value = "Erreur lors de l'enregistrement de la note"
+    console.error(error)
+  }
 }
 
 // Méthodes UI

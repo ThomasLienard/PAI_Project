@@ -1,6 +1,7 @@
 package com.example.projet_pai.controller;
 
 import com.example.projet_pai.dto.SupplierDTO;
+import com.example.projet_pai.dto.SupplierRatingDTO;
 import com.example.projet_pai.service.SupplierServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/suppliers")
+@RequestMapping("/api/admin/suppliers")
 public class SupplierController {
 
     @Autowired
@@ -29,9 +30,19 @@ public class SupplierController {
         supplierService.deactivateSupplier(id);
     }
 
+    @PatchMapping("/{id}/activate")
+    public void activateSupplier(@PathVariable Long id) {
+        supplierService.activateSupplier(id);
+    }
+
     @GetMapping("/{id}")
     public SupplierDTO getSupplier(@PathVariable Long id) {
         return supplierService.getSupplier(id);
+    }
+
+    @PatchMapping("/{id}/rate")
+    public SupplierDTO rateSupplier(@PathVariable Long id, @RequestBody SupplierRatingDTO ratingDTO) {
+        return supplierService.rateSupplier(id, ratingDTO.getRating());
     }
 
     @GetMapping

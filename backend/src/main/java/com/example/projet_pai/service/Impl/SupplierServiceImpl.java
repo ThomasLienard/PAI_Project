@@ -68,6 +68,13 @@ public class SupplierServiceImpl implements SupplierServiceItf {
     }
 
     @Override
+    public void activateSupplier(Long id) {
+        Supplier s = supplierRepository.findById(id).orElseThrow();
+        s.setActive(true);
+        supplierRepository.save(s);
+    }
+
+    @Override
     public SupplierDTO getSupplier(Long id) {
         return supplierRepository.findById(id).map(this::toDTO).orElse(null);
     }
@@ -87,4 +94,13 @@ public class SupplierServiceImpl implements SupplierServiceItf {
     public List<SupplierDTO> getAllSuppliers() {
         return supplierRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public SupplierDTO rateSupplier(Long id, double rate) {
+        Supplier s = supplierRepository.findById(id).orElseThrow();
+        s.setRating(rate);
+        return toDTO(supplierRepository.save(s));
+    }
+
+
 }
