@@ -1,23 +1,19 @@
 package com.example.projet_pai.entite;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Recipe {
-    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String name; // Ajout du nom de la recette
 
     @Column
     private String unite;
@@ -25,21 +21,31 @@ public class Recipe {
     @Column
     private int quantite;
 
-    @ManyToOne
-    @JoinColumn(name = "ingredient_id")
-    private Ingredient ingredient;
+// Removed the @ManyToMany relationship and the ingredients field to eliminate redundancy.
+
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
     public Recipe() {
     }
 
-    public Recipe(String unite, int quantite, Ingredient ingredient) {
+    public Recipe(String name, String unite, int quantite, List<Ingredient> ingredients) {
+        this.name = name;
         this.unite = unite;
         this.quantite = quantite;
-        this.ingredient = ingredient;
+        this.ingredients = ingredients;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUnite() {
@@ -58,15 +64,21 @@ public class Recipe {
         this.quantite = quantite;
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
+    public List<Ingredient> getIngredients() {
+        return ingredients;
     }
 
-    public void setIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 
-    
+    public List<RecipeIngredient> getRecipeIngredients() {
+        return recipeIngredients;
+    }
+
+    public void setRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+        this.recipeIngredients = recipeIngredients;
+    }
 }
 
 
