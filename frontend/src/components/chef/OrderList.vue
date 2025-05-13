@@ -12,55 +12,125 @@
       <div v-if="orders.length === 0" class="empty-state">
         Aucune commande à préparer pour le moment.
       </div>
-      <div class="orders-grid">
-        <div
-          v-for="order in sortedOrders"
-          :key="order.id"
-          class="order-card"
-        >
-          <div class="order-header">
-            <span class="order-number">Commande #{{ order.id }}</span>
-            <span class="table-number">Table {{ order.tableNumber }}</span>
-            <span class="order-time">{{ formatTime(order.createdAt) }}</span>
-          </div>
-          <div class="order-status">
-            <span class="item-status" :class="order.status">{{ order.status }}</span>
-          </div>
-          <div class="order-items">
-            <div
-              v-for="item in order.items"
-              :key="item.id"
-              class="order-item"
-            >
-              <span class="item-name">{{ item.name }}</span>
-              <span class="item-qty">x{{ item.quantity }}</span>
-              <span v-if="item.specialInstructions" class="item-instructions">
-                <i class="fas fa-info-circle"></i> {{ item.specialInstructions }}
-              </span>
+      <div class="orders-columns">
+        <div class="orders-column">
+          <h4>En attente</h4>
+          <div v-if="ordersEnAttente.length === 0" class="empty-state">Aucune</div>
+          <div
+            v-for="order in ordersEnAttente"
+            :key="order.id"
+            class="order-card"
+          >
+            <div class="order-header">
+              <span class="order-number">Commande #{{ order.id }}</span>
+              <span class="table-number">Table {{ order.tableNumber }}</span>
+              <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+            </div>
+            <div class="order-status">
+              <span class="item-status" :class="order.status">{{ order.status }}</span>
+            </div>
+            <div class="order-items">
+              <div
+                v-for="item in order.items"
+                :key="item.id"
+                class="order-item"
+              >
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-qty">x{{ item.quantity }}</span>
+                <span v-if="item.specialInstructions" class="item-instructions">
+                  <i class="fas fa-info-circle"></i> {{ item.specialInstructions }}
+                </span>
+              </div>
+            </div>
+            <div class="order-actions">
+              <button
+                v-if="order.status === 'en_attente'"
+                @click="markOrderInPreparation(order.id)"
+                class="btn-secondary"
+              >
+                Passer en préparation
+              </button>
             </div>
           </div>
-          <div class="order-actions">
-            <button
-              v-if="order.status === 'en_attente'"
-              @click="markOrderInPreparation(order.id)"
-              class="btn-secondary"
-            >
-              Passer en préparation
-            </button>
-            <button
-              v-if="order.status === 'en préparation'"
-              @click="markOrderReady(order.id)"
-              class="btn-success"
-            >
-              Marquer comme prêt à servir
-            </button>
-            <button
-              v-if="order.status === 'prête'"
-              @click="markOrderCompleted(order.id)"
-              class="btn-complete"
-            >
-              Marquer la commande comme terminée
-            </button>
+        </div>
+        <div class="orders-column">
+          <h4>En préparation</h4>
+          <div v-if="ordersEnPreparation.length === 0" class="empty-state">Aucune</div>
+          <div
+            v-for="order in ordersEnPreparation"
+            :key="order.id"
+            class="order-card"
+          >
+            <div class="order-header">
+              <span class="order-number">Commande #{{ order.id }}</span>
+              <span class="table-number">Table {{ order.tableNumber }}</span>
+              <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+            </div>
+            <div class="order-status">
+              <span class="item-status" :class="order.status">{{ order.status }}</span>
+            </div>
+            <div class="order-items">
+              <div
+                v-for="item in order.items"
+                :key="item.id"
+                class="order-item"
+              >
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-qty">x{{ item.quantity }}</span>
+                <span v-if="item.specialInstructions" class="item-instructions">
+                  <i class="fas fa-info-circle"></i> {{ item.specialInstructions }}
+                </span>
+              </div>
+            </div>
+            <div class="order-actions">
+              <button
+                v-if="order.status === 'en_preparation'"
+                @click="markOrderReady(order.id)"
+                class="btn-success"
+              >
+                Marquer comme prêt à servir
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="orders-column">
+          <h4>Prête</h4>
+          <div v-if="ordersPrete.length === 0" class="empty-state">Aucune</div>
+          <div
+            v-for="order in ordersPrete"
+            :key="order.id"
+            class="order-card"
+          >
+            <div class="order-header">
+              <span class="order-number">Commande #{{ order.id }}</span>
+              <span class="table-number">Table {{ order.tableNumber }}</span>
+              <span class="order-time">{{ formatTime(order.createdAt) }}</span>
+            </div>
+            <div class="order-status">
+              <span class="item-status" :class="order.status">{{ order.status }}</span>
+            </div>
+            <div class="order-items">
+              <div
+                v-for="item in order.items"
+                :key="item.id"
+                class="order-item"
+              >
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-qty">x{{ item.quantity }}</span>
+                <span v-if="item.specialInstructions" class="item-instructions">
+                  <i class="fas fa-info-circle"></i> {{ item.specialInstructions }}
+                </span>
+              </div>
+            </div>
+            <div class="order-actions">
+              <button
+                v-if="order.status === 'prête'"
+                @click="markOrderCompleted(order.id)"
+                class="btn-complete"
+              >
+                Marquer la commande comme terminée
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -102,7 +172,10 @@ const formatTime = (iso: string) => {
   return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 }
 
-const sortedOrders = computed(() => orders.value)
+// Nouveaux computed pour chaque état
+const ordersEnAttente = computed(() => orders.value.filter(o => o.status === 'en_attente'))
+const ordersEnPreparation = computed(() => orders.value.filter(o => o.status === 'en_preparation'))
+const ordersPrete = computed(() => orders.value.filter(o => o.status === 'prête'))
 
 // Actions sur la commande
 const markOrderInPreparation = async (orderId: number) => {
@@ -127,18 +200,44 @@ onMounted(() => {
 .order-list {
   padding: 2rem;
 }
-.orders-grid {
+.orders-columns {
   display: flex;
-  flex-wrap: wrap;
   gap: 2rem;
+  justify-content: stretch;
+}
+.orders-column {
+  flex: 1 1 0;
+  min-width: 320px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 4px #0001;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.orders-column h4 {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 .order-card {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px #0001;
   padding: 1.5rem;
-  min-width: 350px;
-  flex: 1 1 350px;
+  margin-bottom: 1.5rem;
+  min-width: 250px;
+}
+.empty-state {
+  color: #888;
+  font-style: italic;
+  margin: 2rem 0;
+  text-align: center;
+}
+.orders-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 .order-header {
   display: flex;
@@ -199,9 +298,4 @@ onMounted(() => {
 .btn-secondary { background: #90caf9; color: #222; }
 .btn-success { background: #a5d6a7; color: #222; }
 .btn-complete { background: #2196f3; color: #fff; }
-.empty-state {
-  color: #888;
-  font-style: italic;
-  margin: 2rem 0;
-}
 </style>

@@ -33,7 +33,7 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
     public void markItemInPreparation(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
-        order.setStatus("en préparation");
+        order.setStatus("en_preparation");
         orderRepository.save(order);
     }
 
@@ -42,7 +42,7 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
     public void markItemReady(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
-        order.setStatus("prêt");
+        order.setStatus("prête");
         orderRepository.save(order);
     }
 
