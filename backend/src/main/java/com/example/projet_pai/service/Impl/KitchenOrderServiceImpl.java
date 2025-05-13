@@ -49,6 +49,9 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
                 for (var ri : item.getDish().getRecipe().getRecipeIngredients()) {
                     var ingredient = ri.getIngredient();
                     double totalADeduire = ri.getQuantite() * nbPortions;
+                    if (ingredient.getStock() < totalADeduire) {
+                        throw new RuntimeException("Stock insuffisant pour l'ingrédient : " + ingredient.getName());
+                    }
                     ingredient.setStock(ingredient.getStock() - totalADeduire);
                     ingredientRepository.save(ingredient);
                 }
