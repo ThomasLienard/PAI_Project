@@ -231,7 +231,7 @@ public class DataInitializer implements CommandLineRunner {
             ing.setUnit(unit);
             ing.setPhotoUrl(photoUrl);
             ing.setCategory(category);
-            ing.setInitialStock(initialStock);
+            ing.setStock(initialStock);
             ing.setAlertThreshold(alertThreshold);
             ing.setRecommendedOrderQty(recommendedOrderQty);
             ing.setShelfLifeDays(shelfLifeDays);

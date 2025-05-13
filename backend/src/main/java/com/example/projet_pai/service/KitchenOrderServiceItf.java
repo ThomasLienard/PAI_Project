@@ -25,4 +25,8 @@ public interface KitchenOrderServiceItf {
      * Marque une commande comme "terminée"
      */
     void markOrderCompleted(Long orderId);
+    /**
+     * Déduit les ingrédients du stock pour un plat
+     */
+    void deductIngredientsStock(Long orderId);
 }

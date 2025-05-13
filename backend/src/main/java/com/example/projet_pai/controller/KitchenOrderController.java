@@ -22,6 +22,7 @@ public class KitchenOrderController {
     @PatchMapping("/{orderId}/in-preparation")
     public void markItemInPreparation(@PathVariable Long orderId) {
         kitchenOrderService.markItemInPreparation(orderId);
+        kitchenOrderService.deductIngredientsStock(orderId);
     }
 
     @PatchMapping("/{orderId}/ready")

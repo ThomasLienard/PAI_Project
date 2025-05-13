@@ -12,7 +12,7 @@ public class Ingredient {
     private String description;
     private String unit;
     private String photoUrl;
-    private Double initialStock;
+    private Double stock; // anciennement initialStock
     private Double alertThreshold;
     private Double recommendedOrderQty;
     private Integer shelfLifeDays;
@@ -60,12 +60,12 @@ public class Ingredient {
         this.photoUrl = photoUrl;
     }
 
-    public Double getInitialStock() {
-        return initialStock;
+    public Double getStock() {
+        return stock;
     }
 
-    public void setInitialStock(Double initialStock) {
-        this.initialStock = initialStock;
+    public void setStock(Double stock) {
+        this.stock = stock;
     }
 
     public Double getAlertThreshold() {
@@ -99,7 +99,4 @@ public class Ingredient {
     public void setCategory(IngredientCategory category) {
         this.category = category;
     }
-
-    // Getters & Setters
-    // ...
 }

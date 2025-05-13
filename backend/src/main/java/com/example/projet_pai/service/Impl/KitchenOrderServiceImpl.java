@@ -4,6 +4,7 @@ import com.example.projet_pai.dto.OrderDTO;
 import com.example.projet_pai.entite.Order;
 import com.example.projet_pai.entite.OrderItem;
 import com.example.projet_pai.repository.OrderRepository;
+import com.example.projet_pai.repository.IngredientRepository;
 import com.example.projet_pai.repository.OrderItemRepository;
 import com.example.projet_pai.service.KitchenOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
     private OrderRepository orderRepository;
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private IngredientRepository ingredientRepository;
 
     @Override
     public List<OrderDTO> getOrdersToPrepare() {
@@ -35,6 +38,22 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
         order.setStatus("en_preparation");
         orderRepository.save(order);
+    }
+
+    public void deductIngredientsStock(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
+        for (OrderItem item : order.getItems()) {
+            if (item.getDish() != null && item.getDish().getRecipe() != null) {
+                int nbPortions = item.getQuantity();
+                for (var ri : item.getDish().getRecipe().getRecipeIngredients()) {
+                    var ingredient = ri.getIngredient();
+                    double totalADeduire = ri.getQuantite() * nbPortions;
+                    ingredient.setStock(ingredient.getStock() - totalADeduire);
+                    ingredientRepository.save(ingredient);
+                }
+            }
+        }
     }
 
     @Override

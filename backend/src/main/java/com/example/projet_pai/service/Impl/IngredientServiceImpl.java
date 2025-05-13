@@ -39,7 +39,7 @@ public class IngredientServiceImpl implements IngredientServiceItf {
         ingredient.setName(name);
         ingredient.setUnit(unit);
         ingredient.setDescription(description);
-        ingredient.setInitialStock(initialStock);
+        ingredient.setStock(initialStock);
         ingredient.setAlertThreshold(alertThreshold);
         ingredient.setRecommendedOrderQty(recommendedOrderQty);
         ingredient.setShelfLifeDays(shelfLifeDays);
@@ -67,7 +67,7 @@ public class IngredientServiceImpl implements IngredientServiceItf {
         ingredient.setName(name);
         ingredient.setUnit(unit);
         ingredient.setDescription(description);
-        ingredient.setInitialStock(initialStock);
+        ingredient.setStock(initialStock);
         ingredient.setAlertThreshold(alertThreshold);
         ingredient.setRecommendedOrderQty(recommendedOrderQty);
         ingredient.setShelfLifeDays(shelfLifeDays);
@@ -102,7 +102,7 @@ public class IngredientServiceImpl implements IngredientServiceItf {
             photoUrl = "http://localhost:8080" + photoUrl;
         }
         dto.setPhotoUrl(photoUrl);
-        dto.setInitialStock(ing.getInitialStock());
+        dto.setInitialStock(ing.getStock());
         dto.setAlertThreshold(ing.getAlertThreshold());
         dto.setRecommendedOrderQty(ing.getRecommendedOrderQty());
         dto.setShelfLifeDays(ing.getShelfLifeDays());
