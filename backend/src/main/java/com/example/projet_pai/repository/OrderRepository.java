@@ -16,4 +16,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     @Query("SELECT o FROM Order o WHERE o.table = :table AND o.status != 'servi' ORDER BY o.orderTime DESC")
     List<Order> findCurrentOrdersByTable(Table table);
+
+    @Query("SELECT o FROM Order o WHERE o.status = 'en_attente' OR o.status = 'en_preparation' OR o.status = 'prête'")
+    List<Order> findOrdersToPrepare();
 }
