@@ -20,7 +20,7 @@
         <input v-model="item.unite" required placeholder="Unité" style="width: 80px;" />
         <button type="button" @click="removeIngredient(idx)">Supprimer</button>
       </div>
-      <button type="button" @click="addIngredient">Ajouter un ingrédient</button>
+      <button type="button" class="add-btn" @click="addIngredient">Ajouter un ingrédient</button>
     </div>
     <button type="submit">{{ recipe ? 'Modifier' : 'Créer' }} la recette</button>
     <button type="button" @click="$emit('cancel')">Annuler</button>
@@ -74,7 +74,78 @@ function submit() {
 }
 </script>
 
-// Ce composant est un formulaire utilisé pour ajouter ou modifier une recette.
-// Rôle :
-// - Permettre au cuisinier de saisir les informations d'une recette (nom, ingrédients, étapes).
-// - Valider les données saisies avant de les envoyer au backend.
+<style scoped>
+form {
+  margin-top: 24px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 24px 18px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+label {
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 6px;
+  display: block;
+}
+input, select {
+  margin: 6px 8px 12px 0;
+  padding: 7px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+  font-size: 1em;
+}
+input[type="number"] {
+  width: 90px;
+}
+button[type="button"] {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  margin-left: 8px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button[type="button"]:hover {
+  background: #c0392b;
+}
+button[type="submit"] {
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  margin-top: 12px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button[type="submit"]:hover {
+  background: #219150;
+}
+button[type="button"].add-btn {
+  background: #3498db;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-left: 0;
+}
+button[type="button"].add-btn:hover {
+  background: #2980b9;
+}
+.edit-btn {
+  background: #f39c12;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.edit-btn:hover {
+  background: #e67e22;
+}
+</style>
+

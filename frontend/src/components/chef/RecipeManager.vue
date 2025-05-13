@@ -8,7 +8,7 @@
         @edit="openEditForm"
         @delete="deleteRecipe"
       />
-      <button @click="showCreateForm = true">Ajouter une recette</button>
+      <button v-if="!showCreateForm && !editingRecipe" @click="showCreateForm = true">Ajouter une recette</button>
       <RecipeForm
         v-if="showCreateForm || editingRecipe"
         :ingredients="ingredients"
@@ -68,3 +68,33 @@ async function deleteRecipe(id) {
   await fetchRecipes()
 }
 </script>
+
+<style scoped>
+.recipe-manager {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+.recipe-manager h3 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #2c3e50;
+}
+button {
+  margin: 8px 4px 0 0;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #3498db;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #217dbb;
+}
+</style>
