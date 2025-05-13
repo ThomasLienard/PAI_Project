@@ -147,42 +147,6 @@ class ServerOrderControllerTest {
         verify(serverOrderService, times(1)).getCurrentOrdersByTable(tableId);
     }
 
-    @Test
-    void testUpdateOrderStatus_Success() {
-        // Configuration des mocks
-        Long orderId = 1L;
-        String newStatus = "pret";
-        Map<String, String> statusUpdate = Map.of("status", newStatus);
-        
-        when(serverOrderService.updateOrderStatus(orderId, newStatus)).thenReturn(mockOrderDTO);
-
-        // Exécution du test
-        ResponseEntity<OrderDTO> response = serverOrderController.updateOrderStatus(orderId, statusUpdate);
-
-        // Vérification des résultats
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-
-        // Vérification que le service a été appelé
-        verify(serverOrderService, times(1)).updateOrderStatus(orderId, newStatus);
-    }
-
-    @Test
-    void testUpdateOrderStatus_InvalidStatus() {
-        // Configuration des mocks
-        Long orderId = 1L;
-        Map<String, String> statusUpdate = Collections.emptyMap(); // Statut manquant
-        
-        // Exécution du test
-        ResponseEntity<OrderDTO> response = serverOrderController.updateOrderStatus(orderId, statusUpdate);
-
-        // Vérification des résultats
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody());
-
-        // Vérification que le service n'a pas été appelé
-        verify(serverOrderService, never()).updateOrderStatus(anyLong(), anyString());
-    }
 
     @Test
     void testCancelOrder_Success() {

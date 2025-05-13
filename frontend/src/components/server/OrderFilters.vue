@@ -19,7 +19,7 @@
         <option value="">Tous</option>
         <option value="en_attente">En attente</option>
         <option value="en_preparation">En préparation</option>
-        <option value="prete">Prête</option>
+        <option value="prête">Prête</option>
         <option value="servie">Servie</option>
       </select>
     </label>

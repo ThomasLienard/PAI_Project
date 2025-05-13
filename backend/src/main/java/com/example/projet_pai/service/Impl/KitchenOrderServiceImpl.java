@@ -51,7 +51,7 @@ public class KitchenOrderServiceImpl implements KitchenOrderServiceItf {
     public void markOrderCompleted(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande non trouvée: " + orderId));
-        order.setStatus("terminée");
+        order.setStatus("servie");
         orderRepository.save(order);
     }
 }

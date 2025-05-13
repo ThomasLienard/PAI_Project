@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/server/orders")
-@PreAuthorize("hasRole('SERVEUR')")
 public class ServerOrderController {
 
     @Autowired
@@ -47,24 +46,6 @@ public class ServerOrderController {
         try {
             List<OrderDTO> orders = serverOrderService.getCurrentOrdersByTable(tableId);
             return ResponseEntity.ok(orders);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PatchMapping("/{orderId}/status")
-    public ResponseEntity<OrderDTO> updateOrderStatus(
-            @PathVariable Long orderId, 
-            @RequestBody Map<String, String> statusUpdate) {
-        try {
-            String newStatus = statusUpdate.get("status");
-            if (newStatus == null) {
-                return ResponseEntity.badRequest().build();
-            }
-            
-            OrderDTO updatedOrder = serverOrderService.updateOrderStatus(orderId, newStatus);
-            return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
