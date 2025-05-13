@@ -37,6 +37,12 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private IngredientCategoryRepository ingredientCategoryRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
     @Override
     public void run(String... args) throws Exception {
         // Créer les rôles s'ils n'existent pas
@@ -105,6 +111,15 @@ public class DataInitializer implements CommandLineRunner {
                 18.0, "http://localhost:8080/images/steak-frites.png", plats, Set.of(sansGluten));
         createDishIfNotFound("Tarte aux pommes", "Une tarte maison avec des pommes fraîches.",
                 6.0, "http://localhost:8080/images/tarte-aux-pommes.png", desserts, Set.of(vegan, sansGluten));
+
+        // Créer 2 catégories d'ingrédients si elles n'existent pas
+        IngredientCategory legumes = createIngredientCategoryIfNotFound("Légumes", "http://localhost:8080/images/category-icons/legumes.png");
+        IngredientCategory viandes = createIngredientCategoryIfNotFound("Viandes", "http://localhost:8080/images/category-icons/viandes.png");
+
+        // Créer 4 ingrédients si ils n'existent pas
+        createIngredientIfNotFound("Tomate", "Tomate fraîche", "kg", "http://localhost:8080/images/ingredient-photos/tomate.jpg", legumes, 50.0, 10.0, 20.0, 7);
+        createIngredientIfNotFound("Carotte", "Carotte bio", "kg", "http://localhost:8080/images/ingredient-photos/carotte.jpg", legumes, 30.0, 5.0, 10.0, 10);
+        createIngredientIfNotFound("Poulet", "Blanc de poulet", "kg", "http://localhost:8080/images/ingredient-photos/poulet.jpg", viandes, 20.0, 5.0, 10.0, 5);   
     }
 
     private void createRoleIfNotFound(String roleName) {
@@ -156,6 +171,34 @@ public class DataInitializer implements CommandLineRunner {
             dish.setCategory(category);
             dish.setTags(tags);
             dishRepository.save(dish);
+        }
+    }
+
+    private IngredientCategory createIngredientCategoryIfNotFound(String name, String iconPath) {
+        return ingredientCategoryRepository.findByName(name)
+                .orElseGet(() -> {
+                    IngredientCategory cat = new IngredientCategory();
+                    cat.setName(name);
+                    cat.setIcon(iconPath);
+                    return ingredientCategoryRepository.save(cat);
+                });
+    }
+
+    private void createIngredientIfNotFound(String name, String description, String unit, String photoUrl,
+                                        IngredientCategory category, Double initialStock, Double alertThreshold,
+                                        Double recommendedOrderQty, Integer shelfLifeDays) {
+        if (!ingredientRepository.findByName(name).isPresent()) {
+            Ingredient ing = new Ingredient();
+            ing.setName(name);
+            ing.setDescription(description);
+            ing.setUnit(unit);
+            ing.setPhotoUrl(photoUrl);
+            ing.setCategory(category);
+            ing.setInitialStock(initialStock);
+            ing.setAlertThreshold(alertThreshold);
+            ing.setRecommendedOrderQty(recommendedOrderQty);
+            ing.setShelfLifeDays(shelfLifeDays);
+            ingredientRepository.save(ing);
         }
     }
 }

@@ -93,4 +93,52 @@ export const getTotalTables = async () => {
   }
 };
 
+// Catégories
+export const getAllCategories = async () => {
+  const response = await apiClient.get('/admin/stocks/categories');
+  return response.data;
+};
+
+export const createCategory = async (formData) => {
+  const response = await apiClient.post('/admin/stocks/categories', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const deleteCategory = async (id) => {
+  await apiClient.delete(`/admin/stocks/categories/${id}`);
+};
+
+export const updateCategory = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/categories/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+// Ingrédients
+export const getAllIngredients = async () => {
+  const response = await apiClient.get('/admin/stocks/ingredients');
+  return response.data;
+};
+
+export const createIngredient = async (formData) => {
+  const response = await apiClient.post('/admin/stocks/ingredients', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const deleteIngredient = async (id) => {
+  await apiClient.delete(`/admin/stocks/ingredients/${id}`);
+};
+
+export const updateIngredient = async (id, formData) => {
+  const response = await apiClient.put(`/admin/stocks/ingredients/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
 export default apiClient;
