@@ -149,6 +149,15 @@ public class DataInitializer implements CommandLineRunner {
 
             recipeRepository.save(recetteCesar);
         }
+
+        // Lier la recette à un plat existant
+        Optional<Recipe> recetteCesarOpt = recipeRepository.findByName("Recette Salade César");
+        Optional<Dish> saladeCesarOpt = dishRepository.findByName("Salade César");
+        if (recetteCesarOpt.isPresent() && saladeCesarOpt.isPresent()) {
+            Dish saladeCesar = saladeCesarOpt.get();
+            saladeCesar.setRecipe(recetteCesarOpt.get());
+            dishRepository.save(saladeCesar);
+        }
     }
 
     private void createRoleIfNotFound(String roleName) {
