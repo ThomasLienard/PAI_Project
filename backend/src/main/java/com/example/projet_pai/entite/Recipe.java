@@ -21,13 +21,7 @@ public class Recipe {
     @Column
     private int quantite;
 
-    @ManyToMany
-    @JoinTable(
-        name = "recipe_ingredients",
-        joinColumns = @JoinColumn(name = "recipe_id"),
-        inverseJoinColumns = @JoinColumn(name = "ingredient_id")
-    )
-    private List<Ingredient> ingredients = new ArrayList<>();
+// Removed the @ManyToMany relationship and the ingredients field to eliminate redundancy.
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
