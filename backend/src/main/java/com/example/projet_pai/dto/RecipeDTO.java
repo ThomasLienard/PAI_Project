@@ -1,17 +1,19 @@
 package com.example.projet_pai.dto;
 
+import com.example.projet_pai.entite.Ingredient;
+
 public class RecipeDTO {
 
     private Long id;
     private String unite;
     private int quantite;
-    private String ingredient;
+    private Ingredient ingredient;
 
     // Constructeurs
     public RecipeDTO() {
     }
 
-    public RecipeDTO(Long id, String unite, int quantite, String ingredient) {
+    public RecipeDTO(Long id, String unite, int quantite, Ingredient ingredient) {
         this.id = id;
         this.unite = unite;
         this.quantite = quantite;
@@ -43,11 +45,11 @@ public class RecipeDTO {
         this.quantite = quantite;
     }
 
-    public String getIngredient() {
+    public Ingredient getIngredient() {
         return ingredient;
     }
 
-    public void setIngredient(String ingredient) {
+    public void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient;
     }
 }

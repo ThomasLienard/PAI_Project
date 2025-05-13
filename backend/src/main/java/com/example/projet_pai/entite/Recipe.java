@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Recipe {
@@ -23,13 +25,14 @@ public class Recipe {
     @Column
     private int quantite;
 
-    @Column
-    private String ingredient;
+    @ManyToOne
+    @JoinColumn(name = "ingredient_id")
+    private Ingredient ingredient;
 
     public Recipe() {
     }
 
-    public Recipe(String unite, int quantite, String ingredient) {
+    public Recipe(String unite, int quantite, Ingredient ingredient) {
         this.unite = unite;
         this.quantite = quantite;
         this.ingredient = ingredient;
@@ -55,11 +58,11 @@ public class Recipe {
         this.quantite = quantite;
     }
 
-    public String getIngredient() {
+    public Ingredient getIngredient() {
         return ingredient;
     }
 
-    public void setIngredient(String ingredient) {
+    public void setIngredient(Ingredient ingredient) {
         this.ingredient = ingredient;
     }
 
