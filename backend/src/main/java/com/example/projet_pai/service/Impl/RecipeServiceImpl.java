@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.projet_pai.dto.RecipeDTO;
 import com.example.projet_pai.entite.Recipe;
+import org.springframework.stereotype.Service;
 import com.example.projet_pai.repository.RecipeRepository;
 import com.example.projet_pai.service.RecipeServiceItf;
 
+@Service 
 public class RecipeServiceImpl implements RecipeServiceItf {
 
 
