@@ -8,5 +8,5 @@ public interface SupplierProductServiceItf {
     SupplierProductDTO updateProduct(Long id, SupplierProductDTO dto);
     List<SupplierProductDTO> getProductsBySupplier(Long supplierId);
     List<SupplierProductDTO> searchProducts(String name, String category);
-    List<SupplierProductDTO> getAlternatives(Long productId);
+    void deleteProduct(Long productId);
 }

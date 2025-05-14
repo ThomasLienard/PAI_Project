@@ -8,18 +8,13 @@ public class SupplierProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String reference;
     private String name;
     private String category;
     private double price;
-    private String packaging;
     private int usualDeliveryTime; // jours
 
     @ManyToOne
     private Supplier supplier;
-
-    @ManyToOne
-    private SupplierProduct alternativeTo; // produit alternatif (optionnel)
 
     public Long getId() {
         return id;
@@ -27,14 +22,6 @@ public class SupplierProduct {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
     }
 
     public String getName() {
@@ -61,14 +48,6 @@ public class SupplierProduct {
         this.price = price;
     }
 
-    public String getPackaging() {
-        return packaging;
-    }
-
-    public void setPackaging(String packaging) {
-        this.packaging = packaging;
-    }
-
     public int getUsualDeliveryTime() {
         return usualDeliveryTime;
     }
@@ -84,15 +63,5 @@ public class SupplierProduct {
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
-
-    public SupplierProduct getAlternativeTo() {
-        return alternativeTo;
-    }
-
-    public void setAlternativeTo(SupplierProduct alternativeTo) {
-        this.alternativeTo = alternativeTo;
-    }
-
-    // Getters et setters
     
 }
