@@ -3,6 +3,8 @@ package com.example.projet_pai.entite;
 import jakarta.persistence.*;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Tag {
 
@@ -15,6 +17,7 @@ public class Tag {
     private String icon; // URL ou nom de l'icône associée au tag (optionnel)
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnore
     private Set<Dish> dishes; // Plats associés à ce tag
 
     // Getters et setters

@@ -3,6 +3,8 @@ package com.example.projet_pai.entite;
 import jakarta.persistence.*;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Category {
 
@@ -13,6 +15,7 @@ public class Category {
     private String name; // Nom de la catégorie (ex. : Entrées, Plats, Desserts)
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Dish> dishes; // Liste des plats associés à cette catégorie
 
     // Getters et setters

@@ -14,7 +14,7 @@
           <!-- Ajout de la photo du plat -->
           <img
             v-if="item.imageUrl"
-            :src="item.imageUrl"
+            :src="getImageUrl(item.imageUrl)"
             alt="photo du plat"
             style="width: 48px; height: 48px; object-fit: cover; margin-right: 12px; border-radius: 6px;"
           />
@@ -99,7 +99,13 @@ export default {
     const formatPrice = (price) => {
       return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
     };
-    
+
+    // Fonction utilitaire pour l'image
+    const getImageUrl = (url) => {
+      if (!url) return ''
+      return url.startsWith('http') ? url : `http://localhost:8080${url}`
+    };
+
     const increaseQuantity = (itemId) => {
       emit('increase-quantity', itemId);
     };
@@ -121,7 +127,8 @@ export default {
       increaseQuantity,
       decreaseQuantity,
       removeItem,
-      addInstructions
+      addInstructions,
+      getImageUrl
     };
   }
 }
