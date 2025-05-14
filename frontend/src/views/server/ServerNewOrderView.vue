@@ -45,7 +45,7 @@
             >
               <img
                 v-if="item.imageUrl"
-                :src="item.imageUrl"
+                :src="getImageUrl(item.imageUrl)"
                 alt="photo du plat"
                 style="width: 60px; height: 60px; object-fit: cover; margin-right: 12px; border-radius: 6px;"
               />
@@ -266,6 +266,11 @@ export default {
       loadMenu();
     });
 
+    function getImageUrl(url) {
+      if (!url) return ''
+      return url.startsWith('http') ? url : `http://localhost:8080${url}`
+    }
+
     return {
       selectedTable,
       showTableSelection,
@@ -291,7 +296,8 @@ export default {
       saveInstructions,
       confirmCancel,
       confirmOrder,
-      handleConfirmation
+      handleConfirmation,
+      getImageUrl
     };
   }
 }

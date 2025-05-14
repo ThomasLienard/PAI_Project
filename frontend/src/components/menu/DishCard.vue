@@ -1,6 +1,6 @@
 <template>
   <div class="dish-card">
-    <img :src="dish.imageUrl" alt="Image du plat" v-if="dish.imageUrl" />
+    <img :src="getImageUrl(dish.imageUrl)" alt="Image du plat" v-if="dish.imageUrl" />
     <h3>{{ dish.name }}</h3>
     <p>{{ dish.description }}</p>
     <p class="price">{{ dish.price.toFixed(2) }} €</p>
@@ -20,6 +20,11 @@ defineProps({
     required: true
   }
 })
+
+function getImageUrl(url) {
+  if (!url) return ''
+  return url.startsWith('http') ? url : `http://localhost:8080${url}`
+}
 </script>
 
 <style scoped>
