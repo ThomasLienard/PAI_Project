@@ -16,7 +16,7 @@
         <td>
           <img
             v-if="dish.imageUrl"
-            :src="dish.imageUrl"
+            :src="getImageUrl(dish.imageUrl)"
             alt="photo"
             style="max-width: 80px; max-height: 80px; object-fit: cover;"
           />
@@ -41,6 +41,11 @@
 const props = defineProps({
   dishes: { type: Array, default: () => [] }
 })
+
+function getImageUrl(url) {
+  if (!url) return ''
+  return url.startsWith('http') ? url : `http://localhost:8080${url}`
+}
 </script>
 
 <style scoped>

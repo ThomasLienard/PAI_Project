@@ -110,7 +110,7 @@ public class DishServiceImpl implements DishServiceItf {
             String filename = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
             Path filePath = Paths.get(dishUploadDir, filename);
             Files.write(filePath, photo.getBytes());
-            return "/images/dishes/" + filename;
+            return "/images/dish-photos/" + filename;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de la photo", e);
         }
