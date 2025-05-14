@@ -1,100 +1,112 @@
 <template>
   <div>
     <NavBar />
-    <h1>Gestion des menus</h1>
-    <form @submit.prevent="saveDish">
-      <input v-model="currentDish.name" placeholder="Nom du plat" required />
-      <input v-model="currentDish.price" type="number" placeholder="Prix" required />
-      <input v-model="currentDish.allergens" placeholder="Allergènes" />
-      <select v-model="currentDish.category" required>
-        <option value="entrée">Entrée</option>
-        <option value="plat">Plat</option>
-        <option value="dessert">Dessert</option>
-        <option value="boisson">Boisson</option>
-      </select>
-      <input v-model="currentDish.stock" type="number" placeholder="Stock" required />
-      <button type="submit">{{ isEditing ? 'Modifier' : 'Ajouter' }} le plat</button>
-    </form>
-    <ul>
-      <li v-for="dish in dishes" :key="dish.id">
-        {{ dish.name }} - {{ dish.price }}€ - {{ dish.category }} - Stock: {{ dish.stock }}
-        <button @click="editDish(dish)">Modifier</button>
-        <button @click="deleteDish(dish.id)">Supprimer</button>
-      </li>
-    </ul>
+    <h1>Gestion des plats</h1>
+    <DishForm
+      v-if="showForm"
+      :dish="currentDish"
+      :categories="categories"
+      :tags="tags"
+      :isEdit="isEditing"
+      @submit="saveDish"
+      @cancel="closeForm"
+    />
+    <button v-if="!showForm" @click="openAddForm">Ajouter un plat</button>
+    <DishList
+      :dishes="dishes"
+      @edit="editDish"
+      @delete="deleteDish"
+    />
   </div>
 </template>
 
-<script setup >
-import { ref } from 'vue'
-import axios from 'axios'
+<script setup>
+import { ref, onMounted } from 'vue'
 import NavBar from '../../components/NavBar.vue';
+import DishForm from '../../components/admin/DishForm.vue'
+import DishList from '../../components/admin/DishList.vue'
+import apiClient, { getAllCategories } from '../../services/apiClient'
 
 const dishes = ref([])
-const currentDish = ref({ id: null, name: '', price: 0, allergens: '', category: 'entrée', stock: 0 })
+const categories = ref([])
+const tags = ref([])
+const showForm = ref(false)
 const isEditing = ref(false)
+const currentDish = ref({
+  id: null,
+  name: '',
+  description: '',
+  price: 0,
+  imageUrl: '',
+  categoryId: null,
+  tagIds: []
+})
 
-const fetchDishes = async () => {
-  const response = await axios.get('/api/menus')
-  dishes.value = response.data
+async function fetchDishes() {
+  const res = await apiClient.get('/admin/dishes')
+  dishes.value = res.data
 }
-
-const saveDish = async () => {
-  if (isEditing.value) {
-    await axios.put(`/api/menus/${currentDish.value.id}`, currentDish.value)
-  } else {
-    const response = await axios.post('/api/menus', currentDish.value)
-    dishes.value.push(response.data)
+async function fetchCategories() {
+  const res = await apiClient.get('/admin/dishes/categories')
+  categories.value = res.data
+}
+async function fetchTags() {
+  try {
+    const res = await apiClient.get('/tags')
+    tags.value = res.data
+  } catch (e) {
+    tags.value = []
+    console.error('Erreur lors du chargement des tags :', e)
   }
-  resetForm()
-  fetchDishes()
 }
 
-const editDish = (dish) => {
-  currentDish.value = { ...dish }
-  isEditing.value = true
-}
-
-const deleteDish = async (id) => {
-  await axios.delete(`/api/menus/${id}`)
-  fetchDishes()
-}
-
-const resetForm = () => {
-  currentDish.value = { id: null, name: '', price: 0, allergens: '', category: 'entrée', stock: 0 }
+function openAddForm() {
   isEditing.value = false
+  currentDish.value = {
+    id: null,
+    name: '',
+    description: '',
+    price: 0,
+    imageUrl: '',
+    categoryId: null,
+    tagIds: []
+  }
+  showForm.value = true
 }
 
-fetchDishes()
+function closeForm() {
+  showForm.value = false
+}
+
+function editDish(dish) {
+  isEditing.value = true
+  currentDish.value = { ...dish }
+  showForm.value = true
+}
+
+async function saveDish(dish, photo) {
+  const formData = new FormData()
+  formData.append('dish', new Blob([JSON.stringify(dish)], { type: 'application/json' }))
+  if (photo) formData.append('photo', photo)
+  if (isEditing.value) {
+    await apiClient.put(`/admin/dishes/${dish.id}`, formData)
+  } else {
+    await apiClient.post('/admin/dishes', formData)
+  }
+  await fetchDishes()
+  closeForm()
+}
+
+async function deleteDish(id) {
+  if (confirm('Supprimer ce plat ?')) {
+    await apiClient.delete(`/admin/dishes/${id}`)
+    await fetchDishes()
+  }
+}
+
+onMounted(() => {
+  fetchDishes()
+  fetchCategories()
+  fetchTags()
+})
 </script>
-
-<style scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-input, select, button {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #ccc;
-}
-
-button {
-  margin-left: 1rem;
-}
-</style>

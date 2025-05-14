@@ -1,5 +1,7 @@
 package com.example.projet_pai.dto;
 
+import com.example.projet_pai.entite.Tag;
+
 public class TagDTO {
     private Long id;
     private String name; // Nom du tag
@@ -28,5 +30,14 @@ public class TagDTO {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+    public static TagDTO fromEntity(Tag tag) {
+        if (tag == null) {
+            return null;
+        }
+        TagDTO dto = new TagDTO();
+        dto.setId(tag.getId());
+        dto.setName(tag.getName());
+        return dto;
     }
 }
