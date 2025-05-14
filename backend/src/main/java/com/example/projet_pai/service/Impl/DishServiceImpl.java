@@ -38,40 +38,31 @@ public class DishServiceImpl implements DishServiceItf {
 
     @Override
     public void addDish(DishCreateUpdateDTO dto, MultipartFile photo) {
-        System.out.println("=== [addDish] DTO reçu ===");
-        System.out.println("Nom: " + dto.getName());
-        System.out.println("Description: " + dto.getDescription());
-        System.out.println("Prix: " + dto.getPrice());
-        System.out.println("CategoryId: " + dto.getCategoryId());
-        System.out.println("TagIds: " + dto.getTagIds());
-        System.out.println("Photo: " + (photo != null ? photo.getOriginalFilename() : "Aucune"));
-
         Dish dish = new Dish();
         dish.setName(dto.getName());
         dish.setDescription(dto.getDescription());
         dish.setPrice(dto.getPrice());
 
+        // Gestion obligatoire de la catégorie
         if (dto.getCategoryId() == null) {
-            System.out.println("!!! ERREUR: categoryId est null !!!");
+            throw new RuntimeException("Une catégorie est obligatoire pour le plat.");
         }
-        dish.setCategory(categoryRepository.findById(dto.getCategoryId()).orElseThrow(() -> {
-            System.out.println("!!! ERREUR: Catégorie introuvable pour id=" + dto.getCategoryId());
-            return new RuntimeException("Catégorie introuvable");
-        }));
+        dish.setCategory(categoryRepository.findById(dto.getCategoryId())
+            .orElseThrow(() -> new RuntimeException("Catégorie introuvable")));
 
+        // Les tags peuvent être vides
         if (dto.getTagIds() == null) {
-            System.out.println("!!! ERREUR: tagIds est null !!!");
+            dish.setTags(new java.util.HashSet<>());
+        } else {
+            dish.setTags(tagRepository.findAllById(dto.getTagIds()).stream().collect(Collectors.toSet()));
         }
-        dish.setTags(tagRepository.findAllById(dto.getTagIds()).stream().collect(Collectors.toSet()));
 
         if (photo != null && !photo.isEmpty()) {
             String url = savePhoto(photo);
             dish.setImageUrl(url);
-            System.out.println("Photo enregistrée à: " + url);
         }
 
         dishRepository.save(dish);
-        System.out.println("=== [addDish] Plat enregistré avec succès ===");
     }
 
     @Override
