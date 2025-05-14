@@ -15,13 +15,11 @@
         <router-link to="/admin/statistics">
           <button>Gestion des statistiques</button>
         </router-link>
-
         <router-link to="/admin/suppliers">
           <button>Gestion des fournisseurs</button>
-
+        </router-link>
         <router-link to="/admin/stocks">
           <button>Gestion des stocks</button>
-
         </router-link>
       </div>
   </div>

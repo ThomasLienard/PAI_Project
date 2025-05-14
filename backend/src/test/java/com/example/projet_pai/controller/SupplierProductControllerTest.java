@@ -32,7 +32,7 @@ public class SupplierProductControllerTest {
         dto.name = "Produit Test";
         when(productService.addProduct(any())).thenReturn(dto);
 
-        SupplierProductDTO result = controller.addProduct(dto);
+        SupplierProductDTO result = controller.addProduct(1L, dto); // Ajout du supplierId
 
         assertNotNull(result);
         assertEquals("Produit Test", result.name);
@@ -46,7 +46,7 @@ public class SupplierProductControllerTest {
         dto.name = "Produit Modifié";
         when(productService.updateProduct(eq(1L), any())).thenReturn(dto);
 
-        SupplierProductDTO result = controller.updateProduct(1L, dto);
+        SupplierProductDTO result = controller.updateProduct(1L, 1L, dto);
 
         assertNotNull(result);
         assertEquals("Produit Modifié", result.name);
@@ -65,24 +65,10 @@ public class SupplierProductControllerTest {
     }
 
     @Test
-    void testSearchProducts() {
-        when(productService.searchProducts(any(), any())).thenReturn(Collections.emptyList());
-
-        List<SupplierProductDTO> result = controller.searchProducts("name", "cat");
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(productService).searchProducts("name", "cat");
+    void testDeleteProduct() {
+        // Pas de retour attendu pour la suppression
+        controller.deleteProduct(1L, 2L);
+        verify(productService).deleteProduct(2L);
     }
 
-    @Test
-    void testGetAlternatives() {
-        when(productService.getAlternatives(1L)).thenReturn(Collections.emptyList());
-
-        List<SupplierProductDTO> result = controller.getAlternatives(1L);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(productService).getAlternatives(1L);
-    }
 }

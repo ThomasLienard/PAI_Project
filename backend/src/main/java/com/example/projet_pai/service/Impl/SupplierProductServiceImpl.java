@@ -23,33 +23,25 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
     private SupplierProductDTO toDTO(SupplierProduct p) {
         SupplierProductDTO dto = new SupplierProductDTO();
         dto.id = p.getId();
-        dto.reference = p.getReference();
         dto.name = p.getName();
         dto.category = p.getCategory();
         dto.price = p.getPrice();
-        dto.packaging = p.getPackaging();
         dto.usualDeliveryTime = p.getUsualDeliveryTime();
         dto.supplierId = p.getSupplier() != null ? p.getSupplier().getId() : null;
-        dto.alternativeToId = p.getAlternativeTo() != null ? p.getAlternativeTo().getId() : null;
+        // Les champs reference, packaging, alternativeToId ne sont plus utilisés
         return dto;
     }
 
     private SupplierProduct toEntity(SupplierProductDTO dto) {
         SupplierProduct p = new SupplierProduct();
         p.setId(dto.id);
-        p.setReference(dto.reference);
         p.setName(dto.name);
         p.setCategory(dto.category);
         p.setPrice(dto.price);
-        p.setPackaging(dto.packaging);
         p.setUsualDeliveryTime(dto.usualDeliveryTime);
         if (dto.supplierId != null) {
             Supplier supplier = supplierRepository.findById(dto.supplierId).orElseThrow();
             p.setSupplier(supplier);
-        }
-        if (dto.alternativeToId != null) {
-            SupplierProduct alt = productRepository.findById(dto.alternativeToId).orElse(null);
-            p.setAlternativeTo(alt);
         }
         return p;
     }
@@ -63,16 +55,11 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
     @Override
     public SupplierProductDTO updateProduct(Long id, SupplierProductDTO dto) {
         SupplierProduct p = productRepository.findById(id).orElseThrow();
-        p.setReference(dto.reference);
         p.setName(dto.name);
         p.setCategory(dto.category);
         p.setPrice(dto.price);
-        p.setPackaging(dto.packaging);
         p.setUsualDeliveryTime(dto.usualDeliveryTime);
-        if (dto.alternativeToId != null) {
-            SupplierProduct alt = productRepository.findById(dto.alternativeToId).orElse(null);
-            p.setAlternativeTo(alt);
-        }
+        // Pas de gestion de reference, packaging, alternativeTo
         return toDTO(productRepository.save(p));
     }
 
@@ -92,10 +79,11 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
     }
 
     @Override
-    public List<SupplierProductDTO> getAlternatives(Long productId) {
-        return productRepository.findAll().stream()
-                .filter(p -> p.getAlternativeTo() != null && p.getAlternativeTo().getId().equals(productId))
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public void deleteProduct(Long productId) {
+        SupplierProduct product = productRepository.findById(productId).orElseThrow();
+        if (product.getSupplier() != null) {
+            product.getSupplier().getProducts().remove(product);
+        }
+        productRepository.delete(product);
     }
 }

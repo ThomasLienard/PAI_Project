@@ -8,37 +8,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/supplier-products")
+@RequestMapping("/api/admin/suppliers/{supplierId}/products")
 public class SupplierProductController {
 
     @Autowired
     private SupplierProductServiceItf productService;
 
-    @PostMapping
-    public SupplierProductDTO addProduct(@RequestBody SupplierProductDTO dto) {
-        return productService.addProduct(dto);
-    }
-
-    @PutMapping("/{id}")
-    public SupplierProductDTO updateProduct(@PathVariable Long id, @RequestBody SupplierProductDTO dto) {
-        return productService.updateProduct(id, dto);
-    }
-
-    @GetMapping("/supplier/{supplierId}")
+    // Liste des produits d'un fournisseur
+    @GetMapping
     public List<SupplierProductDTO> getProductsBySupplier(@PathVariable Long supplierId) {
         return productService.getProductsBySupplier(supplierId);
     }
 
-    @GetMapping("/search")
-    public List<SupplierProductDTO> searchProducts(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String category
-    ) {
-        return productService.searchProducts(name, category);
+    // Ajout d'un produit au catalogue du fournisseur
+    @PostMapping
+    public SupplierProductDTO addProduct(@PathVariable Long supplierId, @RequestBody SupplierProductDTO dto) {
+        dto.setSupplierId(supplierId);
+        return productService.addProduct(dto);
     }
 
-    @GetMapping("/{productId}/alternatives")
-    public List<SupplierProductDTO> getAlternatives(@PathVariable Long productId) {
-        return productService.getAlternatives(productId);
+    // Modification d'un produit du catalogue du fournisseur
+    @PutMapping("/{productId}")
+    public SupplierProductDTO updateProduct(@PathVariable Long supplierId, @PathVariable Long productId, @RequestBody SupplierProductDTO dto) {
+        dto.setSupplierId(supplierId);
+        dto.setId(productId);
+        return productService.updateProduct(productId, dto);
+    }
+
+    // Suppression d'un produit du catalogue du fournisseur
+    @DeleteMapping("/{productId}")
+    public void deleteProduct(@PathVariable Long supplierId, @PathVariable Long productId) {
+        productService.deleteProduct(productId);
     }
 }

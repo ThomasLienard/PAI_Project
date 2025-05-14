@@ -114,10 +114,50 @@
       <!-- Modal Catalogue -->
       <div v-if="showCatalogModal" class="modal">
         <div class="modal-content">
-          <h2>Catalogue de {{ selectedSupplier?.name }}</h2>
-          <div class="products-grid">
-            <!-- Liste des produits -->
+          <h2>Catalogue de {{ catalogSupplier?.name }}</h2>
+          <button class="btn-secondary" @click="closeCatalogModal">Fermer</button>
+          <div v-if="productErrorMsg" class="error-msg">{{ productErrorMsg }}</div>
+          <div>
+            <h3>Ajouter / Modifier un produit</h3>
+            <form @submit.prevent="saveProduct" class="product-form">
+              <div>
+                <label>Nom du produit : </label>
+                <input v-model="productForm.name" placeholder="Nom du produit" required />
+              </div>
+              <div>
+                <label>Prix (€) : </label>
+                <input v-model.number="productForm.price" type="number" step="0.01" placeholder="Prix (€)" required />
+              </div>
+              <div>
+                <label>Délai livraison (jours) : </label>
+                <input v-model.number="productForm.usualDeliveryTime" type="number" placeholder="Délai livraison (jours)" required />
+              </div>
+              <button type="submit" class="btn-primary">{{ isEditingProduct ? 'Modifier' : 'Ajouter' }}</button>
+              <button type="button" class="btn-secondary" @click="openAddProduct">Réinitialiser</button>
+            </form>
           </div>
+          <h3>Produits</h3>
+          <table class="catalog-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prix (€)</th>
+                <th>Délai livraison (j)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product in catalogProducts" :key="product.id">
+                <td>{{ product.name }}</td>
+                <td>{{ product.price.toFixed(2) }}</td>
+                <td>{{ product.usualDeliveryTime }}</td>
+                <td>
+                  <button class="btn-secondary" @click="openEditProduct(product)">Modifier</button>
+                  <button class="btn-warning" @click="deleteProduct(product.id)">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -167,6 +207,16 @@ const filterCriteria = ref('name')
 const isEditing = ref(false)
 const showForm = ref(false)
 const showCatalogModal = ref(false)
+const catalogProducts = ref([])
+const catalogSupplier = ref(null)
+const productForm = ref({
+  id: null,
+  name: '',
+  price: 0,
+  usualDeliveryTime: 0
+})
+const isEditingProduct = ref(false)
+const productErrorMsg = ref('')
 const showOrdersModal = ref(false)
 const selectedSupplier = ref(null)
 const errorMsg = ref('')
@@ -268,9 +318,64 @@ const editSupplier = (supplier) => {
   showForm.value = true
 }
 
-const viewProducts = (supplier) => {
-  selectedSupplier.value = supplier
+const viewProducts = async (supplier) => {
+  catalogSupplier.value = supplier
   showCatalogModal.value = true
+  await fetchCatalog(supplier.id)
+}
+
+const fetchCatalog = async (supplierId) => {
+  try {
+    const res = await apiClient.get(`/admin/suppliers/${supplierId}/products`)
+    catalogProducts.value = res.data
+  } catch (error) {
+    productErrorMsg.value = "Erreur lors du chargement du catalogue"
+  }
+}
+
+const openAddProduct = () => {
+  productForm.value = {
+    id: null,
+    name: '',
+    price: 0,
+    usualDeliveryTime: 0
+  }
+  isEditingProduct.value = false
+}
+
+const openEditProduct = (product) => {
+  productForm.value = { ...product }
+  isEditingProduct.value = true
+}
+
+const saveProduct = async () => {
+  try {
+    if (isEditingProduct.value) {
+      await apiClient.put(`/admin/suppliers/${catalogSupplier.value.id}/products/${productForm.value.id}`, productForm.value)
+    } else {
+      await apiClient.post(`/admin/suppliers/${catalogSupplier.value.id}/products`, productForm.value)
+    }
+    await fetchCatalog(catalogSupplier.value.id)
+    openAddProduct()
+  } catch (error) {
+    productErrorMsg.value = "Erreur lors de l'enregistrement du produit"
+  }
+}
+
+const deleteProduct = async (productId) => {
+  try {
+    await apiClient.delete(`/admin/suppliers/${catalogSupplier.value.id}/products/${productId}`)
+    await fetchCatalog(catalogSupplier.value.id)
+  } catch (error) {
+    productErrorMsg.value = "Erreur lors de la suppression du produit"
+  }
+}
+
+const closeCatalogModal = () => {
+  showCatalogModal.value = false
+  catalogProducts.value = []
+  catalogSupplier.value = null
+  productErrorMsg.value = ''
 }
 
 const viewOrders = (supplier) => {
@@ -367,6 +472,22 @@ onMounted(async () => {
   overflow-y: auto;
 }
 
+.catalog-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.catalog-table th, .catalog-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.catalog-table th {
+  background-color: #f4f4f4;
+}
+
 .btn-primary {
   background-color: var(--primary-color);
   color: white;
@@ -388,8 +509,8 @@ onMounted(async () => {
 }
 
 .btn-info {
-  background-color: var(--info-color);
-  color: white;
+  background-color:  beige;
+  color: black;
 }
 
 .error-msg {
