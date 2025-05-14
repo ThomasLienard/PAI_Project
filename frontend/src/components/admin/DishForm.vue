@@ -1,7 +1,14 @@
 <template>
   <form @submit.prevent="onSubmit">
     <input v-model="localDish.name" placeholder="Nom du plat" required />
-    <input v-model.number="localDish.price" type="number" placeholder="Prix (€)" required min="0" />
+    <input
+      v-model.number="localDish.price"
+      type="number"
+      placeholder="Prix (€)"
+      required
+      min="0"
+      step="0.01"
+    />
     <textarea v-model="localDish.description" placeholder="Description" required />
     <select v-model="localDish.categoryId" required>
       <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>

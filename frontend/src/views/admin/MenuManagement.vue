@@ -22,10 +22,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import NavBar from '../../components/NavBar.vue';
+import NavBar from '../../components/NavBar.vue'
 import DishForm from '../../components/admin/DishForm.vue'
 import DishList from '../../components/admin/DishList.vue'
-import apiClient, { getAllCategories } from '../../services/apiClient'
+import apiClient from '../../services/apiClient'
 
 const dishes = ref([])
 const categories = ref([])
@@ -80,7 +80,17 @@ function closeForm() {
 
 function editDish(dish) {
   isEditing.value = true
-  currentDish.value = { ...dish }
+  let categoryId = null
+  if ('categoryId' in dish && dish.categoryId != null) {
+    categoryId = Number(dish.categoryId)
+  } else if ('category' in dish && dish.category && dish.category.id != null) {
+    categoryId = Number(dish.category.id)
+  }
+  currentDish.value = {
+    ...dish,
+    categoryId,
+    tagIds: dish.tags ? dish.tags.map(tag => tag.id) : []
+  }
   showForm.value = true
 }
 
