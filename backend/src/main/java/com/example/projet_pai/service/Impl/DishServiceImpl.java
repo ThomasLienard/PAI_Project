@@ -75,14 +75,8 @@ public class DishServiceImpl implements DishServiceItf {
 
         if (photo != null && !photo.isEmpty()) {
             String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            Path path = Paths.get(dishUploadDir, filename);
-            try {
-                Files.createDirectories(path.getParent());
-                Files.copy(photo.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException("Erreur lors de la mise à jour de la photo", e);
-            }
-            dish.setImageUrl("/images/dish-photos/" + filename);
+            String url = savePhoto(photo, filename);
+            dish.setImageUrl(url);
         }
 
         dish.setCategory(categoryRepository.findById(dto.getCategoryId()).orElseThrow());
