@@ -12,6 +12,13 @@ public class DishDTOMapper {
         dto.setImageUrl(dish.getImageUrl());
         dto.setCategoryName(dish.getCategory() != null ? dish.getCategory().getName() : null);
         dto.setTags(dish.getTags() != null ? dish.getTags().stream().map(TagDTO::fromEntity).collect(java.util.stream.Collectors.toSet()) : null);
+        
+        if (dish.getRecipe() != null) {
+            dto.setDisponible(dish.getRecipe().isDisponible());
+        } else {
+            dto.setDisponible(false); 
+        }
+
         return dto;
     }
 }

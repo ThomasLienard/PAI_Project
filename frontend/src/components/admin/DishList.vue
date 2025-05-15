@@ -9,6 +9,7 @@
         <th>Catégorie</th>
         <th>Tags</th>
         <th>Actions</th>
+        <th>Disponible</th>
       </tr>
     </thead>
     <tbody>
@@ -31,6 +32,11 @@
         <td>
           <button @click="$emit('edit', dish)">Modifier</button>
           <button @click="$emit('delete', dish.id)">Supprimer</button>
+        </td>
+        <td>
+          <div v-if="!dish.disponible" class="indisponible">
+            Indisponible
+        </div>
         </td>
       </tr>
     </tbody>
@@ -55,5 +61,12 @@ function getImageUrl(url) {
   padding: 2px 6px;
   margin-left: 4px;
   font-size: 0.9em;
+}
+
+.indisponible {
+  color: #e74c3c; 
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 10px;
 }
 </style>

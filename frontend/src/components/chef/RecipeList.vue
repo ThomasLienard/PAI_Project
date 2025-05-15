@@ -14,6 +14,9 @@
         </ul>
       </span>
       <span v-else>Aucun ingrédient</span>
+      <div v-if="!recipe.disponible" class="indisponible">
+        Indisponible
+      </div>
       <button class="edit-btn" @click="$emit('edit', recipe)">Modifier</button>
       <button class="delete-btn" @click="$emit('delete', recipe.id)">Supprimer</button>
     </li>
@@ -74,5 +77,12 @@ li ul {
 }
 .delete-btn:hover {
   background: #c0392b; /* rouge foncé */
+}
+
+.indisponible {
+  color: #e74c3c; 
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 10px;
 }
 </style>

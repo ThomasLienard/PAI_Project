@@ -9,7 +9,8 @@ public class DishDTO {
     private double price;
     private String imageUrl;
     private String categoryName; // Nom de la catégorie
-    private Set<TagDTO> tags; // Liste des tags sous forme de DTO
+    private Set<TagDTO> tags; // Liste des tags sous forme de DTO7
+    private boolean disponible; // Est-ce que la recette est disponible ?
 
     // Getters et setters
     public Long getId() {
@@ -66,5 +67,13 @@ public class DishDTO {
 
     public void setTags(Set<TagDTO> tags) {
         this.tags = tags;
+    }
+
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
     }
 }

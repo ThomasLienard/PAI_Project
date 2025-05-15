@@ -34,6 +34,7 @@ const editingRecipe = ref(null)
 
 const fetchRecipes = async () => {
   const res = await apiClient.get('/cuisinier/recipes')
+  //console.log(res.data)
   recipes.value = res.data
 }
 const fetchIngredients = async () => {

@@ -44,6 +44,7 @@ const currentDish = ref({
 
 async function fetchDishes() {
   const res = await apiClient.get('/admin/dishes')
+  console.log(res.data)
   dishes.value = res.data
 }
 async function fetchCategories() {

@@ -14,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.example.projet_pai.dto.RecipeDTO;
+import com.example.projet_pai.entite.Recipe;
 import com.example.projet_pai.service.RecipeServiceItf;
 import com.example.projet_pai.service.ServerOrderServiceItf;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cuisinier/recipes")
@@ -71,5 +73,11 @@ public class RecipeController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<RecipeDTO>> getAvailableRecipes() {
+        List<RecipeDTO> recipeDTOs = service.getAvailableRecipes();
+        return ResponseEntity.ok(recipeDTOs);
     }
 }

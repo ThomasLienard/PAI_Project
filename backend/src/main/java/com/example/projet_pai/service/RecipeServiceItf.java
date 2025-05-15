@@ -10,4 +10,6 @@ public interface RecipeServiceItf {
     RecipeDTO getRecipeById(Long id);
     RecipeDTO updateRecipe(Long id, RecipeDTO recipeDTO);
     boolean deleteRecipe(Long id);
+    public void updateRecipeAvailability();
+    public List<RecipeDTO> getAvailableRecipes();
 }
