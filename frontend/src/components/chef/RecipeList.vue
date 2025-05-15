@@ -80,7 +80,7 @@ li ul {
 }
 
 .indisponible {
-  color: #e74c3c; /* rouge */
+  color: #e74c3c; 
   font-size: 1.5em;
   font-weight: bold;
   margin-top: 10px;

@@ -4,6 +4,7 @@ import com.example.projet_pai.dto.DishDTO;
 import com.example.projet_pai.entite.Category;
 import com.example.projet_pai.dto.DishCreateUpdateDTO;
 import com.example.projet_pai.service.DishServiceItf;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import com.example.projet_pai.service.RecipeServiceItf;
+
 @RestController
 @RequestMapping("/api/admin/dishes")
 @PreAuthorize("hasRole('ADMIN')")
@@ -21,9 +24,13 @@ public class AdminDishController {
 
     @Autowired
     private DishServiceItf dishService;
+    
+    @Autowired
+    private RecipeServiceItf recipeService;
 
     @GetMapping
     public List<DishDTO> getAllDishes() {
+        recipeService.updateRecipeAvailability();
         return dishService.getAllDishes();
     }
 

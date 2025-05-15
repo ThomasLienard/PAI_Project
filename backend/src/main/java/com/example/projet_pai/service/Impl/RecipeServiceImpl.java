@@ -72,6 +72,7 @@ public class RecipeServiceImpl implements RecipeServiceItf {
 
     @Override
     public List<RecipeDTO> getAllRecipes() {
+        this.updateRecipeAvailability();
         return recipeRepository.findAll().stream().map(recipe -> {
             List<RecipeIngredientDTO> ingredientDTOs = recipe.getRecipeIngredients().stream()
                 .map(ri -> new RecipeIngredientDTO(
@@ -177,7 +178,7 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 Ingredient ingredient = recipeIngredient.getIngredient();
                 double requiredQuantity = recipeIngredient.getQuantite();
 
-                if (ingredient.getStock() <= requiredQuantity) {
+                if (ingredient.getStock() < requiredQuantity) {
                     isAvailable = false;
                     break;
                 }
