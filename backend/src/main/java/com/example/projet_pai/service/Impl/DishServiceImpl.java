@@ -100,6 +100,17 @@ public class DishServiceImpl implements DishServiceItf {
             throw new RuntimeException("Erreur lors de l'enregistrement de la photo", e);
         }
     }
+
+    private String savePhoto(MultipartFile photo, String filename) {
+        try {
+            Files.createDirectories(Paths.get(dishUploadDir));
+            Path filePath = Paths.get(dishUploadDir, filename);
+            Files.write(filePath, photo.getBytes());
+            return "/images/dish-photos/" + filename;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la photo", e);
+        }
+    }
     @Override
     public List<Category> getAllDishCategories() {
     return categoryRepository.findAll();
