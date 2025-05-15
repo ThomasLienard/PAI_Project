@@ -65,7 +65,8 @@ public class RecipeServiceImpl implements RecipeServiceItf {
             savedRecipe.getName(),
             savedRecipe.getQuantite(),
             savedRecipe.getUnite(),
-            ingredientDTOs
+            ingredientDTOs,
+            recipe.isDisponible()
         );
     }
 
@@ -84,7 +85,8 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 recipe.getName(),
                 recipe.getQuantite(),
                 recipe.getUnite(),
-                ingredientDTOs
+                ingredientDTOs,
+                recipe.isDisponible()
             );
         }).collect(Collectors.toList());
     }
@@ -104,7 +106,8 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 recipe.getName(),
                 recipe.getQuantite(),
                 recipe.getUnite(),
-                ingredientDTOs
+                ingredientDTOs,
+                recipe.isDisponible()
             );
         }).orElse(null);
     }
@@ -141,12 +144,15 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                     ri.getUnite()
                 )).collect(Collectors.toList());
 
+            this.updateRecipeAvailability();
+
             return new RecipeDTO(
                 updated.getId(),
                 updated.getName(),
                 updated.getQuantite(),
                 updated.getUnite(),
-                ingredientDTOs
+                ingredientDTOs,
+                recipe.isDisponible()
             );
         }).orElse(null);
     }
@@ -171,7 +177,7 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 Ingredient ingredient = recipeIngredient.getIngredient();
                 double requiredQuantity = recipeIngredient.getQuantite();
 
-                if (ingredient.getStock() < requiredQuantity) {
+                if (ingredient.getStock() <= requiredQuantity) {
                     isAvailable = false;
                     break;
                 }
@@ -197,7 +203,8 @@ public class RecipeServiceImpl implements RecipeServiceItf {
                 recipe.getName(),
                 recipe.getQuantite(),
                 recipe.getUnite(),
-                ingredientDTOs
+                ingredientDTOs,
+                recipe.isDisponible()
             );
         }).collect(Collectors.toList());
 
