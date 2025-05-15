@@ -97,6 +97,28 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(client);
         }
 
+        // Créer un utilisateur serveur par défaut s'il n'existe pas
+        if (!userRepository.findByEmail("serveur@example.com").isPresent()) {
+            Role serveurRole = roleRepository.findByName("SERVEUR").orElseThrow(() -> new RuntimeException("Role not found"));
+            Utilisateur serveur = new Utilisateur();
+            serveur.setUsername("serveur");
+            serveur.setEmail("serveur@example.com");
+            serveur.setPassword(passwordEncoder.encode("Serveurpassword1"));
+            serveur.setRole(serveurRole);
+            userRepository.save(serveur);
+        }
+
+        // Créer un utilisateur cuisinier par défaut s'il n'existe pas
+        if (!userRepository.findByEmail("cuisinier@example.com").isPresent()) {
+            Role cuisinierRole = roleRepository.findByName("CUISINIER").orElseThrow(() -> new RuntimeException("Role not found"));
+            Utilisateur cuisinier = new Utilisateur();
+            cuisinier.setUsername("cuisinier");
+            cuisinier.setEmail("cuisinier@example.com");
+            cuisinier.setPassword(passwordEncoder.encode("Cuisinierpassword1"));
+            cuisinier.setRole(cuisinierRole);
+            userRepository.save(cuisinier);
+        }
+
         // Créer des catégories
         Category entrees = createCategoryIfNotFound("Entrées");
         Category plats = createCategoryIfNotFound("Plats");

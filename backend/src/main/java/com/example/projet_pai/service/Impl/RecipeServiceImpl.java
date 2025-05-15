@@ -1,6 +1,7 @@
 package com.example.projet_pai.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.projet_pai.dto.RecipeDTO;
@@ -157,5 +158,48 @@ public class RecipeServiceImpl implements RecipeServiceItf {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateRecipeAvailability() {
+        List<Recipe> recipes = recipeRepository.findAll();
+
+        for (Recipe recipe : recipes) {
+            boolean isAvailable = true;
+
+            for (RecipeIngredient recipeIngredient : recipe.getRecipeIngredients()) {
+                Ingredient ingredient = recipeIngredient.getIngredient();
+                double requiredQuantity = recipeIngredient.getQuantite();
+
+                if (ingredient.getStock() < requiredQuantity) {
+                    isAvailable = false;
+                    break;
+                }
+            }
+            recipe.setDisponible(isAvailable);
+            recipeRepository.save(recipe);
+        }
+    }
+
+    @Override
+    public List<RecipeDTO> getAvailableRecipes() {
+        List<Recipe> availableRecipes = recipeRepository.findByDisponibleTrue();
+        return availableRecipes.stream().map(recipe -> {
+            List<RecipeIngredientDTO> ingredientDTOs = recipe.getRecipeIngredients().stream()
+                .map(ri -> new RecipeIngredientDTO(
+                    ri.getIngredient().getId(),
+                    ri.getIngredient().getName(),
+                    ri.getQuantite(),
+                    ri.getUnite()
+                )).collect(Collectors.toList());
+            return new RecipeDTO(
+                recipe.getId(),
+                recipe.getName(),
+                recipe.getQuantite(),
+                recipe.getUnite(),
+                ingredientDTOs
+            );
+        }).collect(Collectors.toList());
+
     }
 }
