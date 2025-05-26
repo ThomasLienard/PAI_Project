@@ -52,17 +52,6 @@ public class SupplierOrderControllerTest {
     }
 
     @Test
-    void testGetOrdersBySupplier() {
-        when(orderService.getOrdersBySupplier(1L)).thenReturn(Collections.emptyList());
-
-        List<SupplierOrderDTO> result = controller.getOrdersBySupplier(1L);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(orderService).getOrdersBySupplier(1L);
-    }
-
-    @Test
     void testRenewOrder() {
         SupplierOrderDTO dto = new SupplierOrderDTO();
         dto.id = 2L;
@@ -73,5 +62,16 @@ public class SupplierOrderControllerTest {
         assertNotNull(result);
         assertEquals(2L, result.id);
         verify(orderService).renewOrder(1L);
+    }
+
+    @Test
+    void testGetOrderHistoryBySupplier() {
+        when(orderService.getOrderHistoryBySupplier(1L)).thenReturn(Collections.emptyList());
+
+        List<SupplierOrderDTO> result = controller.getOrderHistoryBySupplier(1L);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(orderService).getOrderHistoryBySupplier(1L);
     }
 }

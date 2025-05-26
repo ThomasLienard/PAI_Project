@@ -116,9 +116,7 @@ public class ServerOrderServiceImpl implements ServerOrderServiceItf {
     
     private boolean isValidStatus(String status) {
         return status != null && (
-                status.equals("en_attente") || 
-                status.equals("en_preparation") || 
-                status.equals("pret") || 
-                status.equals("servi"));
+                status.equals("Commandé") || 
+                status.equals("Livré")) ;
     }
 }

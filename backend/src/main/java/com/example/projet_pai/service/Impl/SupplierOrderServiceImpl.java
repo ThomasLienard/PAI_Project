@@ -13,6 +13,7 @@ import com.example.projet_pai.service.SupplierOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,6 +80,7 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     @Override
     public SupplierOrderDTO createOrder(SupplierOrderDTO dto) {
         SupplierOrder o = toEntity(dto);
+        o.setStatus(SupplierOrder.OrderStatus.EN_ATTENTE);
         return toDTO(orderRepository.save(o));
     }
 
@@ -88,8 +90,19 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     }
 
     @Override
-    public List<SupplierOrderDTO> getOrdersBySupplier(Long supplierId) {
-        return orderRepository.findBySupplier_Id(supplierId).stream().map(this::toDTO).collect(Collectors.toList());
+    public List<SupplierOrderDTO> getOrderHistory() {
+        return orderRepository.findAll().stream()
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SupplierOrderDTO> getOrderHistoryBySupplier(Long supplierId) {
+        return orderRepository.findBySupplier_Id(supplierId).stream()
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
