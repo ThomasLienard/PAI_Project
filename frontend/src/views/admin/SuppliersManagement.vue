@@ -306,7 +306,7 @@ const rateSupplier = async (supplier) => {
 
 const fetchOrdersHistory = async (supplierId) => {
   try {
-    const res = await apiClient.get(`/supplier-orders/supplier/${supplierId}`)
+    const res = await apiClient.get(`/admin/supplier/orders/supplier/${supplierId}`)
     ordersHistory.value = res.data
   } catch (error) {
     errorMsg.value = "Erreur lors du chargement de l'historique des commandes"
@@ -418,9 +418,9 @@ const getProductName = (productId) => {
   return product ? product.name : `Produit #${productId}`
 }
 
-const renewOrder = async (orderId) => {
+const renewOrder = async (previousOrderId) => {
   try {
-    await apiClient.post(`/supplier-orders/${orderId}/renew`)
+    await apiClient.post(`/admin/supplier/orders/${previousOrderId}/renew`)
     await fetchOrdersHistory(selectedSupplier.value.id)
   } catch (error) {
     errorMsg.value = "Erreur lors du renouvellement de la commande"
