@@ -5,7 +5,6 @@ import ConnectView from '../views/ConnectView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import UserManagement from '../views/admin/UserManagement.vue';
 import MenuManagement from '../views/admin/MenuManagement.vue';
-import OrderManagement from '../views/admin/OrderManagement.vue';
 import StatisticsManagement from '../views/admin/StatisticsManagement.vue';
 import SuppliersManagement from '../views/admin/SuppliersManagement.vue';
 import UserView from '../views/UserView.vue';
@@ -22,7 +21,7 @@ import ServerNewOrderView from '../views/server/ServerNewOrderView.vue';
 import ReservationView from '../views/ReservationView.vue'
 import MenuView from '../views/MenuView.vue';
 import StockAdminView from '../views/admin/StockAdminView.vue';
-
+import SupplierOrderView from '../views/admin/SupplierOrderView.vue';
 
 
 const routes = [
@@ -32,7 +31,6 @@ const routes = [
   { path: '/admin', name: 'admin', component: AdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
   { path: '/admin/user', name: 'admin-user', component: UserManagement, meta: { requiresAuth: true, role: 'ADMIN' } },
   { path: '/admin/menus',name: 'admin-menus',component: MenuManagement,meta: { requiresAuth: true, role: 'ADMIN' } },
-  {path: '/admin/orders',name: 'admin-orders',component: OrderManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
   {path: '/admin/statistics',name: 'admin-statistics',component: StatisticsManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
   {path: '/admin/suppliers',name: 'admin-suppliers',component: SuppliersManagement, meta: { requiresAuth: true, role: 'ADMIN' }},
   {path: '/user',name: 'user',component: UserView, meta: { requiresAuth: true, role: 'CLIENT' }},
@@ -50,6 +48,7 @@ const routes = [
   {path: '/server/new-order', name: 'server-new-order',component: ServerNewOrderView, meta: { requiresAuth: true, role: 'SERVEUR' }},
   {path: '/user/reservation',name: 'reservation',component: ReservationView ,meta: { requiresAuth: true, role: 'CLIENT' }},
   { path: '/admin/stocks', name: 'admin-stocks', component: StockAdminView, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/admin/orders', name: 'admin-supplier-orders', component: SupplierOrderView, meta: { requiresAuth: true, role: 'ADMIN' } },
 ];
 
 const router = createRouter({

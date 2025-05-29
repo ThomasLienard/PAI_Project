@@ -54,16 +54,28 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         o.setId(ignoreIds || dto.id == null ? null : dto.id);
         o.setOrderDate(dto.orderDate);
         o.setTotalAmount(dto.totalAmount);
-        o.setStatus(SupplierOrder.OrderStatus.valueOf(dto.status));
+
+        if (dto.status != null && !dto.status.trim().isEmpty()) {
+            try {
+                o.setStatus(SupplierOrder.OrderStatus.valueOf(dto.status.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Statut invalide fourni dans le DTO : " + dto.status);
+            }
+        }
+
         if (dto.supplierId != null) {
-            Supplier supplier = supplierRepository.findById(dto.supplierId).orElseThrow();
+            Supplier supplier = supplierRepository.findById(dto.supplierId)
+                .orElseThrow(() -> new RuntimeException("Fournisseur introuvable avec ID: " + dto.supplierId));
             o.setSupplier(supplier);
         }
         if (dto.lines != null) {
             List<SupplierOrderLine> lines = dto.lines.stream()
-                .map(lineDto -> toLineEntity(lineDto, ignoreIds))
+                .map(lineDto -> {
+                    SupplierOrderLine lineEntity = toLineEntity(lineDto, ignoreIds);
+                    lineEntity.setOrder(o);
+                    return lineEntity;
+                })
                 .collect(Collectors.toList());
-            lines.forEach(l -> l.setOrder(o));
             o.setLines(lines);
         }
         return o;
@@ -71,11 +83,12 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
 
     private SupplierOrderLine toLineEntity(SupplierOrderLineDTO dto, boolean ignoreIds) {
         SupplierOrderLine l = new SupplierOrderLine();
-        l.setId(ignoreIds ? null : dto.id);
+        l.setId(ignoreIds || dto.id == null ? null : dto.id);
         l.setQuantity(dto.quantity);
         l.setUnitPrice(dto.unitPrice);
         if (dto.productId != null) {
-            SupplierProduct p = productRepository.findById(dto.productId).orElseThrow();
+            SupplierProduct p = productRepository.findById(dto.productId)
+                .orElseThrow(() -> new RuntimeException("Produit fournisseur introuvable avec ID: " + dto.productId));
             l.setProduct(p);
         }
         return l;
@@ -83,9 +96,33 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
 
     @Override
     public SupplierOrderDTO createOrder(SupplierOrderDTO dto) {
-    SupplierOrder o = toEntity(dto, true); // ✅ Ignorer les IDs
-    o.setStatus(SupplierOrder.OrderStatus.EN_ATTENTE);
-    return toDTO(orderRepository.save(o));
+        if (dto.supplierId == null) {
+            throw new IllegalArgumentException("Un fournisseur doit être sélectionné.");
+        }
+        if (dto.lines == null || dto.lines.isEmpty()) {
+            throw new IllegalArgumentException("La commande doit contenir au moins un produit.");
+        }
+        SupplierOrder o = toEntity(dto, true);
+
+        o.setOrderDate(LocalDate.now());
+        o.setStatus(SupplierOrder.OrderStatus.EN_ATTENTE);
+
+        double finalTotalAmount = 0;
+        if (o.getLines() != null) {
+            finalTotalAmount = o.getLines().stream()
+                .mapToDouble(line -> line.getUnitPrice() * line.getQuantity())
+                .sum();
+        }
+
+        Supplier supplier = o.getSupplier();
+        Double deliveryFee = (supplier != null) ? supplier.getDeliveryFee() : null;
+        if (deliveryFee != null) {
+            finalTotalAmount += deliveryFee;
+        }
+        o.setTotalAmount(finalTotalAmount);
+
+        SupplierOrder savedOrder = orderRepository.save(o);
+        return toDTO(savedOrder);
     }
 
     @Override
