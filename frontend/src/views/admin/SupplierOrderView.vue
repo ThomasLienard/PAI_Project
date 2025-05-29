@@ -131,7 +131,7 @@ const submitOrder = async () => {
 
   submissionStatus.value = null;
   try {
-    await apiClient.post('admin/supplier/orders', orderPayload); // Adapte l'URL
+    await apiClient.post('/admin/supplier/orders', orderPayload); // Adapte l'URL
     submissionStatus.value = { type: 'success', message: 'Commande envoyée avec succès !' };
     // Réinitialiser le formulaire ou rediriger
     selectedSupplierId.value = null;
