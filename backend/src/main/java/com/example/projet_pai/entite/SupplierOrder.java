@@ -26,7 +26,7 @@ public class SupplierOrder {
     
 
     public enum OrderStatus {
-        EN_ATTENTE, CONFIRMEE, LIVREE, PARTIELLEMENT_LIVREE, PROBLEME
+        EN_ATTENTE, LIVREE, PARTIELLEMENT_LIVREE, PROBLEME
     }
 
     public Long getId() {

@@ -165,6 +165,7 @@
       <div v-if="showOrdersModal" class="modal">
         <div class="modal-content">
           <h2>Historique des commandes - {{ selectedSupplier?.name }}</h2>
+          <button class="btn-secondary" @click="showOrdersModal = false">Fermer</button>
           <table class="orders-table">
             <thead>
               <tr>
@@ -172,10 +173,28 @@
                 <th>Produits</th>
                 <th>Montant</th>
                 <th>Statut</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Liste des commandes -->
+              <tr v-if="ordersHistory.length === 0">
+                <td colspan="5" style="text-align:center;">Aucune commande</td>
+              </tr>
+              <tr v-for="order in ordersHistory" :key="order.id">
+                <td>{{ new Date(order.orderDate).toLocaleDateString() }}</td>
+                <td>
+                  <ul>
+                    <li v-for="line in order.lines" :key="line.id">
+                      {{ line.quantity }} x {{ getProductName(line.productId) }}
+                    </li>
+                  </ul>
+                </td>
+                <td>{{ order.totalAmount.toFixed(2) }} €</td>
+                <td>{{ order.status }}</td>
+                <td>
+                  <button class="btn-primary" @click="renewOrder(order.id)">Renouveler</button>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -219,6 +238,7 @@ const isEditingProduct = ref(false)
 const productErrorMsg = ref('')
 const showOrdersModal = ref(false)
 const selectedSupplier = ref(null)
+const ordersHistory = ref([])
 const errorMsg = ref('')
 
 // Computed
@@ -281,6 +301,15 @@ const rateSupplier = async (supplier) => {
   } catch (error) {
     errorMsg.value = "Erreur lors de l'enregistrement de la note"
     console.error(error)
+  }
+}
+
+const fetchOrdersHistory = async (supplierId) => {
+  try {
+    const res = await apiClient.get(`/admin/supplier/orders/supplier/${supplierId}`)
+    ordersHistory.value = res.data
+  } catch (error) {
+    errorMsg.value = "Erreur lors du chargement de l'historique des commandes"
   }
 }
 
@@ -378,9 +407,24 @@ const closeCatalogModal = () => {
   productErrorMsg.value = ''
 }
 
-const viewOrders = (supplier) => {
+const viewOrders = async (supplier) => {
   selectedSupplier.value = supplier
+  await fetchOrdersHistory(supplier.id)
   showOrdersModal.value = true
+}
+
+const getProductName = (productId) => {
+  const product = catalogProducts.value.find(p => p.id === productId)
+  return product ? product.name : `Produit #${productId}`
+}
+
+const renewOrder = async (previousOrderId) => {
+  try {
+    await apiClient.post(`/admin/supplier/orders/${previousOrderId}/renew`)
+    await fetchOrdersHistory(selectedSupplier.value.id)
+  } catch (error) {
+    errorMsg.value = "Erreur lors du renouvellement de la commande"
+  }
 }
 
 const resetForm = () => {

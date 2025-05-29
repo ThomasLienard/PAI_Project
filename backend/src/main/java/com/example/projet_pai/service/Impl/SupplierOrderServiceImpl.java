@@ -13,6 +13,9 @@ import com.example.projet_pai.service.SupplierOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,9 +49,9 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         return dto;
     }
 
-    private SupplierOrder toEntity(SupplierOrderDTO dto) {
+    private SupplierOrder toEntity(SupplierOrderDTO dto, boolean ignoreIds) {
         SupplierOrder o = new SupplierOrder();
-        o.setId(dto.id);
+        o.setId(ignoreIds || dto.id == null ? null : dto.id);
         o.setOrderDate(dto.orderDate);
         o.setTotalAmount(dto.totalAmount);
         o.setStatus(SupplierOrder.OrderStatus.valueOf(dto.status));
@@ -57,16 +60,18 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
             o.setSupplier(supplier);
         }
         if (dto.lines != null) {
-            List<SupplierOrderLine> lines = dto.lines.stream().map(this::toLineEntity).collect(Collectors.toList());
+            List<SupplierOrderLine> lines = dto.lines.stream()
+                .map(lineDto -> toLineEntity(lineDto, ignoreIds))
+                .collect(Collectors.toList());
             lines.forEach(l -> l.setOrder(o));
             o.setLines(lines);
         }
         return o;
     }
 
-    private SupplierOrderLine toLineEntity(SupplierOrderLineDTO dto) {
+    private SupplierOrderLine toLineEntity(SupplierOrderLineDTO dto, boolean ignoreIds) {
         SupplierOrderLine l = new SupplierOrderLine();
-        l.setId(dto.id);
+        l.setId(ignoreIds ? null : dto.id);
         l.setQuantity(dto.quantity);
         l.setUnitPrice(dto.unitPrice);
         if (dto.productId != null) {
@@ -78,8 +83,9 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
 
     @Override
     public SupplierOrderDTO createOrder(SupplierOrderDTO dto) {
-        SupplierOrder o = toEntity(dto);
-        return toDTO(orderRepository.save(o));
+    SupplierOrder o = toEntity(dto, true); // ✅ Ignorer les IDs
+    o.setStatus(SupplierOrder.OrderStatus.EN_ATTENTE);
+    return toDTO(orderRepository.save(o));
     }
 
     @Override
@@ -88,16 +94,46 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     }
 
     @Override
-    public List<SupplierOrderDTO> getOrdersBySupplier(Long supplierId) {
-        return orderRepository.findBySupplier_Id(supplierId).stream().map(this::toDTO).collect(Collectors.toList());
+    public List<SupplierOrderDTO> getOrderHistory() {
+        return orderRepository.findAll().stream()
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SupplierOrderDTO> getOrderHistoryBySupplier(Long supplierId) {
+        return orderRepository.findBySupplier_Id(supplierId).stream()
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public SupplierOrderDTO renewOrder(Long previousOrderId) {
         SupplierOrder previous = orderRepository.findById(previousOrderId).orElseThrow();
-        SupplierOrderDTO dto = toDTO(previous);
-        dto.id = null; // nouvelle commande
-        dto.status = SupplierOrder.OrderStatus.EN_ATTENTE.name();
-        return createOrder(dto);
+        SupplierOrder newOrder = new SupplierOrder();
+        newOrder.setOrderDate(LocalDate.now());
+        newOrder.setSupplier(previous.getSupplier());
+        newOrder.setStatus(SupplierOrder.OrderStatus.EN_ATTENTE);
+        newOrder.setTotalAmount(previous.getTotalAmount());
+
+        newOrder.setId(null);
+        
+        
+        List<SupplierOrderLine> newLines = new ArrayList<>();
+        for (SupplierOrderLine oldLine : previous.getLines()) {
+            SupplierOrderLine newLine = new SupplierOrderLine();
+            newLine.setProduct(oldLine.getProduct());
+            newLine.setQuantity(oldLine.getQuantity());
+            newLine.setOrder(newOrder); 
+            newLine.setId(null);
+            newLines.add(newLine);
+        }
+        newOrder.setLines(newLines);
+       
+        
+        SupplierOrder saved = orderRepository.save(newOrder);
+        return toDTO(saved);
     }
 }
