@@ -25,6 +25,7 @@
       :lines="orderLines"
       :products="supplierProducts"
       :can-submit="canSubmitOrder"
+      :supplier-fee="selectedSupplierFee"
       @submit-order="submitOrder"
     />
 
@@ -55,7 +56,7 @@ const selectedSupplierFee = computed(() => {
     const supplier = suppliers.value.find(s => s.id === selectedSupplierId.value);
     console.log('Fournisseur sélectionné :', supplier);
     console.log('delivery_fee trouvé :', supplier ? supplier.delivery_fee : undefined);
-    return supplier ? (parseFloat(supplier.delivery_fee) || 0) : 0;
+    return supplier ? (parseFloat(supplier.deliveryFee) || 0) : 0;
   }
   return 0;
 });
