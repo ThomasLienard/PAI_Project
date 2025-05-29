@@ -78,7 +78,7 @@ const fetchSupplierProducts = async (supplierId) => {
   loadingProducts.value = true;
   submissionStatus.value = null;
   try {
-    const response = await apiClient.get(`admin/suppliers/${supplierId}/products`);
+    const response = await apiClient.get(`/admin/suppliers/${supplierId}/products`);
     supplierProducts.value = response.data.map(p => ({ 
       ...p, 
       unitPrice: parseFloat(p.price) || 0
