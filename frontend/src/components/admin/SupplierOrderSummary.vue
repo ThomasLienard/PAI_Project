@@ -3,7 +3,9 @@
     <h3>Récapitulatif</h3>
     <div v-if="totalQuantity > 0">
       <p>Nombre total d'articles : {{ totalQuantity }}</p>
-      <p><strong>Montant Total : {{ formatCurrency(totalAmount) }}</strong></p>
+      <p>Sous-total Produits : {{ formatCurrency(productsSubtotal) }}</p>
+      <p>Frais de livraison : {{ formatCurrency(supplierFee) }}</p>
+      <p><strong>Montant Total : {{ formatCurrency(grandTotal) }}</strong></p>
       <button @click="$emit('submit-order')" :disabled="!canSubmit">
         Envoyer la Commande
       </button>
@@ -16,41 +18,31 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  lines: { // { productId: quantity }
-    type: Object,
-    required: true,
-    default: () => ({})
-  },
-  products: { // Liste des produits disponibles du fournisseur pour trouver les prix
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  canSubmit: {
-    type: Boolean,
-    required: true,
-    default: false
+  lines: Object,
+  products: Array,
+  canSubmit: Boolean,
+  supplierFee: {
+    type: Number,
+    default: 0
   }
 });
 
-defineEmits(['submit-order']);
+const totalQuantity = computed(() =>
+  Object.values(props.lines).reduce((sum, qty) => sum + (qty || 0), 0)
+);
 
-const totalQuantity = computed(() => {
-  return Object.values(props.lines).reduce((sum, qty) => sum + (qty || 0), 0);
-});
-
-const totalAmount = computed(() => {
-  return Object.entries(props.lines).reduce((sum, [productId, quantity]) => {
+const productsSubtotal = computed(() =>
+  Object.entries(props.lines).reduce((sum, [productId, quantity]) => {
     const product = props.products.find(p => p.id.toString() === productId);
     const price = product ? (product.unitPrice || 0) : 0;
     return sum + (price * (quantity || 0));
-  }, 0);
-});
+  }, 0)
+);
 
-const formatCurrency = (value) => {
-  if (typeof value !== 'number') return '0.00 €';
-  return value.toFixed(2) + ' €';
-};
+const grandTotal = computed(() => productsSubtotal.value + props.supplierFee);
+
+const formatCurrency = value =>
+  typeof value === 'number' ? value.toFixed(2) + ' €' : '0.00 €';
 </script>
 
 <style scoped>

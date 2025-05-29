@@ -1,5 +1,6 @@
 <template>
   <div class="supplier-order-view">
+    <NavBar />
     <h1>Nouvelle Commande Fournisseur</h1>
 
     <SupplierSelector
@@ -35,24 +36,35 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import apiClient from '@/services/apiClient'; // Assure-toi que ce chemin est correct
+import apiClient from '@/services/apiClient';
 
 import SupplierSelector from '@/components/admin/SupplierSelector.vue';
 import SupplierProductTable from '@/components/admin/SupplierProductTable.vue';
 import SupplierOrderSummary from '@/components/admin/SupplierOrderSummary.vue';
+import NavBar from '@/components/NavBar.vue';
 
 const suppliers = ref([]);
 const selectedSupplierId = ref(null);
 const supplierProducts = ref([]);
 const orderLines = ref({});
 const loadingProducts = ref(false);
-const submissionStatus = ref(null); 
+const submissionStatus = ref(null);
 
+const selectedSupplierFee = computed(() => {
+  if (selectedSupplierId.value) {
+    const supplier = suppliers.value.find(s => s.id === selectedSupplierId.value);
+    console.log('Fournisseur sélectionné :', supplier);
+    console.log('delivery_fee trouvé :', supplier ? supplier.delivery_fee : undefined);
+    return supplier ? (parseFloat(supplier.delivery_fee) || 0) : 0;
+  }
+  return 0;
+});
 
 onMounted(async () => {
   try {
     const response = await apiClient.get('/admin/suppliers/all');
     suppliers.value = response.data;
+    console.log('Liste des fournisseurs chargée :', suppliers.value);
   } catch (error) {
     console.error("Erreur lors du chargement des fournisseurs:", error);
     submissionStatus.value = { type: 'error', message: 'Impossible de charger les fournisseurs.' };
@@ -70,8 +82,12 @@ const fetchSupplierProducts = async (supplierId) => {
   submissionStatus.value = null;
   try {
     const response = await apiClient.get(`admin/suppliers/${supplierId}/products`);
-    supplierProducts.value = response.data.map(p => ({ ...p, unitPrice: parseFloat(p.unitPrice) || 0 })); // Assure que unitPrice est un nombre
-    orderLines.value = {}; // Réinitialiser les quantités
+    supplierProducts.value = response.data.map(p => ({ 
+      ...p, 
+      unitPrice: parseFloat(p.price) || 0
+    })); 
+    orderLines.value = {};
+    console.log('Produits du fournisseur chargés :', supplierProducts.value);
   } catch (error) {
     console.error(`Erreur lors du chargement des produits pour le fournisseur ${supplierId}:`, error);
     supplierProducts.value = [];
@@ -83,6 +99,7 @@ const fetchSupplierProducts = async (supplierId) => {
 
 const handleSupplierChange = (newSupplierId) => {
   selectedSupplierId.value = newSupplierId;
+  console.log('Changement de fournisseur sélectionné :', newSupplierId);
   fetchSupplierProducts(newSupplierId);
 };
 
@@ -116,7 +133,6 @@ const submitOrder = async () => {
   const orderPayload = {
     supplierId: selectedSupplierId.value,
     lines: linesToSubmit,
-    // Le total sera calculé côté backend, mais on peut l'envoyer pour info si besoin
   };
 
   submissionStatus.value = null;
