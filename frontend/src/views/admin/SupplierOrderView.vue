@@ -86,6 +86,7 @@ const fetchSupplierProducts = async (supplierId) => {
     orderLines.value = {};
   } catch (error) {
     supplierProducts.value = [];
+    orderLines.value = {};
     submissionStatus.value = { type: 'error', message: 'Impossible de charger les produits du fournisseur.' };
   } finally {
     loadingProducts.value = false;
