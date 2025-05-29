@@ -54,8 +54,6 @@ const submissionStatus = ref(null);
 const selectedSupplierFee = computed(() => {
   if (selectedSupplierId.value) {
     const supplier = suppliers.value.find(s => s.id === selectedSupplierId.value);
-    console.log('Fournisseur sélectionné :', supplier);
-    console.log('delivery_fee trouvé :', supplier ? supplier.delivery_fee : undefined);
     return supplier ? (parseFloat(supplier.deliveryFee) || 0) : 0;
   }
   return 0;
@@ -65,9 +63,7 @@ onMounted(async () => {
   try {
     const response = await apiClient.get('/admin/suppliers/all');
     suppliers.value = response.data;
-    console.log('Liste des fournisseurs chargée :', suppliers.value);
   } catch (error) {
-    console.error("Erreur lors du chargement des fournisseurs:", error);
     submissionStatus.value = { type: 'error', message: 'Impossible de charger les fournisseurs.' };
   }
 });
@@ -88,9 +84,7 @@ const fetchSupplierProducts = async (supplierId) => {
       unitPrice: parseFloat(p.price) || 0
     })); 
     orderLines.value = {};
-    console.log('Produits du fournisseur chargés :', supplierProducts.value);
   } catch (error) {
-    console.error(`Erreur lors du chargement des produits pour le fournisseur ${supplierId}:`, error);
     supplierProducts.value = [];
     submissionStatus.value = { type: 'error', message: 'Impossible de charger les produits du fournisseur.' };
   } finally {
@@ -100,7 +94,6 @@ const fetchSupplierProducts = async (supplierId) => {
 
 const handleSupplierChange = (newSupplierId) => {
   selectedSupplierId.value = newSupplierId;
-  console.log('Changement de fournisseur sélectionné :', newSupplierId);
   fetchSupplierProducts(newSupplierId);
 };
 
@@ -145,7 +138,6 @@ const submitOrder = async () => {
     supplierProducts.value = [];
     orderLines.value = {};
   } catch (error) {
-    console.error("Erreur lors de la soumission de la commande:", error);
     submissionStatus.value = { type: 'error', message: error.response?.data?.message || 'Erreur lors de l\'envoi de la commande.' };
   }
 };

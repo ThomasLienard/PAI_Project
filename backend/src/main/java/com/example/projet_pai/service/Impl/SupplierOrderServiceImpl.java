@@ -102,11 +102,6 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         if (dto.lines == null || dto.lines.isEmpty()) {
             throw new IllegalArgumentException("La commande doit contenir au moins un produit.");
         }
-
-        double totalFromDtoLines = dto.lines.stream()
-            .mapToDouble(line -> line.unitPrice * line.quantity)
-            .sum();
-
         SupplierOrder o = toEntity(dto, true);
 
         o.setOrderDate(LocalDate.now());
@@ -117,6 +112,12 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
             finalTotalAmount = o.getLines().stream()
                 .mapToDouble(line -> line.getUnitPrice() * line.getQuantity())
                 .sum();
+        }
+
+        Supplier supplier = o.getSupplier();
+        Double deliveryFee = (supplier != null) ? supplier.getDeliveryFee() : null;
+        if (deliveryFee != null) {
+            finalTotalAmount += deliveryFee;
         }
         o.setTotalAmount(finalTotalAmount);
 
