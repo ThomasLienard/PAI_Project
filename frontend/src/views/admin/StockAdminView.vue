@@ -19,15 +19,28 @@
             {{ cat.name }}
           </h3>
           <ul>
-            <li
-              v-for="ing in ingredientsByCategory(cat.id)"
-              :key="ing.id"
-              :class="{ 'alert-stock': ing.initialStock <= ing.alertThreshold }"
-            >
-              <img v-if="ing.photoUrl" :src="ing.photoUrl" alt="photo" width="24" height="24" style="vertical-align:middle;"/>
-              {{ ing.name }} ({{ ing.unit }}) - Stock : {{ ing.initialStock }}
-              <span v-if="ing.initialStock <= ing.alertThreshold" style="color:#e53935; font-weight:bold;">⚠️ Stock bas</span>
-            </li>
+              <li
+  v-for="ing in ingredientsByCategory(cat.id)"
+  :key="ing.id"
+  :class="{
+    'alert-stock': ing.initialStock <= ing.alertThreshold,
+    'critical-stock': ing.initialStock <= ing.alertThreshold * 0.5
+  }"
+>
+  <img v-if="ing.photoUrl" :src="ing.photoUrl" alt="photo" width="24" height="24" style="vertical-align:middle;"/>
+  {{ ing.name }} ({{ ing.unit }}) - Stock : {{ ing.initialStock }}
+  <span
+    v-if="ing.initialStock <= ing.alertThreshold"
+    :style="{
+      color: ing.initialStock <= ing.alertThreshold * 0.5 ? '#e53935' : '#ff9800',
+      fontWeight: 'bold'
+    }"
+  >
+    ⚠️
+    <template v-if="ing.initialStock <= ing.alertThreshold * 0.5">Stock critique</template>
+    <template v-else>Stock bas</template>
+  </span>
+</li>
           </ul>
         </div>
       </div>
@@ -104,8 +117,12 @@ onMounted(() => {
   padding: 1rem;
   border-radius: 8px;
 }
-.alert-stock {
-  background: #ffcccc !important; /* rouge clair */
+.critical-stock {
+  background: #ffeaea !important; /* rouge très clair */
   border: 1px solid #e53935;
+}
+.alert-stock {
+  background: #fff3e0 !important; /* orange très clair */
+  border: 1px solid #ff9800;
 }
 </style>
