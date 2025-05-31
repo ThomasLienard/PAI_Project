@@ -14,6 +14,8 @@ public class IngredientDTO {
 
     private boolean alertSent;
 
+    private String alertLevel; // "OK", "BAS", "CRITIQUE"
+
     public Long getId() {
         return id;
     }
@@ -80,6 +82,13 @@ public class IngredientDTO {
     }
     public void setAlertSent(boolean alertSent) {
         this.alertSent = alertSent;
+    }
+
+    public String getAlertLevel() {
+        return alertLevel;
+    }
+    public void setAlertLevel(String alertLevel) {
+        this.alertLevel = alertLevel;
     }
 
     // Getters & setters

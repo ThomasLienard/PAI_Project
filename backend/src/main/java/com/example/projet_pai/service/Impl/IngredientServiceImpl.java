@@ -91,6 +91,19 @@ public class IngredientServiceImpl implements IngredientServiceItf {
         ingredientRepository.deleteById(id);
     }
 
+    private String computeAlertLevel(Ingredient ing) {
+        if (ing.getInitialStock() == null || ing.getAlertThreshold() == null) return "OK";
+        double stock = ing.getInitialStock();
+        double threshold = ing.getAlertThreshold();
+        if (stock <= threshold * 0.5) {
+            return "CRITIQUE";
+        } else if (stock <= threshold) {
+            return "BAS";
+        } else {
+            return "OK";
+        }
+    }
+
     private IngredientDTO toDTO(Ingredient ing) {
         IngredientDTO dto = new IngredientDTO();
         dto.setId(ing.getId());
@@ -107,6 +120,7 @@ public class IngredientServiceImpl implements IngredientServiceItf {
         dto.setRecommendedOrderQty(ing.getRecommendedOrderQty());
         dto.setShelfLifeDays(ing.getShelfLifeDays());
         dto.setCategoryId(ing.getCategory() != null ? ing.getCategory().getId() : null);
+        dto.setAlertLevel(computeAlertLevel(ing));
         return dto;
     }
 }
