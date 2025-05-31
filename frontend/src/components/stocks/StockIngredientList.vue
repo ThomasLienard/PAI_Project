@@ -83,6 +83,10 @@
         <input v-model.number="editingIngredient.alertThreshold" type="number" />
       </div>
       <div>
+        <label>Notification envoyée :</label><br>
+        <input type="checkbox" v-model="editingIngredient.alertSent" disabled />
+      </div>
+      <div>
         <label>Quantité recommandée à commander :</label><br>
         <input v-model.number="editingIngredient.recommendedOrderQty" type="number" />
       </div>
