@@ -185,6 +185,25 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         
         order.setStatus(SupplierOrder.OrderStatus.LIVREE);
         SupplierOrder updatedOrder = orderRepository.save(order);
+        // mettre à jour les stocks !!!!
+        return toDTO(updatedOrder);
+    }
+
+    @Override
+    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines) {
+        SupplierOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
+        
+        if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
+            throw new IllegalStateException("La commande doit être en attente pour mettre à jour les lignes.");
+        }
+        
+        List<SupplierOrderLine> updatedLines = lines.stream()
+                .map(lineDto -> toLineEntity(lineDto, false))
+                .collect(Collectors.toList());
+        
+        order.setLines(updatedLines);
+        SupplierOrder updatedOrder = orderRepository.save(order);
         return toDTO(updatedOrder);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.projet_pai.service;
 
 import com.example.projet_pai.dto.SupplierOrderDTO;
+import com.example.projet_pai.dto.SupplierOrderLineDTO;
+
 import java.util.List;
 
 public interface SupplierOrderServiceItf {
@@ -33,4 +35,10 @@ public interface SupplierOrderServiceItf {
      * Valide une commande (change le statut à VALIDEE)
      */
     SupplierOrderDTO validateOrder(Long orderId);
+
+    /**
+     * Met à jour les lignes d'une commande existante
+     */
+    SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines);
+
 }
