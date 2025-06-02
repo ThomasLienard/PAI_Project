@@ -43,4 +43,10 @@ public class SupplierOrderController {
     public SupplierOrderDTO renewOrder(@PathVariable Long previousOrderId) {
         return orderService.renewOrder(previousOrderId);
     }
+
+    // Validation d'une commande
+    @PutMapping("/{OrderId/validate}")
+    public SupplierOrderDTO validateOrder(@PathVariable Long OrderId) {
+        return orderService.validateOrder(OrderId);
+    }
 }

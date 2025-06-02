@@ -193,6 +193,8 @@
                 <td>{{ order.status }}</td>
                 <td>
                   <button class="btn-primary" @click="renewOrder(order.id)">Renouveler</button>
+                  <button class="btn-primary">Modifier</button>
+                  <button class="btn-primary" @click="validateOrder(order.id)">Valider</button>
                 </td>
               </tr>
             </tbody>
@@ -424,6 +426,15 @@ const renewOrder = async (previousOrderId) => {
     await fetchOrdersHistory(selectedSupplier.value.id)
   } catch (error) {
     errorMsg.value = "Erreur lors du renouvellement de la commande"
+  }
+}
+
+const validateOrder = async (orderId) => {
+  try {
+    await apiClient.put(`/admin/supplier/orders/${orderId}/validate`)
+    await fetchOrdersHistory(selectedSupplier.value.id)
+  } catch (error) {
+    errorMsg.value = "Erreur lors de la validation de la commande"
   }
 }
 
