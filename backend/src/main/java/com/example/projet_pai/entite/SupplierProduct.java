@@ -13,6 +13,9 @@ public class SupplierProduct {
     private double price;
     private int usualDeliveryTime; // jours
 
+    @OneToOne
+    private Ingredient ingredient;
+
     @ManyToOne
     private Supplier supplier;
 
@@ -62,6 +65,14 @@ public class SupplierProduct {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
     }
     
 }

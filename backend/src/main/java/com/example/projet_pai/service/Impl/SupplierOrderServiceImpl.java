@@ -2,10 +2,12 @@ package com.example.projet_pai.service.Impl;
 
 import com.example.projet_pai.dto.SupplierOrderDTO;
 import com.example.projet_pai.dto.SupplierOrderLineDTO;
+import com.example.projet_pai.entite.Ingredient;
 import com.example.projet_pai.entite.Supplier;
 import com.example.projet_pai.entite.SupplierOrder;
 import com.example.projet_pai.entite.SupplierOrderLine;
 import com.example.projet_pai.entite.SupplierProduct;
+import com.example.projet_pai.repository.IngredientRepository;
 import com.example.projet_pai.repository.SupplierOrderRepository;
 import com.example.projet_pai.repository.SupplierProductRepository;
 import com.example.projet_pai.repository.SupplierRepository;
@@ -28,6 +30,9 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     private SupplierRepository supplierRepository;
     @Autowired
     private SupplierProductRepository productRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
 
     private SupplierOrderDTO toDTO(SupplierOrder o) {
         SupplierOrderDTO dto = new SupplierOrderDTO();
@@ -185,7 +190,21 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         
         order.setStatus(SupplierOrder.OrderStatus.LIVREE);
         SupplierOrder updatedOrder = orderRepository.save(order);
-        // mettre à jour les stocks !!!!
+
+        for (SupplierOrderLine line : order.getLines()) {
+            SupplierProduct product = line.getProduct();
+            Ingredient ingredient = product.getIngredient();
+            if (ingredient == null) {
+                ingredient = new Ingredient();
+                ingredient.setName(product.getName());
+                ingredient.setStock((double) line.getQuantity());
+                ingredient = ingredientRepository.save(ingredient);
+                product.setIngredient(ingredient);
+                productRepository.save(product);
+            }
+            ingredient.setStock(ingredient.getStock() + line.getQuantity());
+            ingredientRepository.save(ingredient);
+        }
         return toDTO(updatedOrder);
     }
 
