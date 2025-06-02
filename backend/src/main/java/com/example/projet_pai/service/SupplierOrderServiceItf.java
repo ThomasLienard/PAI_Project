@@ -28,4 +28,9 @@ public interface SupplierOrderServiceItf {
      * Retourne une commande par son id
      */
     SupplierOrderDTO getOrder(Long orderId);
+
+    /**
+     * Valide une commande (change le statut à VALIDEE)
+     */
+    SupplierOrderDTO validateOrder(Long orderId);
 }

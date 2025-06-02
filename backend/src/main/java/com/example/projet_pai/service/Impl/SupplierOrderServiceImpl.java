@@ -173,4 +173,18 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         SupplierOrder saved = orderRepository.save(newOrder);
         return toDTO(saved);
     }
+
+    @Override
+    public SupplierOrderDTO validateOrder(Long orderId) {
+        SupplierOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
+        
+        if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
+            throw new IllegalStateException("La commande doit être en attente pour être validée.");
+        }
+        
+        order.setStatus(SupplierOrder.OrderStatus.LIVREE);
+        SupplierOrder updatedOrder = orderRepository.save(order);
+        return toDTO(updatedOrder);
+    }
 }
