@@ -193,7 +193,7 @@
                 <td>{{ order.status }}</td>
                 <td>
                   <button class="btn-primary" @click="renewOrder(order.id)">Renouveler</button>
-                  <button class="btn-primary" @click="modifyOrder(order.id)">Modifier</button>
+                  <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="modifyOrder(order.id)">Modifier</button>
                   <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="validateOrder(order.id)">Valider</button>
                 </td>
               </tr>
@@ -470,12 +470,18 @@ const renewOrder = async (previousOrderId) => {
   }
 }
 
-const validatedOrder = ref([]);
+const validatedOrder = computed(() =>
+  ordersHistory.value
+    .filter(order => order.status && order.status.toUpperCase() === 'LIVREE')
+    .map(order => order.id)
+);
+
 const validateOrder = async (orderId) => {
   try {
     await apiClient.put(`/admin/supplier/orders/${orderId}/validate`);
     validatedOrder.value.push(orderId);
     await fetchOrdersHistory(selectedSupplier.value.id);
+    console.log(`Commande ${orderId} validée`);
   } catch (error) {
     errorMsg.value = "Erreur lors de la validation de la commande";
   }
@@ -487,6 +493,7 @@ const showEditOrderModal = ref(false);
 
 const modifyOrder = (orderId) => {
   const order = ordersHistory.value.find(o => o.id === orderId);
+  console.log(order);
   if (!order) return;
   editingOrder.value = { ...order };
   editingOrderLines.value = order.lines.map(line => ({ ...line }));
@@ -505,6 +512,8 @@ const removeOrderLine = (idx) => {
 
 const saveEditedOrder = async () => {
   try {
+    console.log('Saving edited order:', editingOrder.value);
+    console.log('Order lines:', editingOrderLines.value);
     await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, {
       lines: editingOrderLines.value
     });
@@ -514,6 +523,7 @@ const saveEditedOrder = async () => {
     editingOrderLines.value = [];
   } catch (error) {
     errorMsg.value = "Erreur lors de la modification de la commande";
+    console.error(error);
   }
 };
 

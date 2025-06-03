@@ -194,16 +194,13 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         for (SupplierOrderLine line : order.getLines()) {
             SupplierProduct product = line.getProduct();
             Ingredient ingredient = product.getIngredient();
-            if (ingredient == null) {
-                ingredient = new Ingredient();
-                ingredient.setName(product.getName());
-                ingredient.setStock((double) line.getQuantity());
-                ingredient = ingredientRepository.save(ingredient);
-                product.setIngredient(ingredient);
+            Ingredient existingIngredient = ingredientRepository.findByName(product.getName()).orElse(null);
+            if (existingIngredient != null) {
+                existingIngredient.setStock(existingIngredient.getStock() + line.getQuantity());
+                ingredientRepository.save(existingIngredient);
+                product.setIngredient(existingIngredient);
                 productRepository.save(product);
-            }
-            ingredient.setStock(ingredient.getStock() + line.getQuantity());
-            ingredientRepository.save(ingredient);
+            }             
         }
         return toDTO(updatedOrder);
     }

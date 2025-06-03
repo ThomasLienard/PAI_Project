@@ -5,6 +5,7 @@ import com.example.projet_pai.dto.SupplierOrderLineDTO;
 import com.example.projet_pai.service.SupplierOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +57,8 @@ public class SupplierOrderController {
     @PutMapping("/admin/supplier/orders/{orderId}/update-lines")
     public ResponseEntity<?> updateOrderLines(@PathVariable Long orderId, @RequestBody List<SupplierOrderLineDTO> lines) {
         try {
+            System.out.println("Updating order lines for order ID: " + orderId);
+            System.out.println("Received lines: " + lines);
             SupplierOrderDTO updatedOrder = orderService.updateOrderLines(orderId, lines);
             return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
