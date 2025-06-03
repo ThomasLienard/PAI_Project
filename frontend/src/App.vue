@@ -47,11 +47,14 @@ watch(
   <!-- Afficher le header uniquement si `isHiddenRoute` est faux -->
   <header v-if="!isHiddenRoute">
     <div class="wrapper">
+      <div class="logo">
+        <RouterLink to="/">🍽️ RestoApp</RouterLink>
+      </div>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Se connecter</RouterLink>
-        <RouterLink to="/register">Créer un compte</RouterLink>
+        <RouterLink to="/">Accueil</RouterLink>
+        <RouterLink to="/about">À propos</RouterLink>
+        <RouterLink to="/login">Connexion</RouterLink>
+        <RouterLink to="/register">Inscription</RouterLink>
       </nav>
     </div>
   </header>
@@ -61,64 +64,49 @@ watch(
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  padding: 0.5rem 2rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+  display: flex;
+  gap: 1.5rem;
 }
 
 nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s;
 }
 
-nav a:first-of-type {
-  border: 0;
+nav a:hover {
+  background-color: #f0f0f0;
+  color: #42b983;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+nav a.router-link-exact-active {
+  background-color: #42b983;
+  color: white;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+body {
+  padding-top: 70px; /* pour compenser le header fixe */
 }
 </style>

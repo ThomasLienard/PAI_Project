@@ -47,32 +47,53 @@ const registerUser = async () => {
 
 <style scoped>
 .register {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  max-width: 450px;
+  margin: 5rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 input {
-  padding: 0.5rem;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #42b983;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
 }
 
 button {
-  padding: 0.5rem;
+  background-color: #42b983;
+  color: white;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #369f6b;
 }
 
 .error {
-  color: red;
+  color: #ff4444;
+  font-size: 0.95rem;
+  text-align: center;
   margin-top: 1rem;
 }
 </style>
