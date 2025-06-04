@@ -38,7 +38,10 @@ public interface SupplierOrderServiceItf {
 
     /**
      * Met à jour les lignes d'une commande existante
+     * @param status 
      */
-    SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines);
+    SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines, String status);
+
+    List<SupplierOrderDTO> getPendingOrders();
 
 }

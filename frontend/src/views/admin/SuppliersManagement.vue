@@ -132,6 +132,15 @@
                 <label>Délai livraison (jours) : </label>
                 <input v-model.number="productForm.usualDeliveryTime" type="number" placeholder="Délai livraison (jours)" required />
               </div>
+              <div>
+                <label>Ingrédient associé :</label>
+                <select v-model="productForm.ingredientId" required>
+                  <option :value="null">Aucun</option>
+                  <option v-for="ing in ingredients" :key="ing.id" :value="ing.id">
+                    {{ ing.name }}
+                  </option>
+                </select>
+              </div>
               <button type="submit" class="btn-primary">{{ isEditingProduct ? 'Modifier' : 'Ajouter' }}</button>
               <button type="button" class="btn-secondary" @click="openAddProduct">Réinitialiser</button>
             </form>
@@ -193,53 +202,10 @@
                 <td>{{ order.status }}</td>
                 <td>
                   <button class="btn-primary" @click="renewOrder(order.id)">Renouveler</button>
-                  <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="modifyOrder(order.id)">Modifier</button>
-                  <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="validateOrder(order.id)">Valider</button>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <div v-if="showEditOrderModal" class="modal">
-        <div class="modal-content">
-        <h2>Modifier la commande</h2>
-        <button class="btn-secondary" @click="cancelEditOrder">Annuler</button>
-          <form @submit.prevent="saveEditedOrder">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produit</th>
-                  <th>Quantité reçue</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(line, idx) in editingOrderLines" :key="line.id">
-                  <td>{{ getProductName(line.productId) }}</td>
-                  <td>
-                    <input type="number" v-model.number="line.quantity" min="0" />
-                  </td>
-                  <td>
-                    <button
-                      v-if="!line.delivered"
-                      type="button"
-                      class="btn-warning"
-                      @click="removeOrderLine(idx)"
-                    >
-                      Supprimer
-                    </button>
-                    <span v-else style="color: #aaa;">Livré</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div style="margin-top: 1em;">
-              <button type="submit" class="btn-primary">Valider la réception</button>
-              <button type="button" class="btn-secondary" @click="cancelEditOrder">Revenir en arrière</button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -275,7 +241,8 @@ const productForm = ref({
   id: null,
   name: '',
   price: 0,
-  usualDeliveryTime: 0
+  usualDeliveryTime: 0,
+  ingredientId: null
 })
 const isEditingProduct = ref(false)
 const productErrorMsg = ref('')
@@ -283,6 +250,7 @@ const showOrdersModal = ref(false)
 const selectedSupplier = ref(null)
 const ordersHistory = ref([])
 const errorMsg = ref('')
+const ingredients = ref([])
 
 // Computed
 const filteredSuppliers = computed(() => {
@@ -356,6 +324,15 @@ const fetchOrdersHistory = async (supplierId) => {
   }
 }
 
+const fetchIngredients = async () => {
+  try {
+    const res = await apiClient.get('/admin/stocks/ingredients');
+    ingredients.value = res.data;
+  } catch (error) {
+    productErrorMsg.value = "Erreur lors du chargement des ingrédients";
+  }
+};
+
 // Méthodes UI
 const openForm = () => {
   resetForm()
@@ -416,7 +393,7 @@ const openAddProduct = () => {
 }
 
 const openEditProduct = (product) => {
-  productForm.value = { ...product }
+  productForm.value = { ...product, ingredientId: product.ingredientId ?? null };
   isEditingProduct.value = true
 }
 
@@ -470,61 +447,6 @@ const renewOrder = async (previousOrderId) => {
   }
 }
 
-const validatedOrder = computed(() =>
-  ordersHistory.value
-    .filter(order => order.status && order.status.toUpperCase() === 'LIVREE')
-    .map(order => order.id)
-);
-
-const validateOrder = async (orderId) => {
-  try {
-    await apiClient.put(`/admin/supplier/orders/${orderId}/validate`);
-    validatedOrder.value.push(orderId);
-    await fetchOrdersHistory(selectedSupplier.value.id);
-    console.log(`Commande ${orderId} validée`);
-  } catch (error) {
-    errorMsg.value = "Erreur lors de la validation de la commande";
-  }
-}
-
-const editingOrder = ref(null); 
-const editingOrderLines = ref([]); 
-const showEditOrderModal = ref(false);
-
-const modifyOrder = (orderId) => {
-  const order = ordersHistory.value.find(o => o.id === orderId);
-  console.log(order);
-  if (!order) return;
-  editingOrder.value = { ...order };
-  editingOrderLines.value = order.lines.map(line => ({ ...line }));
-  showEditOrderModal.value = true;
-};
-
-const cancelEditOrder = () => {
-  showEditOrderModal.value = false;
-  editingOrder.value = null;
-  editingOrderLines.value = [];
-};
-
-const removeOrderLine = (idx) => {
-  editingOrderLines.value.splice(idx, 1);
-};
-
-const saveEditedOrder = async () => {
-  try {
-    console.log('Saving edited order:', editingOrder.value);
-    console.log('Order lines:', editingOrderLines.value);
-    await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, editingOrderLines.value);
-    await fetchOrdersHistory(selectedSupplier.value.id);
-    showEditOrderModal.value = false;
-    editingOrder.value = null;
-    editingOrderLines.value = [];
-  } catch (error) {
-    errorMsg.value = "Erreur lors de la modification de la commande";
-    console.error(error);
-  }
-};
-
 const resetForm = () => {
   currentSupplier.value = {
     name: '',
@@ -541,6 +463,7 @@ const resetForm = () => {
 // Chargement initial
 onMounted(async () => {
   await fetchSuppliers()
+  await fetchIngredients()
 })
 </script>
 

@@ -13,7 +13,8 @@ public class SupplierProduct {
     private double price;
     private int usualDeliveryTime; // jours
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
 
     @ManyToOne

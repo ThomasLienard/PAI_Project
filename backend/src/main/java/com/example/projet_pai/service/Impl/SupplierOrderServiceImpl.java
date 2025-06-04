@@ -183,30 +183,27 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     public SupplierOrderDTO validateOrder(Long orderId) {
         SupplierOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
-        
+
         if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
             throw new IllegalStateException("La commande doit être en attente pour être validée.");
         }
-        
+
         order.setStatus(SupplierOrder.OrderStatus.LIVREE);
         SupplierOrder updatedOrder = orderRepository.save(order);
 
         for (SupplierOrderLine line : order.getLines()) {
             SupplierProduct product = line.getProduct();
             Ingredient ingredient = product.getIngredient();
-            Ingredient existingIngredient = ingredientRepository.findByName(product.getName()).orElse(null);
-            if (existingIngredient != null) {
-                existingIngredient.setStock(existingIngredient.getStock() + line.getQuantity());
-                ingredientRepository.save(existingIngredient);
-                product.setIngredient(existingIngredient);
-                productRepository.save(product);
-            }             
+            if (ingredient != null) {
+                ingredient.setStock(ingredient.getStock() + line.getQuantity());
+                ingredientRepository.save(ingredient);
+            }
         }
         return toDTO(updatedOrder);
     }
 
     @Override
-    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines) {
+    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines, String status) {
         SupplierOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
         
@@ -235,7 +232,36 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         }
         order.setTotalAmount(totalAmount);
 
+        // Changer le statut si fourni
+        if (status != null && !status.trim().isEmpty()) {
+            try {
+                order.setStatus(SupplierOrder.OrderStatus.valueOf(status.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Statut invalide fourni : " + status);
+            }
+        }
+
         SupplierOrder updatedOrder = orderRepository.save(order);
+
+        for (SupplierOrderLine line : updatedOrder.getLines()) {
+            SupplierProduct product = line.getProduct();
+            Ingredient ingredient = product.getIngredient();
+            if (ingredient != null) {
+                ingredient.setStock(ingredient.getStock() + line.getQuantity());
+                ingredientRepository.save(ingredient);
+            }
+        }
         return toDTO(updatedOrder);
     }
+
+    @Override
+    public List<SupplierOrderDTO> getPendingOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getStatus() == SupplierOrder.OrderStatus.EN_ATTENTE)
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }
