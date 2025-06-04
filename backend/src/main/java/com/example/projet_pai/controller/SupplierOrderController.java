@@ -54,7 +54,7 @@ public class SupplierOrderController {
     }
 
     // Mise à jour des lignes d'une commande
-    @PutMapping("/admin/supplier/orders/{orderId}/update-lines")
+    @PutMapping("/{orderId}/update-lines")
     public ResponseEntity<?> updateOrderLines(@PathVariable Long orderId, @RequestBody List<SupplierOrderLineDTO> lines) {
         try {
             System.out.println("Updating order lines for order ID: " + orderId);

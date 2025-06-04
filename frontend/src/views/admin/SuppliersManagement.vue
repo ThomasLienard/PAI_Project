@@ -514,9 +514,7 @@ const saveEditedOrder = async () => {
   try {
     console.log('Saving edited order:', editingOrder.value);
     console.log('Order lines:', editingOrderLines.value);
-    await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, {
-      lines: editingOrderLines.value
-    });
+    await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, editingOrderLines.value);
     await fetchOrdersHistory(selectedSupplier.value.id);
     showEditOrderModal.value = false;
     editingOrder.value = null;
