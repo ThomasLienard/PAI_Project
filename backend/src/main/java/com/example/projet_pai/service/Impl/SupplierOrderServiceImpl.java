@@ -215,10 +215,26 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         }
         
         List<SupplierOrderLine> updatedLines = lines.stream()
-                .map(lineDto -> toLineEntity(lineDto, false))
+                .map(lineDto -> {
+                    SupplierOrderLine line = toLineEntity(lineDto, false);
+                    line.setOrder(order);
+                    return line;
+                })
                 .collect(Collectors.toList());
         
         order.setLines(updatedLines);
+
+        // Recalculer le montant total
+        double totalAmount = updatedLines.stream()
+                .mapToDouble(line -> line.getUnitPrice() * line.getQuantity())
+                .sum();
+        Supplier supplier = order.getSupplier();
+        Double deliveryFee = (supplier != null) ? supplier.getDeliveryFee() : null;
+        if (deliveryFee != null) {
+            totalAmount += deliveryFee;
+        }
+        order.setTotalAmount(totalAmount);
+
         SupplierOrder updatedOrder = orderRepository.save(order);
         return toDTO(updatedOrder);
     }
