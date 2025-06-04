@@ -183,24 +183,21 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     public SupplierOrderDTO validateOrder(Long orderId) {
         SupplierOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
-        
+
         if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
             throw new IllegalStateException("La commande doit être en attente pour être validée.");
         }
-        
+
         order.setStatus(SupplierOrder.OrderStatus.LIVREE);
         SupplierOrder updatedOrder = orderRepository.save(order);
 
         for (SupplierOrderLine line : order.getLines()) {
             SupplierProduct product = line.getProduct();
             Ingredient ingredient = product.getIngredient();
-            Ingredient existingIngredient = ingredientRepository.findByName(product.getName()).orElse(null);
-            if (existingIngredient != null) {
-                existingIngredient.setStock(existingIngredient.getStock() + line.getQuantity());
-                ingredientRepository.save(existingIngredient);
-                product.setIngredient(existingIngredient);
-                productRepository.save(product);
-            }             
+            if (ingredient != null) {
+                ingredient.setStock(ingredient.getStock() + line.getQuantity());
+                ingredientRepository.save(ingredient);
+            }
         }
         return toDTO(updatedOrder);
     }
@@ -248,4 +245,5 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
+
 }
