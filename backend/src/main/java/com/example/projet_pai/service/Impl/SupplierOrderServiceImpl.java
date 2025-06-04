@@ -203,7 +203,7 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     }
 
     @Override
-    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines) {
+    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines, String status) {
         SupplierOrder order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
         
@@ -231,6 +231,15 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
             totalAmount += deliveryFee;
         }
         order.setTotalAmount(totalAmount);
+
+        // Changer le statut si fourni
+        if (status != null && !status.trim().isEmpty()) {
+            try {
+                order.setStatus(SupplierOrder.OrderStatus.valueOf(status.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Statut invalide fourni : " + status);
+            }
+        }
 
         SupplierOrder updatedOrder = orderRepository.save(order);
         return toDTO(updatedOrder);

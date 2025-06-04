@@ -2,6 +2,7 @@ package com.example.projet_pai.controller;
 
 import com.example.projet_pai.dto.SupplierOrderDTO;
 import com.example.projet_pai.dto.SupplierOrderLineDTO;
+import com.example.projet_pai.dto.UpdateOrderLinesRequest;
 import com.example.projet_pai.service.SupplierOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +56,11 @@ public class SupplierOrderController {
 
     // Mise à jour des lignes d'une commande
     @PutMapping("/{orderId}/update-lines")
-    public ResponseEntity<?> updateOrderLines(@PathVariable Long orderId, @RequestBody List<SupplierOrderLineDTO> lines) {
+    public ResponseEntity<?> updateOrderLines(
+            @PathVariable Long orderId,
+            @RequestBody UpdateOrderLinesRequest request) {
         try {
-            System.out.println("Updating order lines for order ID: " + orderId);
-            System.out.println("Received lines: " + lines);
-            SupplierOrderDTO updatedOrder = orderService.updateOrderLines(orderId, lines);
+            SupplierOrderDTO updatedOrder = orderService.updateOrderLines(orderId, request.lines, request.status);
             return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erreur lors de la mise à jour des lignes de commande : " + e.getMessage());

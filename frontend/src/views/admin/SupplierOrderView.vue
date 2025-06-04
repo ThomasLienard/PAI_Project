@@ -111,6 +111,7 @@ const showEditOrderModal = ref(false);
 const editingOrder = ref(null); 
 const editingOrderLines = ref([]); 
 const orders = ref([]);
+const originalOrderLines = ref([]);
 
 const selectedSupplierFee = computed(() => {
   if (selectedSupplierId.value) {
@@ -220,6 +221,8 @@ const modifyOrder = (orderId) => {
   if (!order) return;
   editingOrder.value = { ...order };
   editingOrderLines.value = order.lines.map(line => ({ ...line }));
+  // Stocke les quantités originales
+  originalOrderLines.value = order.lines.map(line => ({ id: line.id, quantity: line.quantity }));
   showEditOrderModal.value = true;
 };
 
@@ -235,11 +238,30 @@ const removeOrderLine = (idx) => {
 
 const saveEditedOrder = async () => {
   try {
-    await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, editingOrderLines.value);
+    // Vérifie si au moins une quantité a diminué
+    let partiellementLivree = false;
+    for (const editedLine of editingOrderLines.value) {
+      const originalLine = originalOrderLines.value.find(l => l.id === editedLine.id);
+      if (originalLine && editedLine.quantity < originalLine.quantity) {
+        partiellementLivree = true;
+        break;
+      }
+    }
+    const newStatus = partiellementLivree ? 'PARTIELLEMENT_LIVREE' : 'LIVREE';
+
+    // Envoie les lignes et le nouveau statut au backend
+    await apiClient.put(
+      `/admin/supplier/orders/${editingOrder.value.id}/update-lines`,
+      {
+        lines: editingOrderLines.value,
+        status: newStatus
+      }
+    );
     await fetchPendingOrders();
     showEditOrderModal.value = false;
     editingOrder.value = null;
     editingOrderLines.value = [];
+    originalOrderLines.value = [];
   } catch (error) {
     submissionStatus.value = { type: 'error', message: "Erreur lors de la modification de la commande" };
     console.error(error);
