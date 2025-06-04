@@ -20,6 +20,10 @@ public class Ingredient {
     @ManyToOne
     private IngredientCategory category;
 
+    @OneToOne
+    private SupplierProduct supplierProduct; 
+
+
     public Long getId() {
         return id;
     }
@@ -98,5 +102,13 @@ public class Ingredient {
 
     public void setCategory(IngredientCategory category) {
         this.category = category;
+    }
+
+    public SupplierProduct getSupplierProduct() {
+            return supplierProduct;
+        }
+
+    public void setSupplierProduct(SupplierProduct supplierProduct) {
+        this.supplierProduct = supplierProduct;
     }
 }
