@@ -238,4 +238,14 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         SupplierOrder updatedOrder = orderRepository.save(order);
         return toDTO(updatedOrder);
     }
+
+    @Override
+    public List<SupplierOrderDTO> getPendingOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getStatus() == SupplierOrder.OrderStatus.EN_ATTENTE)
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 }

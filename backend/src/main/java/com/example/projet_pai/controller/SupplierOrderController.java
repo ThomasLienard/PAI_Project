@@ -65,4 +65,9 @@ public class SupplierOrderController {
             return ResponseEntity.badRequest().body("Erreur lors de la mise à jour des lignes de commande : " + e.getMessage());
         }
     }
+
+    @GetMapping("/pending")
+    public List<SupplierOrderDTO> getPendingOrders() {
+        return orderService.getPendingOrders();
+    }
 }

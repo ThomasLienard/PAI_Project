@@ -193,53 +193,10 @@
                 <td>{{ order.status }}</td>
                 <td>
                   <button class="btn-primary" @click="renewOrder(order.id)">Renouveler</button>
-                  <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="modifyOrder(order.id)">Modifier</button>
-                  <button v-if="!validatedOrder.includes(order.id)" class="btn-primary" @click="validateOrder(order.id)">Valider</button>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <div v-if="showEditOrderModal" class="modal">
-        <div class="modal-content">
-        <h2>Modifier la commande</h2>
-        <button class="btn-secondary" @click="cancelEditOrder">Annuler</button>
-          <form @submit.prevent="saveEditedOrder">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produit</th>
-                  <th>Quantité reçue</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(line, idx) in editingOrderLines" :key="line.id">
-                  <td>{{ getProductName(line.productId) }}</td>
-                  <td>
-                    <input type="number" v-model.number="line.quantity" min="0" />
-                  </td>
-                  <td>
-                    <button
-                      v-if="!line.delivered"
-                      type="button"
-                      class="btn-warning"
-                      @click="removeOrderLine(idx)"
-                    >
-                      Supprimer
-                    </button>
-                    <span v-else style="color: #aaa;">Livré</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div style="margin-top: 1em;">
-              <button type="submit" class="btn-primary">Valider la réception</button>
-              <button type="button" class="btn-secondary" @click="cancelEditOrder">Revenir en arrière</button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -469,61 +426,6 @@ const renewOrder = async (previousOrderId) => {
     errorMsg.value = "Erreur lors du renouvellement de la commande"
   }
 }
-
-const validatedOrder = computed(() =>
-  ordersHistory.value
-    .filter(order => order.status && order.status.toUpperCase() === 'LIVREE')
-    .map(order => order.id)
-);
-
-const validateOrder = async (orderId) => {
-  try {
-    await apiClient.put(`/admin/supplier/orders/${orderId}/validate`);
-    validatedOrder.value.push(orderId);
-    await fetchOrdersHistory(selectedSupplier.value.id);
-    console.log(`Commande ${orderId} validée`);
-  } catch (error) {
-    errorMsg.value = "Erreur lors de la validation de la commande";
-  }
-}
-
-const editingOrder = ref(null); 
-const editingOrderLines = ref([]); 
-const showEditOrderModal = ref(false);
-
-const modifyOrder = (orderId) => {
-  const order = ordersHistory.value.find(o => o.id === orderId);
-  console.log(order);
-  if (!order) return;
-  editingOrder.value = { ...order };
-  editingOrderLines.value = order.lines.map(line => ({ ...line }));
-  showEditOrderModal.value = true;
-};
-
-const cancelEditOrder = () => {
-  showEditOrderModal.value = false;
-  editingOrder.value = null;
-  editingOrderLines.value = [];
-};
-
-const removeOrderLine = (idx) => {
-  editingOrderLines.value.splice(idx, 1);
-};
-
-const saveEditedOrder = async () => {
-  try {
-    console.log('Saving edited order:', editingOrder.value);
-    console.log('Order lines:', editingOrderLines.value);
-    await apiClient.put(`/admin/supplier/orders/${editingOrder.value.id}/update-lines`, editingOrderLines.value);
-    await fetchOrdersHistory(selectedSupplier.value.id);
-    showEditOrderModal.value = false;
-    editingOrder.value = null;
-    editingOrderLines.value = [];
-  } catch (error) {
-    errorMsg.value = "Erreur lors de la modification de la commande";
-    console.error(error);
-  }
-};
 
 const resetForm = () => {
   currentSupplier.value = {

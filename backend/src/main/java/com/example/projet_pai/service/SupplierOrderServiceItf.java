@@ -41,4 +41,6 @@ public interface SupplierOrderServiceItf {
      */
     SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines);
 
+    List<SupplierOrderDTO> getPendingOrders();
+
 }
