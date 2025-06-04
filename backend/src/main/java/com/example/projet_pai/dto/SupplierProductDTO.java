@@ -7,6 +7,7 @@ public class SupplierProductDTO {
     public double price;
     public int usualDeliveryTime;
     public Long supplierId;
+    public Long ingredientId;
 
     public void setSupplierId(Long supplierId2) {
         this.supplierId = supplierId2;

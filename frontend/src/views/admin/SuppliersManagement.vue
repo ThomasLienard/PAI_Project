@@ -132,6 +132,15 @@
                 <label>Délai livraison (jours) : </label>
                 <input v-model.number="productForm.usualDeliveryTime" type="number" placeholder="Délai livraison (jours)" required />
               </div>
+              <div>
+                <label>Ingrédient associé :</label>
+                <select v-model="productForm.ingredientId" required>
+                  <option :value="null">Aucun</option>
+                  <option v-for="ing in ingredients" :key="ing.id" :value="ing.id">
+                    {{ ing.name }}
+                  </option>
+                </select>
+              </div>
               <button type="submit" class="btn-primary">{{ isEditingProduct ? 'Modifier' : 'Ajouter' }}</button>
               <button type="button" class="btn-secondary" @click="openAddProduct">Réinitialiser</button>
             </form>
@@ -232,7 +241,8 @@ const productForm = ref({
   id: null,
   name: '',
   price: 0,
-  usualDeliveryTime: 0
+  usualDeliveryTime: 0,
+  ingredientId: null
 })
 const isEditingProduct = ref(false)
 const productErrorMsg = ref('')
@@ -240,6 +250,7 @@ const showOrdersModal = ref(false)
 const selectedSupplier = ref(null)
 const ordersHistory = ref([])
 const errorMsg = ref('')
+const ingredients = ref([])
 
 // Computed
 const filteredSuppliers = computed(() => {
@@ -313,6 +324,15 @@ const fetchOrdersHistory = async (supplierId) => {
   }
 }
 
+const fetchIngredients = async () => {
+  try {
+    const res = await apiClient.get('/admin/stocks/ingredients');
+    ingredients.value = res.data;
+  } catch (error) {
+    productErrorMsg.value = "Erreur lors du chargement des ingrédients";
+  }
+};
+
 // Méthodes UI
 const openForm = () => {
   resetForm()
@@ -373,7 +393,7 @@ const openAddProduct = () => {
 }
 
 const openEditProduct = (product) => {
-  productForm.value = { ...product }
+  productForm.value = { ...product, ingredientId: product.ingredientId ?? null };
   isEditingProduct.value = true
 }
 
@@ -443,6 +463,7 @@ const resetForm = () => {
 // Chargement initial
 onMounted(async () => {
   await fetchSuppliers()
+  await fetchIngredients()
 })
 </script>
 
