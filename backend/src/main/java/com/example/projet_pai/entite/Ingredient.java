@@ -1,5 +1,8 @@
 package com.example.projet_pai.entite;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +22,10 @@ public class Ingredient {
 
     @ManyToOne
     private IngredientCategory category;
+
+    @OneToMany(mappedBy = "ingredient")
+    private List<SupplierProduct> supplierProducts = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -98,5 +105,13 @@ public class Ingredient {
 
     public void setCategory(IngredientCategory category) {
         this.category = category;
+    }
+
+    public List<SupplierProduct> getSupplierProducts() {
+        return supplierProducts;
+    }
+
+    public void setSupplierProducts(List<SupplierProduct> supplierProducts) {
+        this.supplierProducts = supplierProducts;
     }
 }

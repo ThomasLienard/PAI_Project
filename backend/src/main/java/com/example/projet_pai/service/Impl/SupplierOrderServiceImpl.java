@@ -2,10 +2,12 @@ package com.example.projet_pai.service.Impl;
 
 import com.example.projet_pai.dto.SupplierOrderDTO;
 import com.example.projet_pai.dto.SupplierOrderLineDTO;
+import com.example.projet_pai.entite.Ingredient;
 import com.example.projet_pai.entite.Supplier;
 import com.example.projet_pai.entite.SupplierOrder;
 import com.example.projet_pai.entite.SupplierOrderLine;
 import com.example.projet_pai.entite.SupplierProduct;
+import com.example.projet_pai.repository.IngredientRepository;
 import com.example.projet_pai.repository.SupplierOrderRepository;
 import com.example.projet_pai.repository.SupplierProductRepository;
 import com.example.projet_pai.repository.SupplierRepository;
@@ -28,6 +30,9 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
     private SupplierRepository supplierRepository;
     @Autowired
     private SupplierProductRepository productRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
 
     private SupplierOrderDTO toDTO(SupplierOrder o) {
         SupplierOrderDTO dto = new SupplierOrderDTO();
@@ -173,4 +178,90 @@ public class SupplierOrderServiceImpl implements SupplierOrderServiceItf {
         SupplierOrder saved = orderRepository.save(newOrder);
         return toDTO(saved);
     }
+
+    @Override
+    public SupplierOrderDTO validateOrder(Long orderId) {
+        SupplierOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
+
+        if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
+            throw new IllegalStateException("La commande doit être en attente pour être validée.");
+        }
+
+        order.setStatus(SupplierOrder.OrderStatus.LIVREE);
+        SupplierOrder updatedOrder = orderRepository.save(order);
+
+        for (SupplierOrderLine line : order.getLines()) {
+            SupplierProduct product = line.getProduct();
+            Ingredient ingredient = product.getIngredient();
+            if (ingredient != null) {
+                ingredient.setStock(ingredient.getStock() + line.getQuantity());
+                ingredientRepository.save(ingredient);
+            }
+        }
+        return toDTO(updatedOrder);
+    }
+
+    @Override
+    public SupplierOrderDTO updateOrderLines(Long orderId, List<SupplierOrderLineDTO> lines, String status) {
+        SupplierOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable avec ID: " + orderId));
+        
+        if (order.getStatus() != SupplierOrder.OrderStatus.EN_ATTENTE) {
+            throw new IllegalStateException("La commande doit être en attente pour mettre à jour les lignes.");
+        }
+        
+        List<SupplierOrderLine> updatedLines = lines.stream()
+                .map(lineDto -> {
+                    SupplierOrderLine line = toLineEntity(lineDto, false);
+                    line.setOrder(order);
+                    return line;
+                })
+                .collect(Collectors.toList());
+        
+        order.setLines(updatedLines);
+
+        // Recalculer le montant total
+        double totalAmount = updatedLines.stream()
+                .mapToDouble(line -> line.getUnitPrice() * line.getQuantity())
+                .sum();
+        Supplier supplier = order.getSupplier();
+        Double deliveryFee = (supplier != null) ? supplier.getDeliveryFee() : null;
+        if (deliveryFee != null) {
+            totalAmount += deliveryFee;
+        }
+        order.setTotalAmount(totalAmount);
+
+        // Changer le statut si fourni
+        if (status != null && !status.trim().isEmpty()) {
+            try {
+                order.setStatus(SupplierOrder.OrderStatus.valueOf(status.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Statut invalide fourni : " + status);
+            }
+        }
+
+        SupplierOrder updatedOrder = orderRepository.save(order);
+
+        for (SupplierOrderLine line : updatedOrder.getLines()) {
+            SupplierProduct product = line.getProduct();
+            Ingredient ingredient = product.getIngredient();
+            if (ingredient != null) {
+                ingredient.setStock(ingredient.getStock() + line.getQuantity());
+                ingredientRepository.save(ingredient);
+            }
+        }
+        return toDTO(updatedOrder);
+    }
+
+    @Override
+    public List<SupplierOrderDTO> getPendingOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getStatus() == SupplierOrder.OrderStatus.EN_ATTENTE)
+                .sorted(Comparator.comparing(SupplierOrder::getOrderDate).reversed())
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
 }

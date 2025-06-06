@@ -14,6 +14,10 @@ public class SupplierProduct {
     private int usualDeliveryTime; // jours
 
     @ManyToOne
+    @JoinColumn(name = "ingredient_id")
+    private Ingredient ingredient;
+
+    @ManyToOne
     private Supplier supplier;
 
     public Long getId() {
@@ -62,6 +66,14 @@ public class SupplierProduct {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        this.ingredient = ingredient;
     }
     
 }

@@ -1,8 +1,10 @@
 package com.example.projet_pai.service.Impl;
 
 import com.example.projet_pai.dto.SupplierProductDTO;
+import com.example.projet_pai.entite.Ingredient;
 import com.example.projet_pai.entite.Supplier;
 import com.example.projet_pai.entite.SupplierProduct;
+import com.example.projet_pai.repository.IngredientRepository;
 import com.example.projet_pai.repository.SupplierProductRepository;
 import com.example.projet_pai.repository.SupplierRepository;
 import com.example.projet_pai.service.SupplierProductServiceItf;
@@ -19,6 +21,8 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
     private SupplierProductRepository productRepository;
     @Autowired
     private SupplierRepository supplierRepository;
+    @Autowired
+    private IngredientRepository ingredientRepository;
 
     private SupplierProductDTO toDTO(SupplierProduct p) {
         SupplierProductDTO dto = new SupplierProductDTO();
@@ -28,6 +32,7 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
         dto.price = p.getPrice();
         dto.usualDeliveryTime = p.getUsualDeliveryTime();
         dto.supplierId = p.getSupplier() != null ? p.getSupplier().getId() : null;
+        dto.ingredientId = p.getIngredient() != null ? p.getIngredient().getId() : null;
         // Les champs reference, packaging, alternativeToId ne sont plus utilisés
         return dto;
     }
@@ -39,6 +44,13 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
         p.setCategory(dto.category);
         p.setPrice(dto.price);
         p.setUsualDeliveryTime(dto.usualDeliveryTime);
+        if (dto.ingredientId != null) {
+            Ingredient ingredient = ingredientRepository.findById(dto.ingredientId).orElseThrow();
+            p.setIngredient(ingredient);
+            if (ingredient.getSupplierProducts() != null && !ingredient.getSupplierProducts().contains(p)) {
+                ingredient.getSupplierProducts().add(p);
+            }
+        }
         if (dto.supplierId != null) {
             Supplier supplier = supplierRepository.findById(dto.supplierId).orElseThrow();
             p.setSupplier(supplier);
@@ -59,6 +71,10 @@ public class SupplierProductServiceImpl implements SupplierProductServiceItf {
         p.setCategory(dto.category);
         p.setPrice(dto.price);
         p.setUsualDeliveryTime(dto.usualDeliveryTime);
+        if (dto.ingredientId != null) {
+        Ingredient ingredient = ingredientRepository.findById(dto.ingredientId).orElseThrow();
+        p.setIngredient(ingredient);
+        }
         // Pas de gestion de reference, packaging, alternativeTo
         return toDTO(productRepository.save(p));
     }

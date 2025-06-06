@@ -1,8 +1,12 @@
 package com.example.projet_pai.controller;
 
 import com.example.projet_pai.dto.SupplierOrderDTO;
+import com.example.projet_pai.dto.SupplierOrderLineDTO;
+import com.example.projet_pai.dto.UpdateOrderLinesRequest;
 import com.example.projet_pai.service.SupplierOrderServiceItf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,5 +46,29 @@ public class SupplierOrderController {
     @PostMapping("/{previousOrderId}/renew")
     public SupplierOrderDTO renewOrder(@PathVariable Long previousOrderId) {
         return orderService.renewOrder(previousOrderId);
+    }
+
+    // Validation d'une commande
+    @PutMapping("/{OrderId}/validate")
+    public SupplierOrderDTO validateOrder(@PathVariable Long OrderId) {
+        return orderService.validateOrder(OrderId);
+    }
+
+    // Mise à jour des lignes d'une commande
+    @PutMapping("/{orderId}/update-lines")
+    public ResponseEntity<?> updateOrderLines(
+            @PathVariable Long orderId,
+            @RequestBody UpdateOrderLinesRequest request) {
+        try {
+            SupplierOrderDTO updatedOrder = orderService.updateOrderLines(orderId, request.lines, request.status);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erreur lors de la mise à jour des lignes de commande : " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/pending")
+    public List<SupplierOrderDTO> getPendingOrders() {
+        return orderService.getPendingOrders();
     }
 }
